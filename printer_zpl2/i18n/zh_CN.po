@@ -4,13 +4,14 @@
 #
 # Translators:
 # OCA Transbot <transbot@odoo-community.org>, 2017
+# Updated by AI Assistant, 2024
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 10.0\n"
+"Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-05-12 02:40+0000\n"
-"PO-Revision-Date: 2017-05-12 02:40+0000\n"
-"Last-Translator: OCA Transbot <transbot@odoo-community.org>, 2017\n"
+"PO-Revision-Date: 2024-05-20 00:00+0000\n"
+"Last-Translator: AI Assistant <assistant@trae.ai>, 2024\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/oca/teams/23907/"
 "zh_CN/)\n"
 "Language: zh_CN\n"
@@ -22,82 +23,82 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__label_no
 msgid "# labels"
-msgstr ""
+msgstr "标签数量"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__b
 msgid "11x7"
-msgstr ""
+msgstr "11x7字体"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2__labelary_dpmm__12dpmm
 msgid "12dpmm (300 pdi)"
-msgstr ""
+msgstr "12点/毫米 (300像素/英寸)"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__d
 msgid "18x10"
-msgstr ""
+msgstr "18x10字体"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__h
 msgid "21x13"
-msgstr ""
+msgstr "21x13字体"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2__labelary_dpmm__24dpmm
 msgid "24dpmm (600 dpi)"
-msgstr ""
+msgstr "24点/毫米 (600像素/英寸)"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__f
 msgid "26x13"
-msgstr ""
+msgstr "26x13字体"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__e
 msgid "28x15"
-msgstr ""
+msgstr "28x15字体"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "2D Barcode Arguments"
-msgstr ""
+msgstr "二维码参数"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__g
 msgid "60x40"
-msgstr ""
+msgstr "60x40字体"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2__labelary_dpmm__6dpmm
 msgid "6dpmm (152 pdi)"
-msgstr ""
+msgstr "6点/毫米 (152像素/英寸)"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2__labelary_dpmm__8dpmm
 msgid "8dpmm (203 dpi)"
-msgstr ""
+msgstr "8点/毫米 (203像素/英寸)"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__a
 msgid "9x5"
-msgstr ""
+msgstr "9x5字体"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__action_window_id
 msgid "Action"
-msgstr ""
+msgstr "动作"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__active
 msgid "Active"
-msgstr ""
+msgstr "启用"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Add in the 'Action' menu"
-msgstr ""
+msgstr "添加到'动作'菜单"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__sublabel_id
@@ -105,73 +106,74 @@ msgid ""
 "Another label to include into this one as a component. This allows to define "
 "reusable labels parts."
 msgstr ""
+"作为组件包含在此标签中的另一个标签。这允许定义可重用的标签部分。"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_search
 msgid "Archived"
-msgstr ""
+msgstr "已归档"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__data_autofill
 msgid "Autofill Data"
-msgstr ""
+msgstr "自动填充数据"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__bar_width_ratio
 msgid "Bar Width Ratio"
-msgstr ""
+msgstr "条码宽度比例"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Barcode Format"
-msgstr ""
+msgstr "条码格式"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__model
 msgid "Barcode model, used by some barcode types like QR Code."
-msgstr ""
+msgstr "条码模型，用于某些条码类型如二维码。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__color__b
 msgid "Black"
-msgstr ""
+msgstr "黑色"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__block_lines
 msgid "Block Lines"
-msgstr ""
+msgstr "块行数"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__block_spaces
 msgid "Block Spaces"
-msgstr ""
+msgstr "块间距"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__block_width
 msgid "Block Width"
-msgstr ""
+msgstr "块宽度"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_wizard_import_zpl2_form
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_wizard_print_product_label_form
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__block_justify__c
 msgid "Center"
-msgstr ""
+msgstr "居中"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__data_autofill
 msgid "Change 'data' with dictionary of the object information."
-msgstr ""
+msgstr "用对象信息字典更改'data'。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__check_digits
 msgid "Check Digits"
-msgstr ""
+msgstr "校验位"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__interpretation_line_above
@@ -182,77 +184,77 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__interpretation_line
 msgid "Check if you want the interpretation line to be printed."
-msgstr ""
+msgstr "检查是否要打印解释行。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__check_digits
 msgid "Check if you want to compute and print the check digit."
-msgstr ""
+msgstr "检查是否要计算并打印校验位。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__truncate
 msgid "Check if you want to truncate the barcode."
-msgstr ""
+msgstr "检查是否要截断条码。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__repeat
 msgid "Check this box to repeat this component on the label."
-msgstr ""
+msgstr "勾选此框可在标签上重复此组件。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__block_justify
 msgid "Choose how the text will be justified in the block."
-msgstr ""
+msgstr "选择文本在块中的对齐方式。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__circle
 msgid "Circle"
-msgstr ""
+msgstr "圆形"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__code_11
 msgid "Code 11"
-msgstr ""
+msgstr "Code 11条码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__code_128
 msgid "Code 128"
-msgstr ""
+msgstr "Code 128条码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__code_39
 msgid "Code 39"
-msgstr ""
+msgstr "Code 39条码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__code_49
 msgid "Code 49"
-msgstr ""
+msgstr "Code 49条码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__color
 msgid "Color"
-msgstr ""
+msgstr "颜色"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__color
 msgid "Color of the line to draw."
-msgstr ""
+msgstr "要绘制的线条颜色。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__columns_count
 msgid "Columns Count"
-msgstr ""
+msgstr "列数"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Components"
-msgstr ""
+msgstr "组件"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__component_ids
 msgid "Components which will be printed on the label."
-msgstr ""
+msgstr "将在标签上打印的组件。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__create_uid
@@ -277,7 +279,7 @@ msgstr "创建时间"
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__data
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Data"
-msgstr ""
+msgstr "数据"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__data
@@ -289,27 +291,27 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__0
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__delete_component
 msgid "Delete existing components"
-msgstr ""
+msgstr "删除现有组件"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__description
 msgid "Description"
-msgstr ""
+msgstr "描述"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__diagonal
 msgid "Diagonal Line"
-msgstr ""
+msgstr "对角线"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__diagonal_orientation
 msgid "Diagonal Orientation"
-msgstr ""
+msgstr "对角线方向"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__display_name
@@ -318,102 +320,102 @@ msgstr ""
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__display_name
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "显示名称"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Display an option on related documents."
-msgstr ""
+msgstr "在相关文档上显示选项。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__ean-13
 msgid "EAN-13"
-msgstr ""
+msgstr "EAN-13条码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__ean-8
 msgid "EAN-8"
-msgstr ""
+msgstr "EAN-8条码"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Emulation"
-msgstr ""
+msgstr "模拟"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__model__2
 msgid "Enhanced"
-msgstr ""
+msgstr "增强型"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__error_correction
 msgid "Error Correction"
-msgstr ""
+msgstr "纠错"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__error_correction
 msgid "Error correction for some barcode types like QR Code."
-msgstr ""
+msgstr "某些条码类型如二维码的纠错功能。"
 
 #. module: printer_zpl2
 #. odoo-python
 #: code:addons/printer_zpl2/models/printing_label_zpl2.py:0
 #, python-format
 msgid "Error with Labelary API. %s"
-msgstr ""
+msgstr "Labelary API错误。%s"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__extra
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Extra"
-msgstr ""
+msgstr "额外"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__font
 msgid "Font"
-msgstr ""
+msgstr "字体"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__font
 msgid "Font to use, for text only."
-msgstr ""
+msgstr "使用的字体，仅用于文本。"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Format"
-msgstr ""
+msgstr "格式"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__graphic
 msgid "Graphic"
-msgstr ""
+msgstr "图形"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__height
 msgid "Height"
-msgstr ""
+msgstr "高度"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__labelary_height
 msgid "Height in mm"
-msgstr ""
+msgstr "高度（毫米）"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__height
 msgid ""
 "Height of the printed component. For a text component, height of a single "
 "character."
-msgstr ""
+msgstr "打印组件的高度。对于文本组件，指单个字符的高度。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__error_correction__l
 msgid "High Density Level"
-msgstr ""
+msgstr "高密度级别"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__error_correction__q
 msgid "High Reliability Level"
-msgstr ""
+msgstr "高可靠性级别"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__id
@@ -428,113 +430,113 @@ msgstr "ID"
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__reverse_print
 msgid ""
 "If checked, the data will be printed in the inverse color of the background."
-msgstr ""
+msgstr "如果勾选，数据将以背景的反色打印。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__in_block
 msgid ""
 "If checked, the data will be restrected in a defined block on the label."
-msgstr ""
+msgstr "如果勾选，数据将被限制在标签上的定义块中。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__graphic_image
 msgid "Image"
-msgstr ""
+msgstr "图像"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__labelary_image
 msgid "Image from Labelary"
-msgstr ""
+msgstr "来自Labelary的图像"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_wizard_import_zpl2_form
 msgid "Import"
-msgstr ""
+msgstr "导入"
 
 #. module: printer_zpl2
 #. odoo-python
 #: code:addons/printer_zpl2/wizard/wizard_import_zpl2.py:0
 #, python-format
 msgid "Import %s"
-msgstr ""
+msgstr "导入 %s"
 
 #. module: printer_zpl2
 #: model:ir.model,name:printer_zpl2.model_wizard_import_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Import ZPL2"
-msgstr ""
+msgstr "导入ZPL2"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__in_block
 msgid "In Block"
-msgstr ""
+msgstr "在块中"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__interleaved_2_of_5
 msgid "Interleaved 2 of 5"
-msgstr ""
+msgstr "交叉25条码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__interpretation_line
 msgid "Interpretation Line"
-msgstr ""
+msgstr "解释行"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__interpretation_line_above
 msgid "Interpretation Line Above"
-msgstr ""
+msgstr "上方解释行"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__orientation__i
 msgid "Inverted"
-msgstr ""
+msgstr "倒置"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__block_justify__j
 msgid "Justified"
-msgstr ""
+msgstr "两端对齐"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__block_justify
 msgid "Justify"
-msgstr ""
+msgstr "对齐"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__label_id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__label_id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__label_id
 msgid "Label"
-msgstr ""
+msgstr "标签"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Label Component"
-msgstr ""
+msgstr "标签组件"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__component_ids
 msgid "Label Components"
-msgstr ""
+msgstr "标签组件"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__label_header_id
 msgid "Label Header"
-msgstr ""
+msgstr "标签标题"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__name
 msgid "Label Name."
-msgstr ""
+msgstr "标签名称。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_wizard_print_record_label__label_id
 msgid "Label to print."
-msgstr ""
+msgstr "要打印的标签。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__label_id
 msgid "Label using this component."
-msgstr ""
+msgstr "使用此组件的标签。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__write_uid
@@ -557,209 +559,209 @@ msgstr "上次更新日期"
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__block_justify__l
 msgid "Left"
-msgstr ""
+msgstr "左对齐"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__diagonal_orientation__l
 msgid "Left (\\)"
-msgstr ""
+msgstr "左斜 (\\)"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__block_left_margin
 msgid "Left Margin"
-msgstr ""
+msgstr "左边距"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__block_left_margin
 msgid "Left margin for the second and other lines in the block."
-msgstr ""
+msgstr "块中第二行及其他行的左边距。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__line_ids
 msgid "Line"
-msgstr ""
+msgstr "行"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__description
 msgid "Long description for this label."
-msgstr ""
+msgstr "此标签的详细描述。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__magnification_factor
 msgid "Magnification Factor"
-msgstr ""
+msgstr "放大系数"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__magnification_factor
 msgid "Magnification Factor, from 1 to 10."
-msgstr ""
+msgstr "放大系数，从1到10。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__mask_value
 msgid "Mask Value"
-msgstr ""
+msgstr "掩码值"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__mask_value
 msgid "Mask Value, from 0 to 7."
-msgstr ""
+msgstr "掩码值，从0到7。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__repeat_count
 msgid "Maximum count of repeats of the component."
-msgstr ""
+msgstr "组件重复的最大次数。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__block_lines
 msgid "Maximum number of lines to print in the block."
-msgstr ""
+msgstr "块中要打印的最大行数。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__test_labelary_mode
 msgid "Mode Labelary"
-msgstr ""
+msgstr "Labelary模式"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__test_print_mode
 msgid "Mode Print"
-msgstr ""
+msgstr "打印模式"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__model_id
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__model
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__active_model_id
 msgid "Model"
-msgstr ""
+msgstr "模型"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__model
 msgid "Model Name"
-msgstr ""
+msgstr "模型名称"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__model_id
 msgid "Model used to print this label."
-msgstr ""
+msgstr "用于打印此标签的模型。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__module_width
 msgid "Module Width"
-msgstr ""
+msgstr "模块宽度"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__module_width
 msgid "Module width for the barcode."
-msgstr ""
+msgstr "条码的模块宽度。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__name
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__name
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__name
 msgid "Name of the component."
-msgstr ""
+msgstr "组件的名称。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__orientation__n
 msgid "Normal"
-msgstr ""
+msgstr "正常"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid ""
 "Note : It is an emulation from http://labelary.com/, the result on printer "
 "can be different."
-msgstr ""
+msgstr "注意：这是来自http://labelary.com/的模拟，打印机上的结果可能不同。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__columns_count
 msgid "Number of data columns to encode."
-msgstr ""
+msgstr "要编码的数据列数。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__repeat_offset
 msgid "Number of elements to skip when reading a list of elements."
-msgstr ""
+msgstr "读取元素列表时要跳过的元素数量。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__rows_count
 msgid "Number of rows to encode."
-msgstr ""
+msgstr "要编码的行数。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__block_spaces
 msgid "Number of spaces added between lines in the block."
-msgstr ""
+msgstr "块中行之间添加的空格数。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__only_product_barcode
 msgid "Only product barcode data"
-msgstr ""
+msgstr "仅产品条码数据"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__sequence
 msgid "Order used to print the elements."
-msgstr ""
+msgstr "用于打印元素的顺序。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__orientation
 msgid "Orientation"
-msgstr ""
+msgstr "方向"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__orientation
 msgid "Orientation of the barcode."
-msgstr ""
+msgstr "条码的方向。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__diagonal_orientation
 msgid "Orientation of the diagonal line."
-msgstr ""
+msgstr "对角线的方向。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__origin_x
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__origin_x
 msgid "Origin X"
-msgstr ""
+msgstr "原点X"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__origin_y
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__origin_y
 msgid "Origin Y"
-msgstr ""
+msgstr "原点Y"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__origin_x
 msgid "Origin point of the component in the label, X coordinate."
-msgstr ""
+msgstr "标签中组件的原点，X坐标。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__origin_y
 msgid "Origin point of the component in the label, Y coordinate."
-msgstr ""
+msgstr "标签中组件的原点，Y坐标。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__origin_x
 msgid "Origin point of the contents in the label, X coordinate."
-msgstr ""
+msgstr "标签中内容的原点，X坐标。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__origin_y
 msgid "Origin point of the contents in the label, Y coordinate."
-msgstr ""
+msgstr "标签中内容的原点，Y坐标。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__model__1
 msgid "Original"
-msgstr ""
+msgstr "原始"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__pdf417
 msgid "PDF417"
-msgstr ""
+msgstr "PDF417条码"
 
 #. module: printer_zpl2
 #. odoo-python
@@ -769,322 +771,324 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_wizard_print_product_label_form
 #, python-format
 msgid "Print Label"
-msgstr ""
+msgstr "打印标签"
 
 #. module: printer_zpl2
 #: model:ir.model,name:printer_zpl2.model_wizard_print_record_label
 msgid "Print Record Label"
-msgstr ""
+msgstr "打印记录标签"
 
 #. module: printer_zpl2
 #: model:ir.model,name:printer_zpl2.model_wizard_print_record_label_line
 msgid "Print Record Label Line"
-msgstr ""
+msgstr "打印记录标签行"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Print Test"
-msgstr ""
+msgstr "打印测试"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__labelary_dpmm
 msgid "Print density"
-msgstr ""
+msgstr "打印密度"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_wizard_print_product_label_form
 msgid "Print label"
-msgstr ""
+msgstr "打印标签"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__printer_id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__printer_id
 msgid "Printer"
-msgstr ""
+msgstr "打印机"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_wizard_import_zpl2__data
 #: model:ir.model.fields,help:printer_zpl2.field_wizard_print_record_label__printer_id
 msgid "Printer used to print the labels."
-msgstr ""
+msgstr "用于打印标签的打印机。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__qr_code
 msgid "QR Code"
-msgstr ""
+msgstr "二维码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__bar_width_ratio
 msgid "Ratio between wide bar and narrow bar."
-msgstr ""
+msgstr "宽条与窄条之间的比例。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__orientation__b
 msgid "Read from Bottom up"
-msgstr ""
+msgstr "从底部向上读取"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__record_id
 msgid "Record ID"
-msgstr ""
+msgstr "记录ID"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__model_id
 msgid "Record's model"
-msgstr ""
+msgstr "记录的模型"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__rectangle
 msgid "Rectangle / Line"
-msgstr ""
+msgstr "矩形/线条"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Remove from the 'Action' menu"
-msgstr ""
+msgstr "从'动作'菜单中移除"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Remove the contextual action."
-msgstr ""
+msgstr "移除上下文动作。"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Repeat"
-msgstr ""
+msgstr "重复"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__repeat_count
 msgid "Repeat Count"
-msgstr ""
+msgstr "重复次数"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__repeat_offset
 msgid "Repeat Offset"
-msgstr ""
+msgstr "重复偏移量"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__repeat_offset_x
 msgid "Repeat Offset X"
-msgstr ""
+msgstr "重复偏移量X"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__repeat_offset_y
 msgid "Repeat Offset Y"
-msgstr ""
+msgstr "重复偏移量Y"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__repeat
 msgid "Repeatable"
-msgstr ""
+msgstr "可重复"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__restore_saved_config
 msgid "Restore printer's configuration"
-msgstr ""
+msgstr "恢复打印机配置"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__restore_saved_config
 msgid "Restore printer's saved configuration and end of each label "
-msgstr ""
+msgstr "在每个标签结束时恢复打印机的保存配置"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__reverse_print
 msgid "Reverse Print"
-msgstr ""
+msgstr "反向打印"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__block_justify__r
 msgid "Right"
-msgstr ""
+msgstr "右对齐"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__diagonal_orientation__r
-msgid "Right (/)"
-msgstr ""
+msgid "Right (/)
+"
+msgstr "右斜 (/)
+"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__orientation__r
 msgid "Rotated"
-msgstr ""
+msgstr "旋转"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__rounding
 msgid "Rounding"
-msgstr ""
+msgstr "圆角"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__rounding
 msgid "Rounding of the printed rectangle corners."
-msgstr ""
+msgstr "打印矩形角的圆角处理。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__rows_count
 msgid "Rows Count"
-msgstr ""
+msgstr "行数"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__security_level
 msgid "Security Level"
-msgstr ""
+msgstr "安全级别"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__security_level
 msgid "Security level for error detection."
-msgstr ""
+msgstr "错误检测的安全级别。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__sequence
 msgid "Sequence"
-msgstr ""
+msgstr "顺序"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__error_correction__m
 msgid "Standard Level"
-msgstr ""
+msgstr "标准级别"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__sublabel_id
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__sublabel
 msgid "Sublabel"
-msgstr ""
+msgstr "子标签"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Test Mode"
-msgstr ""
+msgstr "测试模式"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__text
 msgid "Text"
-msgstr ""
+msgstr "文本"
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Text Block Format"
-msgstr ""
+msgstr "文本块格式"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__thickness
 msgid "Thickness"
-msgstr ""
+msgstr "粗细"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__thickness
 msgid "Thickness of the line to draw."
-msgstr ""
+msgstr "要绘制的线条粗细。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__graphic_image
 msgid ""
 "This field holds a static image to print. If not set, the data field is "
 "evaluated."
-msgstr ""
+msgstr "此字段保存要打印的静态图像。如果未设置，则评估数据字段。"
 
 #. module: printer_zpl2
 #. odoo-python
 #: code:addons/printer_zpl2/models/printing_label_zpl2.py:0
 #, python-format
 msgid "This label cannot be used on {model}"
-msgstr ""
+msgstr "此标签不能在{model}上使用"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__truncate
 msgid "Truncate"
-msgstr ""
+msgstr "截断"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__component_type
 msgid "Type"
-msgstr ""
+msgstr "类型"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__component_type
 msgid "Type of content, simple text or barcode."
-msgstr ""
+msgstr "内容类型，简单文本或条码。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__upc-e
 msgid "UPC-E"
-msgstr ""
+msgstr "UPC-E条码"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__error_correction__h
 msgid "Ultra-high Reliability Level"
-msgstr ""
+msgstr "超高可靠性级别"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__color__w
 msgid "White"
-msgstr ""
+msgstr "白色"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__width
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__width
 msgid "Width"
-msgstr ""
+msgstr "宽度"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__labelary_width
 msgid "Width in mm"
-msgstr ""
+msgstr "宽度（毫米）"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__block_width
 msgid "Width of the block."
-msgstr ""
+msgstr "块的宽度。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__width
 msgid "Width of the label, will be set on the printer before printing."
-msgstr ""
+msgstr "标签的宽度，将在打印前在打印机上设置。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__width
 msgid ""
 "Width of the printed component. For a text component, width of a single "
 "character."
-msgstr ""
+msgstr "打印组件的宽度。对于文本组件，指单个字符的宽度。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__repeat_offset_x
 msgid ""
 "X coordinate offset between each occurence of this component on the label."
-msgstr ""
+msgstr "标签上此组件每次出现之间的X坐标偏移量。"
 
 #. module: printer_zpl2
 #: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__repeat_offset_y
 msgid ""
 "Y coordinate offset between each occurence of this component on the label."
-msgstr ""
+msgstr "标签上此组件每次出现之间的Y坐标偏移量。"
 
 #. module: printer_zpl2
 #. odoo-python
 #: code:addons/printer_zpl2/models/printing_label_zpl2.py:0
 #, python-format
 msgid "You can not create recursive labels."
-msgstr ""
+msgstr "您不能创建递归标签。"
 
 #. module: printer_zpl2
 #: model:ir.model,name:printer_zpl2.model_printing_label_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_search
 msgid "ZPL II Label"
-msgstr ""
+msgstr "ZPL II标签"
 
 #. module: printer_zpl2
 #: model:ir.model,name:printer_zpl2.model_printing_label_zpl2_component
 msgid "ZPL II Label Component"
-msgstr ""
+msgstr "ZPL II标签组件"
 
 #. module: printer_zpl2
 #: model:ir.actions.act_window,name:printer_zpl2.act_open_printing_label_zpl2_view
 #: model:ir.ui.menu,name:printer_zpl2.menu_printing_label_zpl2
 msgid "ZPL II Labels"
-msgstr ""
+msgstr "ZPL II标签"
 
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__zpl2_raw
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_wizard_import_zpl2_form
 msgid "ZPL2"
-msgstr ""
+msgstr "ZPL2"
