@@ -86,3 +86,9 @@ docs/_build/
 
 # OCA rules
 !static/lib/
+
+# 忽略 odoo源代码 目录
+odoo-17.0.post20250717/
+odoo-17.0.post20250917/
+LOG/
+
