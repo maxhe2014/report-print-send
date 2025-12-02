@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_print_mrp_zpl_label_wizard_user,print.mrp.zpl.label.wizard.user,model_print_mrp_zpl_label_wizard_user,base.group_user,1,1,1,0
 access_print_mrp_zpl_label_wizard_manager,print.mrp.zpl.label.wizard.manager,model_print_mrp_zpl_label_wizard_user,base.group_system,1,1,1,1
+access_print_zpl_label_wizard,print.zpl.label.wizard,model_print_zpl_label_wizard,base.group_user,1,0,0,0
