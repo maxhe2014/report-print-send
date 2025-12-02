@@ -1,0 +1,1 @@
+from . import print_mrp_zpl_label_wizard

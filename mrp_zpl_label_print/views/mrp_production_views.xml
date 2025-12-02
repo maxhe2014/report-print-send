@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit MRP Production Form View to add ZPL Print Button -->
+        <record id="mrp_production_form_inherit_zpl_print" model="ir.ui.view">
+            <field name="name">mrp.production.form.inherit.zpl.print</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <!-- Add ZPL Print Button in header -->
+                <xpath expr="//header/button[@name='action_open_label_type']" position="after">
+                    <button name="action_open_mrp_zpl_label_wizard" 
+                            string="Print ZPL Labels" 
+                            type="object" 
+                            class="btn-primary"
+                            groups="stock.group_production_lot"/>
+                </xpath>
+                
+                <!-- Add ZPL Print Button in button box -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_open_mrp_zpl_label_wizard" 
+                            type="object" 
+                            class="oe_stat_button" 
+                            icon="fa-print"
+                            groups="stock.group_production_lot"
+                            invisible="not move_finished_ids">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">ZPL Labels</span>
+                        </div>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Inherit MRP Production Tree View to add ZPL Print Button -->
+        <record id="mrp_production_tree_inherit_zpl_print" model="ir.ui.view">
+            <field name="name">mrp.production.tree.inherit.zpl.print</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+            <field name="arch" type="xml">
+                <!-- Add ZPL Print Button after name field -->
+                <xpath expr="//field[@name='name']" position="after">
+                    <button name="action_open_mrp_zpl_label_wizard" 
+                            string="Print ZPL" 
+                            type="object" 
+                            class="btn-secondary"
+                            groups="stock.group_production_lot"
+                            invisible="not lot_producing_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
