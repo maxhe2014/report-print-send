@@ -88,6 +88,7 @@ FONT_28X15 = "E"
 FONT_26X13 = "F"
 FONT_60X40 = "G"
 FONT_21X13 = "H"
+FONT_CUSTOM = "@"  # 自定义字体标识符
 
 # Color values
 COLOR_BLACK = "B"
@@ -182,6 +183,23 @@ class Zpl2:
     def _font_format(self, font_format):
         """Send the commands which define the font to use for the current data"""
         arguments = [ARG_FONT, ARG_HEIGHT, ARG_WIDTH]
+        
+        # 处理自定义字体
+        if font_format.get(ARG_FONT) == FONT_CUSTOM:
+            # 自定义字体格式: ^A@N,height,width,font_name
+            font_name = font_format.get('font_name', '')
+            orientation = font_format.get(ARG_ORIENTATION, ORIENTATION_NORMAL)
+            height = font_format.get(ARG_HEIGHT, 10)
+            width = font_format.get(ARG_WIDTH, 10)
+            
+            # 检查高度和宽度值是否在允许范围内
+            height = self._enforce(height, minimum=10)
+            width = self._enforce(width, minimum=10)
+            
+            # 生成自定义字体ZPL命令
+            return f"^A@{orientation},{height},{width},{font_name}"
+        
+        # 标准字体处理
         # Add orientation in the font name (only place where there is
         # no comma between values)
         font_format[ARG_FONT] += font_format.get(ARG_ORIENTATION, ORIENTATION_NORMAL)

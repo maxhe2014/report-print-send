@@ -82,10 +82,15 @@ class PrintingLabelZpl2Component(models.Model):
             (str(zpl2.FONT_26X13), "26x13"),
             (str(zpl2.FONT_60X40), "60x40"),
             (str(zpl2.FONT_21X13), "21x13"),
+            (str(zpl2.FONT_CUSTOM), "Custom Font"),
         ],
         required=True,
         default=str(zpl2.FONT_DEFAULT),
         help="Font to use, for text only.",
+    )
+    custom_font_name = fields.Char(
+        string="Custom Font Name",
+        help="Name of the custom font file (e.g., 11519722.TTF). This font must be already uploaded to the printer.",
     )
     thickness = fields.Integer(help="Thickness of the line to draw.")
     color = fields.Selection(

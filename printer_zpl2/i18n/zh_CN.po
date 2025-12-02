@@ -86,6 +86,21 @@ msgid "9x5"
 msgstr "9x5字体"
 
 #. module: printer_zpl2
+#: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__custom
+msgid "Custom Font"
+msgstr "自定义字体"
+
+#. module: printer_zpl2
+#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__custom_font_name
+msgid "Custom Font Name"
+msgstr "自定义字体名称"
+
+#. module: printer_zpl2
+#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__custom_font_name
+msgid "Font file name uploaded to the printer (e.g., 11519722.TTF)"
+msgstr "已上传到打印机的字体文件名（例如：11519722.TTF）"
+
+#. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__action_window_id
 msgid "Action"
 msgstr "动作"

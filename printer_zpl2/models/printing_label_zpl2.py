@@ -226,6 +226,10 @@ class PrintingLabelZpl2(models.Model):
                         zpl2.ARG_BLOCK_LEFT_MARGIN,
                     ]
                 }
+                # 添加自定义字体名称
+                if component.font == str(zpl2.FONT_CUSTOM) and component.custom_font_name:
+                    barcode_arguments['font_name'] = component.custom_font_name
+                
                 label_data.font_data(
                     component_offset_x, component_offset_y, barcode_arguments, data
                 )

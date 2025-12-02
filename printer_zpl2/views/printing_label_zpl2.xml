@@ -171,6 +171,10 @@
                                                     invisible="component_type != 'text'"
                                                 />
                                                 <field
+                                                    name="custom_font_name"
+                                                    invisible="component_type != 'text' or font != '@'"
+                                                />
+                                                <field
                                                     name="in_block"
                                                     invisible="component_type != 'text'"
                                                 />
