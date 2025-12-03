@@ -44,10 +44,15 @@ class PrintZplLabelWizard(models.TransientModel):
         if self.env.context.get('active_ids'):
             result['lot_ids'] = [(6, 0, self.env.context.get('active_ids'))]
         
-        # 设置默认打印机
-        printers = self.env['printing.printer'].search([])
-        if len(printers) == 1:
-            result['printer_id'] = printers.id
+        # 设置默认打印机：优先使用用户设置的默认ZPL打印机
+        user_printer = self.env.user.zpl_printer_id
+        if user_printer:
+            result['printer_id'] = user_printer.id
+        else:
+            # 如果没有设置用户默认打印机，则使用系统默认逻辑
+            printers = self.env['printing.printer'].search([])
+            if len(printers) == 1:
+                result['printer_id'] = printers.id
         
         # 设置默认标签模板
         labels = self.env['printing.label.zpl2'].search([

@@ -19,6 +19,8 @@
         'views/mrp_production_views.xml',
         'views/stock_lot_views.xml',
         'views/print_mrp_zpl_label_wizard_user_views.xml',
+        'views/res_users_views.xml',
+        'views/product_template_views.xml',
         'wizards/print_mrp_zpl_label_wizard_views.xml',
         'wizards/print_zpl_label_wizard_views.xml',
     ],

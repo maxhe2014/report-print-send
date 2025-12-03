@@ -1,4 +1,8 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError, UserError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class PrintMrpZplLabelWizard(models.TransientModel):
@@ -12,11 +16,19 @@ class PrintMrpZplLabelWizard(models.TransientModel):
                                        domain="[('model_id.model', '=', 'stock.lot')]")
     lot_ids = fields.Many2many('stock.lot', string='Lots/Serials',
                               domain="[('id', 'in', available_lot_ids)]")
-    copies_per_label = fields.Integer(string='Copies per Label', default=1)
+    copies_per_label = fields.Integer(string='Copies per Label', default=1,
+                                     help='Number of copies to print for each label')
     
     # Available printers and lots
     available_printer_ids = fields.Many2many('printing.printer', compute='_compute_available_printers')
     available_lot_ids = fields.Many2many('stock.lot', compute='_compute_available_lots')
+    
+    @api.constrains('copies_per_label')
+    def _check_copies_per_label(self):
+        """Validate copies per label value"""
+        for record in self:
+            if record.copies_per_label < 1 or record.copies_per_label > 10:
+                raise ValidationError(_('Copies per label must be between 1 and 10.'))
 
     @api.depends('production_id')
     def _compute_available_lots(self):
@@ -62,20 +74,15 @@ class PrintMrpZplLabelWizard(models.TransientModel):
                 res['label_template_id'] = label_template.id
         
         # Multi-level printer selection priority:
-        # 1. ZPL label template default printer
-        # 2. User's default printer
+        # 1. User's default ZPL printer (new field)
+        # 2. User's default printer (original field)
         # 3. First active printer
         
-        # Get ZPL label template (if any)
-        zpl_label = self.env['printing.label.zpl2'].search([
-            ('model_id.model', '=', 'mrp.production')
-        ], limit=1)
-        
-        if zpl_label and zpl_label.printing_printer_id:
-            # Priority 1: ZPL label template default printer
-            res['printer_id'] = zpl_label.printing_printer_id.id
+        if self.env.user.zpl_printer_id:
+            # Priority 1: User's default ZPL printer (new field)
+            res['printer_id'] = self.env.user.zpl_printer_id.id
         elif self.env.user.printing_printer_id:
-            # Priority 2: User's default printer
+            # Priority 2: User's default printer (original field)
             res['printer_id'] = self.env.user.printing_printer_id.id
         else:
             # Priority 3: First active printer
@@ -90,12 +97,46 @@ class PrintMrpZplLabelWizard(models.TransientModel):
         self.ensure_one()
         
         if not self.lot_ids:
-            raise models.ValidationError("Please select at least one lot to print.")
+            raise ValidationError(_("请选择至少一个批次/序列号进行打印。"))
+        
+        if not self.printer_id:
+            raise ValidationError(_("请选择打印机。"))
+            
+        if not self.label_template_id:
+            raise ValidationError(_("请选择标签模板。"))
+        
+        success_count = 0
+        error_messages = []
         
         # Print each lot
         for lot in self.lot_ids:
-            for i in range(self.copies_per_label):
-                self.label_template_id.print_label(self.printer_id, lot)
+            try:
+                for i in range(self.copies_per_label):
+                    self.label_template_id.print_label(self.printer_id, lot)
+                    success_count += 1
+            except Exception as e:
+                error_msg = f"批次 {lot.name} 打印失败: {str(e)}"
+                error_messages.append(error_msg)
+                _logger.error(error_msg)
+        
+        # Show result message
+        if success_count > 0:
+            message = _("成功打印了 %d 个标签") % success_count
+            if error_messages:
+                message += _("，但有 %d 个标签打印失败") % len(error_messages)
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('打印结果'),
+                    'message': message,
+                    'sticky': False,
+                    'type': 'success' if not error_messages else 'warning',
+                }
+            }
+        else:
+            raise UserError(_("所有标签打印失败，请检查打印机配置和网络连接。\n错误信息: %s") % '\n'.join(error_messages))
         
         return {'type': 'ir.actions.act_window_close'}
 

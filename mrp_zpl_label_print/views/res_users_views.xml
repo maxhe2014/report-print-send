@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 扩展用户表单视图，添加默认ZPL打印机字段 -->
+    <record model="ir.ui.view" id="view_users_form">
+        <field name="name">res.users.form (in mrp_zpl_label_print)</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <group name="preferences" position="after">
+                <group string="ZPL标签打印" name="zpl_printing">
+                    <field name="zpl_printer_id" string="默认ZPL打印机" options="{'no_create': True}" />
+                </group>
+            </group>
+        </field>
+    </record>
+    
+    <!-- 扩展简化版用户表单视图 -->
+    <record model="ir.ui.view" id="view_users_form_simple_modif">
+        <field name="name">res.users.form.simple (in mrp_zpl_label_print)</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif" />
+        <field name="arch" type="xml">
+            <group name="preferences" position="inside">
+                <group name="zpl_printing">
+                    <field name="zpl_printer_id" string="默认ZPL打印机" readonly="0" options="{'no_create': True}" />
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>
