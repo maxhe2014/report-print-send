@@ -27,19 +27,19 @@
                 <form string="User Default ZPL Label Printing Configuration">
                     <sheet>
                         <group>
-                            <group string="User Configuration">
+                            <group string="User Configuration" name="user_configuration">
                                 <field name="user_id" required="1"/>
                                 <field name="active"/>
                             </group>
-                            <group string="Default Printing Settings">
+                            <group string="Default Printing Settings" name="default_printing_settings">
                                 <field name="label_template_id" domain="[('model_id.model', '=', 'stock.lot')]"/>
                                 <field name="printer_id" domain="[('active', '=', True)]"/>
                                 <field name="copies_per_label"/>
                             </group>
-                            <group string="Trigger Conditions">
-                                <field name="trigger_mrp_production" string="Manufacturing Production"/>
-                                <field name="trigger_repair_order" string="Repair Completion"/>
-                                <field name="trigger_stock_lot" string="Stock Lot/Serial Number"/>
+                            <group string="Trigger Conditions" name="trigger_conditions">
+                                <field name="trigger_mrp_production"/>
+                                <field name="trigger_repair_order"/>
+                                <field name="trigger_stock_lot"/>
                             </group>
                         </group>
                     </sheet>

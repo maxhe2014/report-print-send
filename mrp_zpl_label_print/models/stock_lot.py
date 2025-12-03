@@ -1,10 +1,11 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from .base_print_mixin import BasePrintMixin
 import logging
 
 _logger = logging.getLogger(__name__)
 
-class StockLot(models.Model):
+class StockLot(models.Model, BasePrintMixin):
     _inherit = 'stock.lot'
     
     def action_open_print_zpl_label_wizard(self):
@@ -60,7 +61,7 @@ class StockLot(models.Model):
             if not label_template:
                 raise UserError(_('No label template found for lots/serial numbers. Please create a label template first.'))
                 
-            printer = self.env['printing.printer'].search([], limit=1)
+            printer = self._get_printer_with_fallback()
             copies = 1
             
         if not printer:

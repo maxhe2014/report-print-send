@@ -1,10 +1,11 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from ..models.base_print_mixin import BasePrintMixin
 import logging
 
 _logger = logging.getLogger(__name__)
 
-class PrintZplLabelWizard(models.TransientModel):
+class PrintZplLabelWizard(models.TransientModel, BasePrintMixin):
     _name = 'print.zpl.label.wizard'
     _description = 'ZPL Label Printing Wizard'
     
@@ -45,14 +46,9 @@ class PrintZplLabelWizard(models.TransientModel):
             result['lot_ids'] = [(6, 0, self.env.context.get('active_ids'))]
         
         # Set default printer: prioritize user's default ZPL printer
-        user_printer = self.env.user.zpl_printer_id
-        if user_printer:
-            result['printer_id'] = user_printer.id
-        else:
-            # If no user default printer is set, use system default logic
-            printers = self.env['printing.printer'].search([])
-            if len(printers) == 1:
-                result['printer_id'] = printers.id
+        printer = self._get_printer_with_fallback()
+        if printer:
+            result['printer_id'] = printer.id
         
         # Set default label template
         labels = self.env['printing.label.zpl2'].search([

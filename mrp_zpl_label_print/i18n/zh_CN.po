@@ -238,25 +238,37 @@ msgstr "ZPL标签打印"
 msgid "User Default ZPL Label Printing Configuration"
 msgstr "用户默认ZPL标签打印配置"
 
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
-msgid "User Default ZPL Label Printing Configuration"
-msgstr "用户默认ZPL标签打印配置"
+
 
 #. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_print_mrp_zpl_label_wizard_user_form
 msgid "User Configuration"
 msgstr "用户配置"
 
 #. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_print_mrp_zpl_label_wizard_user_form
 msgid "Default Printing Settings"
 msgstr "默认打印设置"
 
 #. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_print_mrp_zpl_label_wizard_user_form
 msgid "Trigger Conditions"
 msgstr "触发条件"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
+msgid "Manufacturing Production"
+msgstr "生产订单"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
+msgid "Repair Completion"
+msgstr "维修完成"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
+msgid "Stock Lot/Serial Number"
+msgstr "库存批次/序列号"
 
 #. module: mrp_zpl_label_print
 #: model:ir.actions.act_window,name:mrp_zpl_label_print.action_print_mrp_zpl_label_wizard_user
@@ -275,21 +287,7 @@ msgstr "用户ZPL标签配置"
 msgid "Print ZPL"
 msgstr "打印ZPL"
 
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_stock_lot_form_inherit_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_stock_lot_tree_inherit_zpl_label_print
-msgid "Quick Print Label"
-msgstr "快速打印标签"
 
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_stock_lot_form_inherit_zpl_label_print
-msgid "Select Template Print"
-msgstr "选择模板打印"
-
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_stock_lot_tree_inherit_zpl_label_print
-msgid "Print Label"
-msgstr "打印ZPL"
 
 #. module: mrp_zpl_label_print
 #: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_repair_order_form_inherit_zpl
@@ -336,35 +334,7 @@ msgstr "在生产订单完成时触发"
 msgid "Trigger on Repair Completion"
 msgstr "在维修完成时触发"
 
-#. module: mrp_zpl_label_print
-#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__copies_per_label
-msgid "Default Copies per Label"
-msgstr "每个标签的默认份数"
 
-#. module: mrp_zpl_label_print
-#: model:ir.model.fields,help:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__copies_per_label
-msgid "Number of copies to print for each label"
-msgstr "每个标签要打印的份数"
-
-#. module: mrp_zpl_label_print
-#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__trigger_mrp_production
-msgid "Trigger on Manufacturing Production"
-msgstr "在生产订单完成时触发"
-
-#. module: mrp_zpl_label_print
-#: model:ir.model.fields,help:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__trigger_mrp_production
-msgid "Automatically print labels when manufacturing order is marked as done"
-msgstr "当生产订单标记为完成时自动打印标签"
-
-#. module: mrp_zpl_label_print
-#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__trigger_repair_order
-msgid "Trigger on Repair Completion"
-msgstr "在维修完成时触发"
-
-#. module: mrp_zpl_label_print
-#: model:ir.model.fields,help:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__trigger_repair_order
-msgid "Automatically print labels when repair order is completed"
-msgstr "当维修单中打印标签时触发"
 
 #. module: mrp_zpl_label_print
 #: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__trigger_stock_lot
@@ -375,3 +345,20 @@ msgstr "在库存批次/序列号时触发"
 #: model:ir.model.fields,help:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__trigger_stock_lot
 msgid "Automatically print labels when stock lot/serial number is created or updated"
 msgstr "当库存批次/序列号创建或更新时自动打印标签"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "Please select at least one lot to test print."
+msgstr "请至少选择一个批次进行测试打印。"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_product_template__zpl_label_template_id
+msgid "ZPL Label Template"
+msgstr "ZPL标签模板"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_product_template__zpl_copies_per_label
+msgid "ZPL Copies per Label"
+msgstr "每个标签的ZPL份数"

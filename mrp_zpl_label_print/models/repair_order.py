@@ -2,13 +2,14 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from .base_print_mixin import BasePrintMixin
 import logging
 
 _logger = logging.getLogger(__name__)
 
 
-class RepairOrder(models.Model):
+class RepairOrder(models.Model, BasePrintMixin):
     _inherit = 'repair.order'
 
     def action_repair_end(self):
@@ -17,8 +18,9 @@ class RepairOrder(models.Model):
         2. User-level ZPL configuration (fallback)"""
         result = super().action_repair_end()
         
-        # 如果返回的是字典（向导），说明需要用户确认，我们仍然要确保标签打印能被触发
-        # 无论返回什么结果，都应该尝试触发标签打印
+        # If the return value is a dictionary (wizard), it means user confirmation is needed,
+        # but we still need to ensure label printing is triggered
+        # Regardless of the return value, we should attempt to trigger label printing
         self._trigger_zpl_label_printing()
         
         return result
@@ -27,13 +29,13 @@ class RepairOrder(models.Model):
         """Override the repair done method to automatically print labels"""
         result = super().action_repair_done()
         
-        # 确保在维修完成时也触发标签打印
+        # Ensure label printing is also triggered when repair is completed
         self._trigger_zpl_label_printing()
         
         return result
     
     def _trigger_zpl_label_printing(self):
-        """触发ZPL标签打印的核心逻辑"""
+        """Core logic for triggering ZPL label printing"""
         try:
             # Get lots from repair operations
             lot_ids = self.move_ids.move_line_ids.lot_id
@@ -58,19 +60,19 @@ class RepairOrder(models.Model):
                     # Use user configuration only if trigger is enabled and template exists
                     user_config.action_auto_print_repair_labels(self.id)
                 else:
-                    _logger.warning(f"用户 {user_config.user_id.name} 启用了维修触发但未配置标签模板")
+                    _logger.warning(f"User {user_config.user_id.name} has enabled repair trigger but no label template is configured")
         except Exception as e:
-            _logger.error(f"自动打印ZPL标签失败 (维修订单 {self.name}): {e}")
-            # 不中断正常流程，只记录错误
+            _logger.error(f"Automatic ZPL label printing failed (Repair Order {self.name}): {e}")
+            # Do not interrupt the normal flow, only log the error
     
     def _print_labels_with_product_config(self, product_template, lot_ids):
         """Print labels using product-level ZPL configuration for repair orders"""
-        # Get printer with fallback logic
+        # Get printer (with fallback)
         printer = self._get_printer_with_fallback()
-        
+
+        # Validate printer
         if not printer:
-            # No printer available, skip printing
-            return
+            raise UserError(_("No printer available. Please configure a printer."))
         
         # Print each lot with product configuration
         label_template = product_template.zpl_label_template_id
@@ -90,19 +92,7 @@ class RepairOrder(models.Model):
             for i in range(copies_per_label):
                 label_template.print_label(printer, lot)
     
-    def _get_printer_with_fallback(self):
-        """Get printer with fallback logic: user ZPL printer -> user default printer -> first active printer"""
-        # Priority 1: User's default ZPL printer
-        if self.env.user.zpl_printer_id:
-            return self.env.user.zpl_printer_id
-        
-        # Priority 2: User's default printer
-        if self.env.user.printing_printer_id:
-            return self.env.user.printing_printer_id
-        
-        # Priority 3: First active printer
-        printer = self.env['printing.printer'].search([('active', '=', True)], limit=1)
-        return printer
+    
 
     def action_open_repair_zpl_label_wizard(self):
         """Directly print ZPL labels for repair orders without wizard"""

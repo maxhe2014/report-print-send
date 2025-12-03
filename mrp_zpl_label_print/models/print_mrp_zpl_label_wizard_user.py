@@ -1,11 +1,12 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+from .base_print_mixin import BasePrintMixin
 import logging
 
 _logger = logging.getLogger(__name__)
 
 
-class PrintMrpZplLabelWizardUser(models.Model):
+class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
     _name = 'print.mrp.zpl.label.wizard.user'
     _description = 'User Default ZPL Label Printing Configuration'
     
@@ -67,13 +68,13 @@ class PrintMrpZplLabelWizardUser(models.Model):
         
         production = self.env['mrp.production'].browse(production_id)
         if not production:
-            _logger.warning(f"制造订单 {production_id} 不存在")
+            _logger.warning(f"Manufacturing order {production_id} does not exist")
             return False
             
         # Get lots from finished product move lines
         lot_ids = production.move_finished_ids.mapped('move_line_ids.lot_id')
         if not lot_ids:
-            _logger.info(f"制造订单 {production.name} 没有关联的批次/序列号")
+            _logger.info(f"Manufacturing order {production.name} has no associated lots/serial numbers")
             return False
         
         # Determine which printer to use
@@ -83,11 +84,11 @@ class PrintMrpZplLabelWizardUser(models.Model):
             printer = self.user_id.zpl_printer_id
         
         if not printer:
-            _logger.warning(f"用户 {self.user_id.name} 没有配置打印机")
+            _logger.warning(f"User {self.user_id.name} has no printer configured")
             return False
             
         if not self.label_template_id:
-            _logger.warning(f"用户 {self.user_id.name} 没有配置标签模板")
+            _logger.warning(f"User {self.user_id.name} has no label template configured")
             return False
         
         success_count = 0
@@ -98,9 +99,9 @@ class PrintMrpZplLabelWizardUser(models.Model):
                     self.label_template_id.print_label(printer, lot)
                     success_count += 1
             except Exception as e:
-                _logger.error(f"打印批次 {lot.name} 的标签失败: {e}")
+                _logger.error(f"Failed to print label for lot {lot.name}: {e}")
         
-        _logger.info(f"成功为制造订单 {production.name} 打印了 {success_count} 个标签")
+        _logger.info(f"Successfully printed {success_count} labels for manufacturing order {production.name}")
         return success_count > 0
     
     def action_auto_print_repair_labels(self, repair_id):
@@ -109,7 +110,7 @@ class PrintMrpZplLabelWizardUser(models.Model):
         
         repair = self.env['repair.order'].browse(repair_id)
         if not repair:
-            _logger.warning(f"维修订单 {repair_id} 不存在")
+            _logger.warning(f"Repair order {repair_id} does not exist")
             return False
             
         # Get lots from repair operations
@@ -119,7 +120,7 @@ class PrintMrpZplLabelWizardUser(models.Model):
             if repair.lot_id:
                 lot_ids = repair.lot_id
             else:
-                _logger.info(f"维修订单 {repair.name} 没有关联的批次/序列号")
+                _logger.info(f"Repair order {repair.name} has no associated lots/serial numbers")
                 return False
         
         # Determine which printer to use
@@ -129,11 +130,11 @@ class PrintMrpZplLabelWizardUser(models.Model):
             printer = self.user_id.zpl_printer_id
         
         if not printer:
-            _logger.warning(f"用户 {self.user_id.name} 没有配置打印机")
+            _logger.warning(f"User {self.user_id.name} has no printer configured")
             return False
             
         if not self.label_template_id:
-            _logger.warning(f"用户 {self.user_id.name} 没有配置标签模板")
+            _logger.warning(f"User {self.user_id.name} has no label template configured")
             return False
         
         success_count = 0
@@ -144,7 +145,7 @@ class PrintMrpZplLabelWizardUser(models.Model):
                     self.label_template_id.print_label(printer, lot)
                     success_count += 1
             except Exception as e:
-                _logger.error(f"打印批次 {lot.name} 的标签失败: {e}")
+                _logger.error(f"Failed to print label for lot {lot.name}: {e}")
         
-        _logger.info(f"成功为维修订单 {repair.name} 打印了 {success_count} 个标签")
+        _logger.info(f"Successfully printed {success_count} labels for repair order {repair.name}")
         return success_count > 0

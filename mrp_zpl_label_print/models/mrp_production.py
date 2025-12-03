@@ -33,8 +33,8 @@ class MrpProduction(models.Model):
                 # Use user configuration only if trigger is enabled
                 user_config.action_auto_print_labels(self.id)
         except Exception as e:
-            _logger.error(f"自动打印ZPL标签失败 (制造订单 {self.name}): {e}")
-            # 不中断正常流程，只记录错误
+            _logger.error(f"Automatic ZPL label printing failed (Manufacturing Order {self.name}): {e}")
+            # Do not interrupt the normal flow, only log the error
         
         return result
     

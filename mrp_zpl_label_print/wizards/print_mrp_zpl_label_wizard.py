@@ -1,11 +1,11 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+from ..models.base_print_mixin import BasePrintMixin
 import logging
 
 _logger = logging.getLogger(__name__)
 
-
-class PrintMrpZplLabelWizard(models.TransientModel):
+class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     _name = 'print.mrp.zpl.label.wizard'
     _description = 'Print ZPL Labels for Manufacturing Order'
 
@@ -78,18 +78,11 @@ class PrintMrpZplLabelWizard(models.TransientModel):
         # 2. User's default printer (original field)
         # 3. First active printer
         
-        if self.env.user.zpl_printer_id:
-            # Priority 1: User's default ZPL printer (new field)
-            res['printer_id'] = self.env.user.zpl_printer_id.id
-        elif self.env.user.printing_printer_id:
-            # Priority 2: User's default printer (original field)
-            res['printer_id'] = self.env.user.printing_printer_id.id
-        else:
-            # Priority 3: First active printer
-            printer = self.env['printing.printer'].search([('active', '=', True)], limit=1)
-            if printer:
-                res['printer_id'] = printer.id
-            
+        # Get printer (with fallback logic)
+        printer = self._get_printer_with_fallback()
+        if printer:
+            res['printer_id'] = printer.id
+             
         return res
 
     def action_print_labels(self):
@@ -97,13 +90,13 @@ class PrintMrpZplLabelWizard(models.TransientModel):
         self.ensure_one()
         
         if not self.lot_ids:
-            raise ValidationError(_("请选择至少一个批次/序列号进行打印。"))
+            raise ValidationError(_("Please select at least one lot/serial number to print."))
         
         if not self.printer_id:
-            raise ValidationError(_("请选择打印机。"))
+            raise ValidationError(_("Please select a printer."))
             
         if not self.label_template_id:
-            raise ValidationError(_("请选择标签模板。"))
+            raise ValidationError(_("Please select a label template."))
         
         success_count = 0
         error_messages = []
@@ -115,28 +108,28 @@ class PrintMrpZplLabelWizard(models.TransientModel):
                     self.label_template_id.print_label(self.printer_id, lot)
                     success_count += 1
             except Exception as e:
-                error_msg = f"批次 {lot.name} 打印失败: {str(e)}"
+                error_msg = f"Lot {lot.name} failed to print: {str(e)}"
                 error_messages.append(error_msg)
                 _logger.error(error_msg)
         
         # Show result message
         if success_count > 0:
-            message = _("成功打印了 %d 个标签") % success_count
+            message = _("Successfully printed %d labels") % success_count
             if error_messages:
-                message += _("，但有 %d 个标签打印失败") % len(error_messages)
+                message += _(" but %d labels failed to print") % len(error_messages)
             
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('打印结果'),
+                    'title': _('Printing Result'),
                     'message': message,
                     'sticky': False,
                     'type': 'success' if not error_messages else 'warning',
                 }
             }
         else:
-            raise UserError(_("所有标签打印失败，请检查打印机配置和网络连接。\n错误信息: %s") % '\n'.join(error_messages))
+            raise UserError(_("All labels failed to print. Please check printer configuration and network connection.\nError details: %s") % '\n'.join(error_messages))
         
         return {'type': 'ir.actions.act_window_close'}
 
@@ -145,7 +138,7 @@ class PrintMrpZplLabelWizard(models.TransientModel):
         self.ensure_one()
         
         if not self.lot_ids:
-            raise models.ValidationError("Please select at least one lot to test print.")
+            raise models.ValidationError(_("Please select at least one lot to test print."))
         
         # Test print the first lot
         test_lot = self.lot_ids[0]
