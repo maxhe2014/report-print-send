@@ -26,43 +26,58 @@ class StockLot(models.Model):
         }
     
     def action_print_default_zpl_label(self):
-        """
-        Print using the default label template for quick printing
-        """
-        # 查找默认的标签模板（按名称排序的第一个）
-        label_template = self.env['printing.label.zpl2'].search([
-            ('model_id.model', '=', 'stock.lot'),
-            ('active', '=', True)
-        ], order='name', limit=1)
+        """Direct print functionality for stock lots with user configuration support"""
+        self.ensure_one()
         
-        if not label_template:
-            raise UserError(_('未找到适用于批次/序列号的标签模板，请先创建标签模板。'))
+        # Get user's default configuration
+        user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
         
-        # 查找可用的打印机
-        printer = self.env['printing.printer'].search([], limit=1)
-        if not printer:
-            raise UserError(_('未找到可用的打印机，请先配置打印机。'))
-        
-        # 为每个选中的批次/序列号打印标签
-        success_count = 0
-        for lot in self:
-            try:
-                label_template.print_label(printer, lot)
-                success_count += 1
-            except Exception as e:
-                _logger.error(f"打印标签失败: {e}")
-        
-        # 显示成功消息
-        if success_count > 0:
+        # If user has config and trigger is disabled, skip printing
+        if user_config and not user_config.trigger_stock_lot:
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('打印成功'),
-                    'message': _('已成功打印 %d 个标签') % success_count,
+                    'title': _("Printing Skipped"),
+                    'message': _("Label printing is disabled for stock lots in your configuration"),
+                    'type': 'warning',
                     'sticky': False,
-                    'type': 'success',
                 }
             }
+        
+        # Get user's default settings or fall back to system defaults
+        if user_config and user_config.label_template_id and user_config.printer_id:
+            label_template = user_config.label_template_id
+            printer = user_config.printer_id
+            copies = user_config.copies_per_label or 1
         else:
-            raise UserError(_('打印失败，请检查打印机配置和标签模板。'))
+            # Fall back to system defaults
+            label_template = self.env['printing.label.zpl2'].search([
+                ('model_id.model', '=', 'stock.lot'),
+                ('active', '=', True)
+            ], order='name', limit=1)
+            
+            if not label_template:
+                raise UserError(_('未找到适用于批次/序列号的标签模板，请先创建标签模板。'))
+                
+            printer = self.env['printing.printer'].search([], limit=1)
+            copies = 1
+            
+        if not printer:
+            raise UserError(_('未找到可用的打印机，请先配置打印机。'))
+            
+        # Print the label (possibly multiple copies)
+        for i in range(copies):
+            label_template.print_label(printer, self)
+        
+        # Return success notification
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _("Success"),
+                'message': _("Label printed successfully"),
+                'type': 'success',
+                'sticky': False,
+            }
+        }

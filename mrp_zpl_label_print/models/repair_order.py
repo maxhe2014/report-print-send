@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import logging
@@ -5,41 +8,63 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class MrpProduction(models.Model):
-    _inherit = 'mrp.production'
+class RepairOrder(models.Model):
+    _inherit = 'repair.order'
 
-    def button_mark_done(self):
-        """Override the mark as done button to automatically print labels with priority:
+    def action_repair_end(self):
+        """Override the repair end button to automatically print labels with priority:
         1. Product-level ZPL configuration (highest priority)
         2. User-level ZPL configuration (fallback)"""
-        result = super().button_mark_done()
+        result = super().action_repair_end()
         
+        # 如果返回的是字典（向导），说明需要用户确认，我们仍然要确保标签打印能被触发
+        # 无论返回什么结果，都应该尝试触发标签打印
+        self._trigger_zpl_label_printing()
+        
+        return result
+    
+    def action_repair_done(self):
+        """Override the repair done method to automatically print labels"""
+        result = super().action_repair_done()
+        
+        # 确保在维修完成时也触发标签打印
+        self._trigger_zpl_label_printing()
+        
+        return result
+    
+    def _trigger_zpl_label_printing(self):
+        """触发ZPL标签打印的核心逻辑"""
         try:
-            # Get lots from finished product move lines
-            lot_ids = self.move_finished_ids.mapped('move_line_ids.lot_id')
+            # Get lots from repair operations
+            lot_ids = self.move_ids.move_line_ids.lot_id
             if not lot_ids:
-                return result
+                # If no operations with lots, check the main product lot
+                if self.lot_id:
+                    lot_ids = self.lot_id
+                else:
+                    return
             
             # Priority 1: Check product-level ZPL configuration
             product_template = self.product_id.product_tmpl_id
             if product_template.zpl_label_template_id:
                 # Product has ZPL configuration, use it
                 self._print_labels_with_product_config(product_template, lot_ids)
-                return result
+                return
             
             # Priority 2: Check user-level ZPL configuration (fallback)
             user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
-            if user_config and user_config.active and user_config.label_template_id and user_config.trigger_mrp_production:
-                # Use user configuration only if trigger is enabled
-                user_config.action_auto_print_labels(self.id)
+            if user_config and user_config.active and user_config.trigger_repair_order:
+                if user_config.label_template_id:
+                    # Use user configuration only if trigger is enabled and template exists
+                    user_config.action_auto_print_repair_labels(self.id)
+                else:
+                    _logger.warning(f"用户 {user_config.user_id.name} 启用了维修触发但未配置标签模板")
         except Exception as e:
-            _logger.error(f"自动打印ZPL标签失败 (制造订单 {self.name}): {e}")
+            _logger.error(f"自动打印ZPL标签失败 (维修订单 {self.name}): {e}")
             # 不中断正常流程，只记录错误
-        
-        return result
     
     def _print_labels_with_product_config(self, product_template, lot_ids):
-        """Print labels using product-level ZPL configuration"""
+        """Print labels using product-level ZPL configuration for repair orders"""
         # Get printer with fallback logic
         printer = self._get_printer_with_fallback()
         
@@ -79,14 +104,17 @@ class MrpProduction(models.Model):
         printer = self.env['printing.printer'].search([('active', '=', True)], limit=1)
         return printer
 
-    def action_open_mrp_zpl_label_wizard(self):
-        """Directly print ZPL labels for manufacturing orders without wizard"""
+    def action_open_repair_zpl_label_wizard(self):
+        """Directly print ZPL labels for repair orders without wizard"""
         self.ensure_one()
         
-        # Get lots from finished product move lines
-        lot_ids = self.move_finished_ids.mapped('move_line_ids.lot_id')
+        # Get lots from repair operations (move lines)
+        lot_ids = self.move_ids.move_line_ids.lot_id
+        if not lot_ids and self.lot_id:
+            lot_ids = self.lot_id
+        
         if not lot_ids:
-            raise UserError(_('No lots/serial numbers found for this manufacturing order.'))
+            raise UserError(_('No lots/serial numbers found for this repair order.'))
         
         # Get user configuration
         user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()

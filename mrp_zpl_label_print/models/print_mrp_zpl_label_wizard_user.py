@@ -20,6 +20,23 @@ class PrintMrpZplLabelWizardUser(models.Model):
     copies_per_label = fields.Integer(string='Default Copies per Label', default=1, 
                                      help='Number of copies to print for each label')
     
+    # Trigger conditions
+    trigger_mrp_production = fields.Boolean(
+        string='Trigger on Manufacturing Production', 
+        default=True,
+        help='Automatically print labels when manufacturing order is marked as done'
+    )
+    trigger_repair_order = fields.Boolean(
+        string='Trigger on Repair Completion', 
+        default=True,
+        help='Automatically print labels when repair order is completed'
+    )
+    trigger_stock_lot = fields.Boolean(
+        string='Trigger on Stock Lot/Serial Number', 
+        default=False,
+        help='Automatically print labels when stock lot/serial number is created or updated'
+    )
+    
     _sql_constraints = [
         ('user_id_unique', 'UNIQUE(user_id)', 'Each user can only have one default configuration!')
     ]
@@ -84,4 +101,50 @@ class PrintMrpZplLabelWizardUser(models.Model):
                 _logger.error(f"打印批次 {lot.name} 的标签失败: {e}")
         
         _logger.info(f"成功为制造订单 {production.name} 打印了 {success_count} 个标签")
+        return success_count > 0
+    
+    def action_auto_print_repair_labels(self, repair_id):
+        """Automatically print labels for repair order based on user config"""
+        self.ensure_one()
+        
+        repair = self.env['repair.order'].browse(repair_id)
+        if not repair:
+            _logger.warning(f"维修订单 {repair_id} 不存在")
+            return False
+            
+        # Get lots from repair operations
+        lot_ids = repair.move_ids.move_line_ids.lot_id
+        if not lot_ids:
+            # If no operations with lots, check the main product lot
+            if repair.lot_id:
+                lot_ids = repair.lot_id
+            else:
+                _logger.info(f"维修订单 {repair.name} 没有关联的批次/序列号")
+                return False
+        
+        # Determine which printer to use
+        printer = self.printer_id
+        if not printer:
+            # Fallback to user's default ZPL printer
+            printer = self.user_id.zpl_printer_id
+        
+        if not printer:
+            _logger.warning(f"用户 {self.user_id.name} 没有配置打印机")
+            return False
+            
+        if not self.label_template_id:
+            _logger.warning(f"用户 {self.user_id.name} 没有配置标签模板")
+            return False
+        
+        success_count = 0
+        # Print each lot
+        for lot in lot_ids:
+            try:
+                for i in range(self.copies_per_label):
+                    self.label_template_id.print_label(printer, lot)
+                    success_count += 1
+            except Exception as e:
+                _logger.error(f"打印批次 {lot.name} 的标签失败: {e}")
+        
+        _logger.info(f"成功为维修订单 {repair.name} 打印了 {success_count} 个标签")
         return success_count > 0

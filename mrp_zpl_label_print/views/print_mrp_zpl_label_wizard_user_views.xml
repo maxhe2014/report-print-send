@@ -12,6 +12,9 @@
                     <field name="label_template_id"/>
                     <field name="printer_id"/>
                     <field name="copies_per_label"/>
+                    <field name="trigger_mrp_production"/>
+                    <field name="trigger_repair_order"/>
+                    <field name="trigger_stock_lot"/>
                 </tree>
             </field>
         </record>
@@ -33,6 +36,11 @@
                                 <field name="printer_id" domain="[('active', '=', True)]"/>
                                 <field name="copies_per_label"/>
                             </group>
+                            <group string="Trigger Conditions">
+                                <field name="trigger_mrp_production" string="Manufacturing Production"/>
+                                <field name="trigger_repair_order" string="Repair Completion"/>
+                                <field name="trigger_stock_lot" string="Stock Lot/Serial Number"/>
+                            </group>
                         </group>
                     </sheet>
                 </form>
@@ -50,8 +58,9 @@
                     Configure default ZPL label printing settings for users.
                 </p>
                 <p>
-                    When a user clicks the "Produce" button on a manufacturing order,
-                    the system will automatically print labels using their default configuration.
+                    When a user clicks the "Produce" button on a manufacturing order or 
+                    the "Repair End" button on a repair order, the system will automatically 
+                    print labels using their default configuration based on the trigger settings.
                 </p>
             </field>
         </record>

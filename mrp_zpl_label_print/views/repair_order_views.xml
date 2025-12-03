@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 扩展维修订单表单视图，添加ZPL标签打印按钮 -->
+        <record id="view_repair_order_form_inherit_zpl" model="ir.ui.view">
+            <field name="name">repair.order.form.inherit.zpl</field>
+            <field name="model">repair.order</field>
+            <field name="inherit_id" ref="repair.view_repair_order_form" />
+            <field name="arch" type="xml">
+                <!-- 在按钮区域添加ZPL标签打印按钮 -->
+                <xpath expr="//header" position="inside">
+                    <button name="action_open_repair_zpl_label_wizard" 
+                            string="直接打印ZPL标签" 
+                            type="object" 
+                            class="btn-primary"
+                            groups="base.group_user"/>
+                </xpath>
+                
+                <!-- 在维修完成按钮上添加条件，根据用户配置决定是否显示 -->
+                <xpath expr="//button[@name='action_repair_end']" position="attributes">
+                    <attribute name="invisible">state != 'under_repair'</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
