@@ -4,30 +4,30 @@
         <field name="name">print.zpl.label.wizard.form</field>
         <field name="model">print.zpl.label.wizard</field>
         <field name="arch" type="xml">
-            <form string="打印ZPL标签">
+            <form string="Print ZPL Label">
                 <sheet>
                     <group>
-                        <group string="打印设置">
+                        <group string="Print Settings">
                             <field name="printer_id" widget="many2one" options="{'no_open': True}"/>
                             <field name="label_template_id" widget="many2one" options="{'no_open': True}"/>
                             <field name="copies_per_label"/>
                         </group>
-                        <group string="批次/序列号">
+                        <group string="Lots/Serial Numbers">
                             <field name="lot_ids" widget="many2many_tags" nolabel="1"/>
                         </group>
                     </group>
                 </sheet>
                 <footer>
-                    <button name="action_test_print" string="测试打印" type="object" class="btn-secondary"/>
-                    <button name="action_print_labels" string="打印标签" type="object" class="btn-primary"/>
-                    <button string="取消" class="btn-secondary" special="cancel"/>
+                    <button name="action_test_print" string="Test Print" type="object" class="btn-secondary"/>
+                    <button name="action_print_labels" string="Print Labels" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
     
     <record id="action_print_zpl_label_wizard" model="ir.actions.act_window">
-        <field name="name">打印ZPL标签</field>
+        <field name="name">Print ZPL Label</field>
         <field name="res_model">print.zpl.label.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>

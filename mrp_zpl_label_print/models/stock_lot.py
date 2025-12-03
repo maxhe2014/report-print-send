@@ -12,7 +12,7 @@ class StockLot(models.Model):
         Open the ZPL label printing wizard for flexible label selection
         """
         return {
-            'name': _('打印ZPL标签'),
+            'name': _('Print ZPL Label'),
             'type': 'ir.actions.act_window',
             'res_model': 'print.zpl.label.wizard',
             'view_mode': 'form',
@@ -58,13 +58,13 @@ class StockLot(models.Model):
             ], order='name', limit=1)
             
             if not label_template:
-                raise UserError(_('未找到适用于批次/序列号的标签模板，请先创建标签模板。'))
+                raise UserError(_('No label template found for lots/serial numbers. Please create a label template first.'))
                 
             printer = self.env['printing.printer'].search([], limit=1)
             copies = 1
             
         if not printer:
-            raise UserError(_('未找到可用的打印机，请先配置打印机。'))
+            raise UserError(_('No printer found. Please configure a printer first.'))
             
         # Print the label (possibly multiple copies)
         for i in range(copies):

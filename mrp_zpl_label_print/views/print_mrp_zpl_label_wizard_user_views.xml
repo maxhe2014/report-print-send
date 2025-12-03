@@ -68,7 +68,7 @@
         <!-- Menu Item -->
         <menuitem id="menu_print_mrp_zpl_label_wizard_user"
                   name="User ZPL Label Configurations"
-                  parent="mrp.menu_mrp_config"
+                  parent="base_report_to_printer.printing_menu"
                   action="action_print_mrp_zpl_label_wizard_user"
                   sequence="100"
                   groups="base.group_user"/>

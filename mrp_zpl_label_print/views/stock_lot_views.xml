@@ -8,12 +8,12 @@
             <xpath expr="//div[@class='oe_button_box']" position="inside">
                 <button name="action_print_default_zpl_label" 
                         type="object" 
-                        string="快速打印标签" 
+                        string="Quick Print Label" 
                         class="btn-primary"
                         groups="base.group_user"/>
                 <button name="action_open_print_zpl_label_wizard" 
                         type="object" 
-                        string="选择模板打印" 
+                        string="Select Template Print" 
                         class="btn-secondary"
                         groups="base.group_user"/>
             </xpath>
@@ -31,7 +31,7 @@
             <field name="name" position="after">
                 <button name="action_print_default_zpl_label" 
                         type="object" 
-                        string="打印标签" 
+                        string="Print Label" 
                         class="btn-primary"
                         groups="base.group_user"/>
             </field>
