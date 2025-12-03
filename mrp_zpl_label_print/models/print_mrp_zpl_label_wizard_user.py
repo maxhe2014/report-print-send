@@ -80,10 +80,6 @@ class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
         # Determine which printer to use
         printer = self.printer_id
         if not printer:
-            # Fallback to user's default ZPL printer
-            printer = self.user_id.zpl_printer_id
-        
-        if not printer:
             _logger.warning(f"User {self.user_id.name} has no printer configured")
             return False
             
@@ -125,10 +121,6 @@ class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
         
         # Determine which printer to use
         printer = self.printer_id
-        if not printer:
-            # Fallback to user's default ZPL printer
-            printer = self.user_id.zpl_printer_id
-        
         if not printer:
             _logger.warning(f"User {self.user_id.name} has no printer configured")
             return False

@@ -28,13 +28,7 @@ msgstr "取消"
 msgid "Copies per Label"
 msgstr "每标签份数"
 
-#. module: mrp_zpl_label_print
-#. odoo-python
-#: code:addons/mrp_zpl_label_print/models/stock_lot.py:0
-#: code:addons/mrp_zpl_label_print/wizards/print_zpl_label_wizard.py:0
-#, python-format
-msgid "Default ZPL Printer"
-msgstr "默认ZPL打印机"
+
 
 #. module: mrp_zpl_label_print
 #. odoo-python
@@ -228,10 +222,7 @@ msgstr "选择模板打印"
 msgid "Print Label"
 msgstr "打印ZPL"
 
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.res_users_view_form
-msgid "ZPL Label Printing"
-msgstr "ZPL标签打印"
+
 
 #. module: mrp_zpl_label_print
 #: model:ir.model,name:mrp_zpl_label_print.model_print_mrp_zpl_label_wizard_user

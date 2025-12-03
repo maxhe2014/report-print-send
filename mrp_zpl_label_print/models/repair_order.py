@@ -114,10 +114,6 @@ class RepairOrder(models.Model, BasePrintMixin):
         # Determine printer to use
         printer = user_config.printer_id
         if not printer:
-            # Fallback to user's default ZPL printer
-            printer = self.env.user.zpl_printer_id
-        
-        if not printer:
             raise UserError(_('No printer configured for ZPL label printing.'))
             
         if not user_config.label_template_id:
