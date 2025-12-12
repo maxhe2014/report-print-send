@@ -66,13 +66,34 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
             if lot_ids:
                 res['lot_ids'] = lot_ids
             
-            # Set default label template
-            label_template = self.env['printing.label.zpl2'].search([
-                ('model_id.model', '=', 'stock.lot')
-            ], limit=1)
-            if label_template:
-                res['label_template_id'] = label_template.id
+            # Priority 1: Check product-level ZPL configuration
+            production = self.env['mrp.production'].browse(production_id)
+            if production and production.product_id:
+                product_template = production.product_id.product_tmpl_id
+                if product_template.zpl_label_template_id:
+                    # Product has ZPL configuration, use it for template and copies
+                    res['label_template_id'] = product_template.zpl_label_template_id.id
+                    
+                    # Set copies per label from product configuration if available
+                    if (product_template.zpl_copies_per_label is not None and 
+                        product_template.zpl_copies_per_label is not False):
+                        res['copies_per_label'] = product_template.zpl_copies_per_label
+            
+            # Priority 2: Use user-level ZPL configuration (fallback)
+            if 'label_template_id' not in res or not res['label_template_id']:
+                user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
+                if user_config and user_config.active and user_config.label_template_id:
+                    res['label_template_id'] = user_config.label_template_id.id
+                    res['copies_per_label'] = user_config.copies_per_label
+                else:
+                    # Fallback to first available label template
+                    label_template = self.env['printing.label.zpl2'].search([
+                        ('model_id.model', '=', 'stock.lot')
+                    ], limit=1)
+                    if label_template:
+                        res['label_template_id'] = label_template.id
         
+        # Printer selection: ALWAYS use user configuration (regardless of product config)
         # Multi-level printer selection priority:
         # 1. User's default ZPL printer (new field)
         # 2. User's default printer (original field)
@@ -93,10 +114,10 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
             raise ValidationError(_("Please select at least one lot/serial number to print."))
         
         if not self.printer_id:
-            raise ValidationError(_("Please select a printer."))
+            raise ValidationError(_("No printer configured. Please configure a printer in user settings."))
             
         if not self.label_template_id:
-            raise ValidationError(_("Please select a label template."))
+            raise ValidationError(_("No label template configured. Please configure a label template in user settings or product configuration."))
         
         success_count = 0
         error_messages = []
