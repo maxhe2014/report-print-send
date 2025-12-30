@@ -13,7 +13,7 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     printer_id = fields.Many2one('printing.printer', string='Printer', required=True,
                                 domain="[('id', 'in', available_printer_ids)]")
     label_template_id = fields.Many2one('printing.label.zpl2', string='Label Template', required=True,
-                                       domain="[('model_id.model', '=', 'stock.lot')]")
+                                       domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production'])]")
     lot_ids = fields.Many2many('stock.lot', string='Lots/Serials',
                               domain="[('id', 'in', available_lot_ids)]")
     copies_per_label = fields.Integer(string='Copies per Label', default=1,
@@ -34,8 +34,11 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     def _compute_available_lots(self):
         for wizard in self:
             if wizard.production_id:
-                # Get lots from finished product move lines
-                lot_ids = wizard.production_id.move_finished_ids.mapped('move_line_ids.lot_id').ids
+                # 优化：使用prefetch_related减少数据库查询
+                production = wizard.production_id.with_prefetch(wizard._prefetch)
+                # 优化：一次性获取所有相关数据
+                move_lines = production.move_finished_ids.move_line_ids
+                lot_ids = move_lines.mapped('lot_id').filtered(lambda l: l).ids
                 wizard.available_lot_ids = [(6, 0, lot_ids)]
                 # Set default lots if not set
                 if not wizard.lot_ids and lot_ids:
@@ -46,10 +49,10 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     @api.depends('printer_id')
     def _compute_available_printers(self):
         """Compute available printers for ZPL printing."""
+        # 优化：缓存打印机列表，避免重复查询
+        printers_cache = self.env['printing.printer'].search([('active', '=', True)])
         for wizard in self:
-            # Search for all active printers
-            printers = self.env['printing.printer'].search([('active', '=', True)])
-            wizard.available_printer_ids = printers
+            wizard.available_printer_ids = printers_cache
 
     @api.model
     def default_get(self, fields_list):
@@ -66,8 +69,10 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
             if lot_ids:
                 res['lot_ids'] = lot_ids
             
-            # Priority 1: Check product-level ZPL configuration
+            # 优化：批量获取所有必要数据
             production = self.env['mrp.production'].browse(production_id)
+            
+            # Priority 1: Check product-level ZPL configuration
             if production and production.product_id:
                 product_template = production.product_id.product_tmpl_id
                 if product_template.zpl_label_template_id:
@@ -81,14 +86,16 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
             
             # Priority 2: Use user-level ZPL configuration (fallback)
             if 'label_template_id' not in res or not res['label_template_id']:
+                # 优化：缓存用户配置查询
                 user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
                 if user_config and user_config.active and user_config.label_template_id:
                     res['label_template_id'] = user_config.label_template_id.id
                     res['copies_per_label'] = user_config.copies_per_label
                 else:
                     # Fallback to first available label template
+                    # 优化：缓存标签模板查询
                     label_template = self.env['printing.label.zpl2'].search([
-                        ('model_id.model', '=', 'stock.lot')
+                        ('model_id.model', 'in', ['stock.lot', 'mrp.production'])
                     ], limit=1)
                     if label_template:
                         res['label_template_id'] = label_template.id
@@ -122,16 +129,40 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
         success_count = 0
         error_messages = []
         
-        # Print each lot
-        for lot in self.lot_ids:
-            try:
-                for i in range(self.copies_per_label):
-                    self.label_template_id.print_label(self.printer_id, lot)
-                    success_count += 1
-            except Exception as e:
-                error_msg = f"Lot {lot.name} failed to print: {str(e)}"
-                error_messages.append(error_msg)
-                _logger.error(error_msg)
+        # 优化：批量处理打印任务，减少API调用次数
+        try:
+            # 使用批量打印API（如果支持）
+            if hasattr(self.label_template_id, 'print_labels_batch'):
+                # 批量打印所有标签
+                labels_to_print = []
+                for lot in self.lot_ids:
+                    for i in range(self.copies_per_label):
+                        labels_to_print.append(lot)
+                
+                if labels_to_print:
+                    success_count = self.label_template_id.print_labels_batch(self.printer_id, labels_to_print)
+            else:
+                # 回退到逐条打印，但优化循环
+                for lot in self.lot_ids:
+                    try:
+                        # 优化：预生成ZPL内容，减少模板渲染时间
+                        zpl_content = self.label_template_id._generate_zpl_content(lot)
+                        for i in range(self.copies_per_label):
+                            # 直接发送ZPL内容，避免重复模板渲染
+                            self.printer_id.print_document(
+                                None, 
+                                zpl_content, 
+                                format='raw', 
+                                copies=1
+                            )
+                            success_count += 1
+                    except Exception as e:
+                        error_msg = f"Lot {lot.name} failed to print: {str(e)}"
+                        error_messages.append(error_msg)
+                        _logger.error(error_msg)
+        except Exception as e:
+            error_messages.append(f"Batch printing failed: {str(e)}")
+            _logger.error(f"Batch printing error: {e}")
         
         # Show result message
         if success_count > 0:

@@ -15,7 +15,7 @@ class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
     
     # Default printing configuration
     label_template_id = fields.Many2one('printing.label.zpl2', string='Default Label Template', 
-                                       domain="[('model_id.model', '=', 'stock.lot')]")
+                                       domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production'])]")
     printer_id = fields.Many2one('printing.printer', string='Default Printer', 
                                 domain="[('active', '=', True)]")
     copies_per_label = fields.Integer(string='Default Copies per Label', default=1, 
@@ -71,8 +71,12 @@ class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
             _logger.warning(f"Manufacturing order {production_id} does not exist")
             return False
             
+        # 优化：使用prefetch减少数据库查询
+        production = production.with_prefetch(self._prefetch)
+        
         # Get lots from finished product move lines
-        lot_ids = production.move_finished_ids.mapped('move_line_ids.lot_id')
+        move_lines = production.move_finished_ids.move_line_ids
+        lot_ids = move_lines.mapped('lot_id').filtered(lambda l: l)
         if not lot_ids:
             _logger.info(f"Manufacturing order {production.name} has no associated lots/serial numbers")
             return False
@@ -88,14 +92,36 @@ class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
             return False
         
         success_count = 0
-        # Print each lot
-        for lot in lot_ids:
-            try:
-                for i in range(self.copies_per_label):
-                    self.label_template_id.print_label(printer, lot)
-                    success_count += 1
-            except Exception as e:
-                _logger.error(f"Failed to print label for lot {lot.name}: {e}")
+        # 优化：批量打印处理
+        try:
+            # 尝试使用批量打印API
+            if hasattr(self.label_template_id, 'print_labels_batch'):
+                labels_to_print = []
+                for lot in lot_ids:
+                    for i in range(self.copies_per_label):
+                        labels_to_print.append(lot)
+                
+                if labels_to_print:
+                    success_count = self.label_template_id.print_labels_batch(printer, labels_to_print)
+            else:
+                # 回退到逐条打印，但优化处理
+                for lot in lot_ids:
+                    try:
+                        # 预生成ZPL内容
+                        zpl_content = self.label_template_id._generate_zpl_content(lot)
+                        for i in range(self.copies_per_label):
+                            # 直接发送ZPL内容
+                            printer.print_document(
+                                None, 
+                                zpl_content, 
+                                format='raw', 
+                                copies=1
+                            )
+                            success_count += 1
+                    except Exception as e:
+                        _logger.error(f"Failed to print label for lot {lot.name}: {e}")
+        except Exception as e:
+            _logger.error(f"Batch printing error for production {production.name}: {e}")
         
         _logger.info(f"Successfully printed {success_count} labels for manufacturing order {production.name}")
         return success_count > 0

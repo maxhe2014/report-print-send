@@ -14,27 +14,29 @@ class MrpProduction(models.Model):
         2. User-level ZPL configuration (fallback)"""
         result = super().button_mark_done()
         
-        try:
-            # Get lots from finished product move lines
-            lot_ids = self.move_finished_ids.mapped('move_line_ids.lot_id')
-            if not lot_ids:
-                return result
-            
-            # Priority 1: Check product-level ZPL configuration
-            product_template = self.product_id.product_tmpl_id
-            if product_template.zpl_label_template_id:
-                # Product has ZPL configuration, use it
-                self._print_labels_with_product_config(product_template, lot_ids)
-                return result
-            
-            # Priority 2: Check user-level ZPL configuration (fallback)
-            user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
-            if user_config and user_config.active and user_config.label_template_id and user_config.trigger_mrp_production:
-                # Use user configuration only if trigger is enabled
-                user_config.action_auto_print_labels(self.id)
-        except Exception as e:
-            _logger.error(f"Automatic ZPL label printing failed (Manufacturing Order {self.name}): {e}")
-            # Do not interrupt the normal flow, only log the error
+        # Handle batch operations by iterating through each manufacturing order
+        for mo in self:
+            try:
+                # Get lots from finished product move lines
+                lot_ids = mo.move_finished_ids.mapped('move_line_ids.lot_id')
+                if not lot_ids:
+                    continue
+                
+                # Priority 1: Check product-level ZPL configuration
+                product_template = mo.product_id.product_tmpl_id
+                if product_template.zpl_label_template_id:
+                    # Product has ZPL configuration, use it
+                    mo._print_labels_with_product_config(product_template, lot_ids)
+                    continue
+                
+                # Priority 2: Check user-level ZPL configuration (fallback)
+                user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
+                if user_config and user_config.active and user_config.label_template_id and user_config.trigger_mrp_production:
+                    # Use user configuration only if trigger is enabled
+                    user_config.action_auto_print_labels(mo.id)
+            except Exception as e:
+                _logger.error(f"Automatic ZPL label printing failed (Manufacturing Order {mo.name}): {e}")
+                # Do not interrupt the normal flow, only log the error
         
         return result
     
