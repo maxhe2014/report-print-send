@@ -68,9 +68,20 @@ class MrpProduction(models.Model):
             else:
                 copies_per_label = 1
         
-        for lot in lot_ids:
+        # Determine which records to print based on label template model
+        label_template_model = label_template.model_id.model
+        
+        if label_template_model == 'stock.lot':
+            # Print each lot record
+            for lot in lot_ids:
+                for i in range(copies_per_label):
+                    label_template.print_label(printer, lot)
+        elif label_template_model == 'mrp.production':
+            # Print the manufacturing order record itself
             for i in range(copies_per_label):
-                label_template.print_label(printer, lot)
+                label_template.print_label(printer, self)
+        else:
+            _logger.warning(f'Unsupported label template model: {label_template_model}')
     
     def _get_printer_with_fallback(self):
         """Get printer with fallback logic: user default printer -> first active printer"""
@@ -114,16 +125,36 @@ class MrpProduction(models.Model):
         success_count = 0
         error_messages = []
         
-        for lot in lot_ids:
+        # Determine which records to print based on label template model
+        label_template_model = user_config.label_template_id.model_id.model
+        
+        if label_template_model == 'stock.lot':
+            # Print each lot record
+            for lot in lot_ids:
+                try:
+                    # Print specified number of copies
+                    for i in range(user_config.copies_per_label):
+                        user_config.label_template_id.print_label(printer, lot)
+                    success_count += 1
+                except Exception as e:
+                    error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
+                    error_messages.append(error_message)
+                    _logger.error(error_message)
+        elif label_template_model == 'mrp.production':
+            # Print the manufacturing order record itself
             try:
                 # Print specified number of copies
                 for i in range(user_config.copies_per_label):
-                    user_config.label_template_id.print_label(printer, lot)
+                    user_config.label_template_id.print_label(printer, self)
                 success_count += 1
             except Exception as e:
-                error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
+                error_message = _('Failed to print label for manufacturing order %s: %s') % (self.name, str(e))
                 error_messages.append(error_message)
                 _logger.error(error_message)
+        else:
+            error_message = _('Unsupported label template model: %s') % label_template_model
+            error_messages.append(error_message)
+            _logger.error(error_message)
         
         # Show result notification
         message_parts = []
@@ -177,15 +208,34 @@ class MrpProduction(models.Model):
         success_count = 0
         error_messages = []
         
-        for lot in lot_ids:
+        # Determine which records to print based on label template model
+        label_template_model = label_template.model_id.model
+        
+        if label_template_model == 'stock.lot':
+            # Print each lot record
+            for lot in lot_ids:
+                try:
+                    for i in range(copies_per_label):
+                        label_template.print_label(printer, lot)
+                    success_count += 1
+                except Exception as e:
+                    error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
+                    error_messages.append(error_message)
+                    _logger.error(error_message)
+        elif label_template_model == 'mrp.production':
+            # Print the manufacturing order record itself
             try:
                 for i in range(copies_per_label):
-                    label_template.print_label(printer, lot)
+                    label_template.print_label(printer, self)
                 success_count += 1
             except Exception as e:
-                error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
+                error_message = _('Failed to print label for manufacturing order %s: %s') % (self.name, str(e))
                 error_messages.append(error_message)
                 _logger.error(error_message)
+        else:
+            error_message = _('Unsupported label template model: %s') % label_template_model
+            error_messages.append(error_message)
+            _logger.error(error_message)
         
         # Show result notification
         message_parts = []

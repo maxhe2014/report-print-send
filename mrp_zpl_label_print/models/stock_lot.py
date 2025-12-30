@@ -54,7 +54,7 @@ class StockLot(models.Model, BasePrintMixin):
         else:
             # Fall back to system defaults
             label_template = self.env['printing.label.zpl2'].search([
-                ('model_id.model', '=', 'stock.lot'),
+                ('model_id.model', 'in', ['stock.lot', 'mrp.production']),
                 ('active', '=', True)
             ], order='name', limit=1)
             

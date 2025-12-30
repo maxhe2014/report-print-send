@@ -11,7 +11,7 @@ class ProductTemplate(models.Model):
     zpl_label_template_id = fields.Many2one(
         'printing.label.zpl2', 
         string='ZPL Label Template',
-        domain="[('model_id.model', '=', 'stock.lot')]"
+        domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production'])]"
     )
     zpl_copies_per_label = fields.Integer(
         string='ZPL Copies per Label', 

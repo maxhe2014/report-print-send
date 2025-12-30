@@ -32,7 +32,7 @@
                                 <field name="active"/>
                             </group>
                             <group string="Default Printing Settings" name="default_printing_settings">
-                                <field name="label_template_id" domain="[('model_id.model', '=', 'stock.lot')]"/>
+                                <field name="label_template_id" domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production'])]"/>
                                 <field name="printer_id" domain="[('active', '=', True)]"/>
                                 <field name="copies_per_label"/>
                             </group>

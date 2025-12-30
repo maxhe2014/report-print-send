@@ -92,36 +92,29 @@ class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
             return False
         
         success_count = 0
-        # 优化：批量打印处理
-        try:
-            # 尝试使用批量打印API
-            if hasattr(self.label_template_id, 'print_labels_batch'):
-                labels_to_print = []
-                for lot in lot_ids:
+        
+        # Determine which records to print based on label template model
+        label_template_model = self.label_template_id.model_id.model
+        
+        if label_template_model == 'stock.lot':
+            # Print each lot record
+            for lot in lot_ids:
+                try:
                     for i in range(self.copies_per_label):
-                        labels_to_print.append(lot)
-                
-                if labels_to_print:
-                    success_count = self.label_template_id.print_labels_batch(printer, labels_to_print)
-            else:
-                # 回退到逐条打印，但优化处理
-                for lot in lot_ids:
-                    try:
-                        # 预生成ZPL内容
-                        zpl_content = self.label_template_id._generate_zpl_content(lot)
-                        for i in range(self.copies_per_label):
-                            # 直接发送ZPL内容
-                            printer.print_document(
-                                None, 
-                                zpl_content, 
-                                format='raw', 
-                                copies=1
-                            )
-                            success_count += 1
-                    except Exception as e:
-                        _logger.error(f"Failed to print label for lot {lot.name}: {e}")
-        except Exception as e:
-            _logger.error(f"Batch printing error for production {production.name}: {e}")
+                        self.label_template_id.print_label(printer, lot)
+                    success_count += 1
+                except Exception as e:
+                    _logger.error(f"Failed to print label for lot {lot.name}: {e}")
+        elif label_template_model == 'mrp.production':
+            # Print the manufacturing order record itself
+            try:
+                for i in range(self.copies_per_label):
+                    self.label_template_id.print_label(printer, production)
+                success_count += 1
+            except Exception as e:
+                _logger.error(f"Failed to print label for manufacturing order {production.name}: {e}")
+        else:
+            _logger.error(f"Unsupported label template model: {label_template_model}")
         
         _logger.info(f"Successfully printed {success_count} labels for manufacturing order {production.name}")
         return success_count > 0
