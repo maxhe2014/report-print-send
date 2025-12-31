@@ -20,7 +20,7 @@ class PrintZplLabelWizard(models.TransientModel, BasePrintMixin):
         comodel_name='printing.label.zpl2',
         string='Label Template',
         required=True,
-        domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production']), ('active', '=', True)]",
+        domain="[('model_id.model', '=', 'stock.lot'), ('active', '=', True)]",
         help='Select the label template to use'
     )
     
