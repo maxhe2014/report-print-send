@@ -31,8 +31,8 @@ class MrpProduction(models.Model):
                 
                 # Priority 2: Check user-level ZPL configuration (fallback)
                 user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
-                if user_config and user_config.active and user_config.label_template_id and user_config.trigger_mrp_production:
-                    # Use user configuration only if trigger is enabled
+                if user_config and user_config.active and user_config.printer_id:
+                    # Use user configuration (trigger is always enabled now)
                     user_config.action_auto_print_labels(mo.id)
             except Exception as e:
                 _logger.error(f"Automatic ZPL label printing failed (Manufacturing Order {mo.name}): {e}")
@@ -55,18 +55,15 @@ class MrpProduction(models.Model):
             _logger.warning(f"No printer available for ZPL label printing (Product: {product_template.name})")
             return
         
-        # Print each lot with product configuration
+        # Use specific manufacturing template only
         label_template = product_template.zpl_label_template_id
         
-        # Determine copies per label: if product has specific value, use it; otherwise use user config or default
-        if product_template.zpl_copies_per_label is not None and product_template.zpl_copies_per_label is not False:
-            copies_per_label = product_template.zpl_copies_per_label
-        else:
-            # Fallback to user configuration
-            if user_config and user_config.active and user_config.copies_per_label:
-                copies_per_label = user_config.copies_per_label
-            else:
-                copies_per_label = 1
+        if not label_template:
+            _logger.warning(f"Product {product_template.name} has no manufacturing order label template configured")
+            return
+        
+        # Determine copies per label: use product configuration if available, otherwise default to 1
+        copies_per_label = product_template.zpl_copies_per_label or 1
         
         # Determine which records to print based on label template model
         label_template_model = label_template.model_id.model
@@ -102,81 +99,60 @@ class MrpProduction(models.Model):
         if not lot_ids:
             raise UserError(_('No lots/serial numbers found for this manufacturing order.'))
         
-        # Priority 1: Check product-level ZPL configuration
+        # Check if both product-level and user-level configurations are complete
         product_template = self.product_id.product_tmpl_id
-        if product_template.zpl_label_template_id:
-            # Product has ZPL configuration, use it
-            return self._print_labels_with_product_config_direct(product_template, lot_ids)
-        
-        # Priority 2: Check user-level ZPL configuration (fallback)
         user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
-        if not user_config or not user_config.active:
-            raise UserError(_('No active user configuration found for ZPL label printing.'))
         
-        # Determine printer to use
-        printer = user_config.printer_id
-        if not printer:
-            raise UserError(_('No printer configured for ZPL label printing.'))
-            
-        if not user_config.label_template_id:
-            raise UserError(_('No label template configured for ZPL label printing.'))
+        # Check product-level configuration
+        has_product_config = bool(product_template.zpl_label_template_id)
         
-        # Print labels
-        success_count = 0
-        error_messages = []
+        # Check user-level configuration
+        has_user_config = bool(user_config and user_config.active and user_config.printer_id)
         
-        # Determine which records to print based on label template model
-        label_template_model = user_config.label_template_id.model_id.model
-        
-        if label_template_model == 'stock.lot':
-            # Print each lot record
-            for lot in lot_ids:
-                try:
-                    # Print specified number of copies
-                    for i in range(user_config.copies_per_label):
-                        user_config.label_template_id.print_label(printer, lot)
-                    success_count += 1
-                except Exception as e:
-                    error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
-                    error_messages.append(error_message)
-                    _logger.error(error_message)
-        elif label_template_model == 'mrp.production':
-            # Print the manufacturing order record itself
-            try:
-                # Print specified number of copies
-                for i in range(user_config.copies_per_label):
-                    user_config.label_template_id.print_label(printer, self)
-                success_count += 1
-            except Exception as e:
-                error_message = _('Failed to print label for manufacturing order %s: %s') % (self.name, str(e))
-                error_messages.append(error_message)
-                _logger.error(error_message)
-        else:
-            error_message = _('Unsupported label template model: %s') % label_template_model
-            error_messages.append(error_message)
-            _logger.error(error_message)
-        
-        # Show result notification
-        message_parts = []
-        if success_count > 0:
-            message_parts.append(_('Successfully printed %d labels') % success_count)
-        
-        if error_messages:
-            message_parts.append(_('%d labels failed to print') % len(error_messages))
-        
-        if message_parts:
-            message_type = 'warning' if error_messages else 'success'
+        # Both configurations must be complete to proceed with printing
+        if not has_product_config and not has_user_config:
+            # Neither configuration is complete
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Print Labels'),
-                    'message': '\n'.join(message_parts),
-                    'sticky': True,
-                    'type': message_type,
+                    'message': _('No ZPL label printing configuration found. Please configure either product-level or user-level printing settings.'),
+                    'sticky': False,
+                    'type': 'info',
+                }
+            }
+        elif not has_product_config:
+            # Product configuration is missing but user configuration exists
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Print Labels'),
+                    'message': _('No label template configured for this product. Please configure the product-level ZPL label template.'),
+                    'sticky': False,
+                    'type': 'info',
+                }
+            }
+        elif not has_user_config:
+            # User configuration is missing but product configuration exists
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Print Labels'),
+                    'message': _('No active printer configured for ZPL label printing. Please configure the user-level printing settings.'),
+                    'sticky': False,
+                    'type': 'info',
                 }
             }
         
+        # Both configurations are complete, proceed with printing
+        # Priority 1: Use product-level ZPL configuration
+        if has_product_config:
+            return self._print_labels_with_product_config_direct(product_template, lot_ids)
+        
+        # This point should not be reached due to the checks above
         return {'type': 'ir.actions.act_window_close'}
     
     def _print_labels_with_product_config_direct(self, product_template, lot_ids):
@@ -190,26 +166,42 @@ class MrpProduction(models.Model):
             printer = self._get_printer_with_fallback()
         
         if not printer:
-            raise UserError(_('No printer available for ZPL label printing.'))
+            # No printer available, show info message and return
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Print Labels'),
+                    'message': _('No printer available for ZPL label printing.'),
+                    'sticky': False,
+                    'type': 'info',
+                }
+            }
         
-        # Print each lot with product configuration
+        # Use specific manufacturing template only
         label_template = product_template.zpl_label_template_id
         
-        # Determine copies per label: if product has specific value, use it; otherwise use user config or default
-        if product_template.zpl_copies_per_label is not None and product_template.zpl_copies_per_label is not False:
-            copies_per_label = product_template.zpl_copies_per_label
-        else:
-            # Fallback to user configuration
-            if user_config and user_config.active and user_config.copies_per_label:
-                copies_per_label = user_config.copies_per_label
-            else:
-                copies_per_label = 1
+        if not label_template:
+            # No template configured for this product, show info message and return
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Print Labels'),
+                    'message': _('No manufacturing order label template configured for this product.'),
+                    'sticky': False,
+                    'type': 'info',
+                }
+            }
         
-        success_count = 0
-        error_messages = []
+        # Determine copies per label: use product configuration if available, otherwise default to 1
+        copies_per_label = product_template.zpl_copies_per_label or 1
         
         # Determine which records to print based on label template model
         label_template_model = label_template.model_id.model
+        
+        success_count = 0
+        error_messages = []
         
         if label_template_model == 'stock.lot':
             # Print each lot record
@@ -252,7 +244,7 @@ class MrpProduction(models.Model):
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Print Labels'),
-                    'message': '\n'.join(message_parts),
+                    'message': '\\n'.join(message_parts),
                     'sticky': True,
                     'type': message_type,
                 }

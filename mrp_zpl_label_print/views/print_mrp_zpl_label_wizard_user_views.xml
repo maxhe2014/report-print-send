@@ -9,12 +9,7 @@
                 <tree>
                     <field name="user_id"/>
                     <field name="active"/>
-                    <field name="label_template_id"/>
                     <field name="printer_id"/>
-                    <field name="copies_per_label"/>
-                    <field name="trigger_mrp_production"/>
-                    <field name="trigger_repair_order"/>
-                    <field name="trigger_stock_lot"/>
                 </tree>
             </field>
         </record>
@@ -24,22 +19,15 @@
             <field name="name">print.mrp.zpl.label.wizard.user.form</field>
             <field name="model">print.mrp.zpl.label.wizard.user</field>
             <field name="arch" type="xml">
-                <form string="User Default ZPL Label Printing Configuration">
+                <form string="User ZPL Label Printer Configuration">
                     <sheet>
                         <group>
                             <group string="User Configuration" name="user_configuration">
                                 <field name="user_id" required="1"/>
                                 <field name="active"/>
                             </group>
-                            <group string="Default Printing Settings" name="default_printing_settings">
-                                <field name="label_template_id" domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production'])]"/>
+                            <group string="Printer Settings" name="printer_settings">
                                 <field name="printer_id" domain="[('active', '=', True)]"/>
-                                <field name="copies_per_label"/>
-                            </group>
-                            <group string="Trigger Conditions" name="trigger_conditions">
-                                <field name="trigger_mrp_production"/>
-                                <field name="trigger_repair_order"/>
-                                <field name="trigger_stock_lot"/>
                             </group>
                         </group>
                     </sheet>
@@ -49,18 +37,17 @@
         
         <!-- Action to open the user configuration -->
         <record id="action_print_mrp_zpl_label_wizard_user" model="ir.actions.act_window">
-            <field name="name">User ZPL Label Printing Configurations</field>
+            <field name="name">User ZPL Label Printer Configurations</field>
             <field name="res_model">print.mrp.zpl.label.wizard.user</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_active': 1}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Configure default ZPL label printing settings for users.
+                    Configure ZPL label printer settings for users.
                 </p>
                 <p>
-                    When a user clicks the "Produce" button on a manufacturing order or 
-                    the "Repair End" button on a repair order, the system will automatically 
-                    print labels using their default configuration based on the trigger settings.
+                    When a user completes a manufacturing order, 
+                    the system will automatically print ZPL labels using their default printer.
                 </p>
             </field>
         </record>

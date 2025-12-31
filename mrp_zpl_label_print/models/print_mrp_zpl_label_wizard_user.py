@@ -8,46 +8,19 @@ _logger = logging.getLogger(__name__)
 
 class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
     _name = 'print.mrp.zpl.label.wizard.user'
-    _description = 'User Default ZPL Label Printing Configuration'
+    _description = 'User ZPL Label Printer Configuration'
     
     user_id = fields.Many2one('res.users', string='User', required=True, ondelete='cascade')
     active = fields.Boolean(string='Active', default=True)
     
-    # Default printing configuration
-    label_template_id = fields.Many2one('printing.label.zpl2', string='Default Label Template', 
-                                       domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production'])]")
+    # Simplified printing configuration - only printer selection
     printer_id = fields.Many2one('printing.printer', string='Default Printer', 
-                                domain="[('active', '=', True)]")
-    copies_per_label = fields.Integer(string='Default Copies per Label', default=1, 
-                                     help='Number of copies to print for each label')
-    
-    # Trigger conditions
-    trigger_mrp_production = fields.Boolean(
-        string='Trigger on Manufacturing Production', 
-        default=True,
-        help='Automatically print labels when manufacturing order is marked as done'
-    )
-    trigger_repair_order = fields.Boolean(
-        string='Trigger on Repair Completion', 
-        default=True,
-        help='Automatically print labels when repair order is completed'
-    )
-    trigger_stock_lot = fields.Boolean(
-        string='Trigger on Stock Lot/Serial Number', 
-        default=False,
-        help='Automatically print labels when stock lot/serial number is created or updated'
-    )
+                                domain="[('active', '=', True)]",
+                                help='Default printer for ZPL label printing')
     
     _sql_constraints = [
         ('user_id_unique', 'UNIQUE(user_id)', 'Each user can only have one default configuration!')
     ]
-    
-    @api.constrains('copies_per_label')
-    def _check_copies_per_label(self):
-        """Validate copies per label value"""
-        for record in self:
-            if record.copies_per_label < 1 or record.copies_per_label > 10:
-                raise ValidationError(_('Copies per label must be between 1 and 10.'))
     
     @api.model
     def get_user_config(self, user_id=None):
@@ -86,77 +59,35 @@ class PrintMrpZplLabelWizardUser(models.Model, BasePrintMixin):
         if not printer:
             _logger.warning(f"User {self.user_id.name} has no printer configured")
             return False
-            
-        if not self.label_template_id:
-            _logger.warning(f"User {self.user_id.name} has no label template configured")
-            return False
         
-        success_count = 0
+        # Get product template configuration
+        product_template = production.product_id.product_tmpl_id
         
-        # Determine which records to print based on label template model
-        label_template_model = self.label_template_id.model_id.model
-        
-        if label_template_model == 'stock.lot':
-            # Print each lot record
-            for lot in lot_ids:
-                try:
-                    for i in range(self.copies_per_label):
-                        self.label_template_id.print_label(printer, lot)
-                    success_count += 1
-                except Exception as e:
-                    _logger.error(f"Failed to print label for lot {lot.name}: {e}")
-        elif label_template_model == 'mrp.production':
-            # Print the manufacturing order record itself
-            try:
-                for i in range(self.copies_per_label):
-                    self.label_template_id.print_label(printer, production)
-                success_count += 1
-            except Exception as e:
-                _logger.error(f"Failed to print label for manufacturing order {production.name}: {e}")
+        # Use product template's ZPL configuration if available
+        if product_template.zpl_label_template_id:
+            label_template = product_template.zpl_label_template_id
+            copies_per_label = product_template.zpl_copies_per_label or 1
         else:
-            _logger.error(f"Unsupported label template model: {label_template_model}")
-        
-        _logger.info(f"Successfully printed {success_count} labels for manufacturing order {production.name}")
-        return success_count > 0
-    
-    def action_auto_print_repair_labels(self, repair_id):
-        """Automatically print labels for repair order based on user config"""
-        self.ensure_one()
-        
-        repair = self.env['repair.order'].browse(repair_id)
-        if not repair:
-            _logger.warning(f"Repair order {repair_id} does not exist")
-            return False
+            # Fallback to first available ZPL template for stock.lot model
+            label_template = self.env['printing.label.zpl2'].search([
+                ('model_id.model', '=', 'stock.lot')
+            ], limit=1)
+            copies_per_label = 1
             
-        # Get lots from repair operations
-        lot_ids = repair.move_ids.move_line_ids.lot_id
-        if not lot_ids:
-            # If no operations with lots, check the main product lot
-            if repair.lot_id:
-                lot_ids = repair.lot_id
-            else:
-                _logger.info(f"Repair order {repair.name} has no associated lots/serial numbers")
+            if not label_template:
+                _logger.warning("No ZPL label template found for stock.lot model")
                 return False
         
-        # Determine which printer to use
-        printer = self.printer_id
-        if not printer:
-            _logger.warning(f"User {self.user_id.name} has no printer configured")
-            return False
-            
-        if not self.label_template_id:
-            _logger.warning(f"User {self.user_id.name} has no label template configured")
-            return False
-        
         success_count = 0
-        # Print each lot
+        
+        # Print each lot record
         for lot in lot_ids:
             try:
-                for i in range(self.copies_per_label):
-                    self.label_template_id.print_label(printer, lot)
-                    success_count += 1
+                for i in range(copies_per_label):
+                    label_template.print_label(printer, lot)
+                success_count += 1
             except Exception as e:
                 _logger.error(f"Failed to print label for lot {lot.name}: {e}")
         
-        _logger.info(f"Successfully printed {success_count} labels for repair order {repair.name}")
+        _logger.info(f"Successfully printed {success_count} labels for manufacturing order {production.name}")
         return success_count > 0

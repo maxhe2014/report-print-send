@@ -33,14 +33,14 @@ class StockLot(models.Model, BasePrintMixin):
         # Get user's default configuration
         user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
         
-        # If user has config and trigger is disabled, skip printing
-        if user_config and not user_config.trigger_stock_lot:
+        # Check if user configuration is complete
+        if user_config and not (user_config.active and user_config.printer_id):
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _("Printing Skipped"),
-                    'message': _("Label printing is disabled for stock lots in your configuration"),
+                    'title': _("Printing Configuration"),
+                    'message': _("Your ZPL label printing configuration is incomplete. Please configure an active printer."),
                     'type': 'warning',
                     'sticky': False,
                 }

@@ -251,10 +251,7 @@ msgstr "触发条件"
 msgid "Manufacturing Production"
 msgstr "生产订单"
 
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
-msgid "Repair Completion"
-msgstr "维修完成"
+
 
 #. module: mrp_zpl_label_print
 #: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
@@ -280,10 +277,7 @@ msgstr "打印ZPL"
 
 
 
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_repair_order_form_inherit_zpl
-msgid "直接打印ZPL标签"
-msgstr "打印ZPL"
+
 
 #. module: mrp_zpl_label_print
 #: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_product_template_form_inherit_zpl_config
@@ -320,10 +314,7 @@ msgstr "每个标签的默认份数"
 msgid "Trigger on Manufacturing Production"
 msgstr "在生产订单完成时触发"
 
-#. module: mrp_zpl_label_print
-#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard_user__trigger_repair_order
-msgid "Trigger on Repair Completion"
-msgstr "在维修完成时触发"
+
 
 
 
