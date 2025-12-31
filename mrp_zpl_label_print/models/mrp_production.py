@@ -30,23 +30,50 @@ class MrpProduction(models.Model):
                     continue
                 
                 # Priority 2: Check user-level ZPL configuration (fallback)
-                user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
-                if user_config and user_config.active and user_config.printer_id:
-                    # Use user configuration (trigger is always enabled now)
-                    user_config.action_auto_print_labels(mo.id)
+                user = self.env.user
+                if user.zpl_printer_id:
+                    # Use user preferences configuration
+                    mo._print_labels_with_user_preferences(lot_ids)
             except Exception as e:
                 _logger.error(f"Automatic ZPL label printing failed (Manufacturing Order {mo.name}): {e}")
                 # Do not interrupt the normal flow, only log the error
         
         return result
     
+    def _print_labels_with_user_preferences(self, lot_ids):
+        """Print labels using user preferences configuration"""
+        user = self.env.user
+        printer = user.zpl_printer_id
+        
+        if not printer:
+            # No printer available, skip printing
+            _logger.warning(f"No ZPL printer configured in user preferences for user: {user.name}")
+            return
+            
+        # Get label template for stock.lot model
+        label_template = self.env['printing.label.zpl2'].search([
+            ('model_id.model', '=', 'stock.lot'),
+            ('active', '=', True)
+        ], order='name', limit=1)
+        
+        if not label_template:
+            _logger.warning("No label template found for stock.lot model")
+            return
+        
+        # Print each lot record
+        for lot in lot_ids:
+            try:
+                label_template.print_label(printer, lot)
+            except Exception as e:
+                _logger.error(f"Failed to print label for lot {lot.name}: {e}")
+    
     def _print_labels_with_product_config(self, product_template, lot_ids):
         """Print labels using product-level ZPL configuration"""
-        # Printer selection: ALWAYS use user configuration (regardless of product config)
-        user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
-        if user_config and user_config.active and user_config.printer_id:
-            printer = user_config.printer_id
-        else:
+        # Printer selection: ALWAYS use user preferences (regardless of product config)
+        user = self.env.user
+        printer = user.zpl_printer_id
+        
+        if not printer:
             # Fallback to user's default printer or first active printer
             printer = self._get_printer_with_fallback()
         
@@ -101,13 +128,13 @@ class MrpProduction(models.Model):
         
         # Check if both product-level and user-level configurations are complete
         product_template = self.product_id.product_tmpl_id
-        user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
+        user = self.env.user
         
         # Check product-level configuration
         has_product_config = bool(product_template.zpl_label_template_id)
         
         # Check user-level configuration
-        has_user_config = bool(user_config and user_config.active and user_config.printer_id)
+        has_user_config = bool(user.zpl_printer_id)
         
         # Both configurations must be complete to proceed with printing
         if not has_product_config and not has_user_config:
@@ -141,7 +168,7 @@ class MrpProduction(models.Model):
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Print Labels'),
-                    'message': _('No active printer configured for ZPL label printing. Please configure the user-level printing settings.'),
+                    'message': _('No ZPL printer configured. Please configure your ZPL label printer in your user preferences (Settings → Users & Companies → Users → Preferences → ZPL Label Printing).'),
                     'sticky': False,
                     'type': 'info',
                 }
@@ -157,11 +184,11 @@ class MrpProduction(models.Model):
     
     def _print_labels_with_product_config_direct(self, product_template, lot_ids):
         """Print labels using product-level ZPL configuration (direct action)"""
-        # Printer selection: ALWAYS use user configuration (regardless of product config)
-        user_config = self.env['print.mrp.zpl.label.wizard.user'].get_user_config()
-        if user_config and user_config.active and user_config.printer_id:
-            printer = user_config.printer_id
-        else:
+        # Printer selection: ALWAYS use user preferences (regardless of product config)
+        user = self.env.user
+        printer = user.zpl_printer_id
+        
+        if not printer:
             # Fallback to user's default printer or first active printer
             printer = self._get_printer_with_fallback()
         

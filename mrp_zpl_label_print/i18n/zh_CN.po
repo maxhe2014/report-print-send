@@ -224,50 +224,7 @@ msgstr "打印ZPL"
 
 
 
-#. module: mrp_zpl_label_print
-#: model:ir.model,name:mrp_zpl_label_print.model_print_mrp_zpl_label_wizard_user
-msgid "User Default ZPL Label Printing Configuration"
-msgstr "用户默认ZPL标签打印配置"
 
-
-
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_print_mrp_zpl_label_wizard_user_form
-msgid "User Configuration"
-msgstr "用户配置"
-
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_print_mrp_zpl_label_wizard_user_form
-msgid "Default Printing Settings"
-msgstr "默认打印设置"
-
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.view_print_mrp_zpl_label_wizard_user_form
-msgid "Trigger Conditions"
-msgstr "触发条件"
-
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
-msgid "Manufacturing Production"
-msgstr "生产订单"
-
-
-
-#. module: mrp_zpl_label_print
-#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_user_form
-msgid "Stock Lot/Serial Number"
-msgstr "库存批次/序列号"
-
-#. module: mrp_zpl_label_print
-#: model:ir.actions.act_window,name:mrp_zpl_label_print.action_print_mrp_zpl_label_wizard_user
-#: model:ir.ui.menu,name:mrp_zpl_label_print.menu_print_mrp_zpl_label_wizard_user
-msgid "User ZPL Label Printing Configurations"
-msgstr "用户ZPL标签打印配置"
-
-#. module: mrp_zpl_label_print
-#: model:ir.ui.menu,name:mrp_zpl_label_print.menu_print_mrp_zpl_label_wizard_user
-msgid "User ZPL Label Configurations"
-msgstr "用户ZPL标签配置"
 
 #. module: mrp_zpl_label_print
 #: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.mrp_production_form_inherit_zpl_print
@@ -338,9 +295,24 @@ msgstr "请至少选择一个批次进行测试打印。"
 #. module: mrp_zpl_label_print
 #: model:ir.model.fields,field_description:mrp_zpl_label_print.field_product_template__zpl_label_template_id
 msgid "ZPL Label Template"
-msgstr "ZPL标签模板"
+msgstr "ZPL模板-生产订单"
 
 #. module: mrp_zpl_label_print
 #: model:ir.model.fields,field_description:mrp_zpl_label_print.field_product_template__zpl_copies_per_label
 msgid "ZPL Copies per Label"
-msgstr "每个标签的ZPL份数"
+msgstr "每标签ZPL打印份数"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_res_users__zpl_printer_id
+msgid "ZPL Label Printer"
+msgstr "ZPL标签打印机"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,help:mrp_zpl_label_print.field_res_users__zpl_printer_id
+msgid "Default printer for ZPL label printing"
+msgstr "ZPL标签打印的默认打印机"
+
+#. module: mrp_zpl_label_print
+#: model:ir.ui.view,arch_db:mrp_zpl_label_print.view_users_form_zpl_label_print
+msgid "ZPL Label Printing"
+msgstr "ZPL标签打印""ZPL份数-生产订单"

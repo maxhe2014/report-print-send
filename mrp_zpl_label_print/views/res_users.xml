@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add ZPL printer selection to user preferences -->
+    <record model="ir.ui.view" id="view_users_form_zpl_label_print">
+        <field name="name">res.users.form (in mrp_zpl_label_print)</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <group name="printing" position="after">
+                <group name="zpl_label_printing" string="ZPL Label Printing">
+                    <field name="zpl_printer_id" options="{'no_create': True}" />
+                </group>
+            </group>
+        </field>
+    </record>
+    
+    <record model="ir.ui.view" id="view_users_form_simple_modif_zpl_label_print">
+        <field name="name">res.users.form.simple (in mrp_zpl_label_print)</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif" />
+        <field name="arch" type="xml">
+            <group name="printing" position="after">
+                <group name="zpl_label_printing">
+                    <field name="zpl_printer_id" readonly="0" options="{'no_create': True}" />
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>
