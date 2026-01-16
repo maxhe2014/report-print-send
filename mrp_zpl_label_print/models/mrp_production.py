@@ -10,8 +10,8 @@ class MrpProduction(models.Model):
 
     def button_mark_done(self):
         """Override the mark as done button to automatically print labels with priority:
-        1. Product-level ZPL configuration (highest priority)
-        2. User-level ZPL configuration (fallback)"""
+        Only print when both product-level ZPL configuration AND user-level printer configuration are complete.
+        If either is missing, skip printing."""
         result = super().button_mark_done()
         
         # Handle batch operations by iterating through each manufacturing order
@@ -22,18 +22,29 @@ class MrpProduction(models.Model):
                 if not lot_ids:
                     continue
                 
-                # Priority 1: Check product-level ZPL configuration
+                # Check both configurations: product-level AND user-level
                 product_template = mo.product_id.product_tmpl_id
-                if product_template.zpl_label_template_id:
-                    # Product has ZPL configuration, use it
-                    mo._print_labels_with_product_config(product_template, lot_ids)
+                user = self.env.user
+                
+                # Only proceed if BOTH configurations are complete
+                has_product_config = bool(product_template.zpl_label_template_id)
+                has_user_config = bool(user.zpl_printer_id)
+                
+                if not has_product_config or not has_user_config:
+                    # Skip printing if either configuration is missing
+                    missing_configs = []
+                    if not has_product_config:
+                        missing_configs.append("product-level label template")
+                    if not has_user_config:
+                        missing_configs.append("user-level printer configuration")
+                    
+                    _logger.info(f"Skipping automatic ZPL label printing for MO {mo.name}: Missing {', '.join(missing_configs)}")
                     continue
                 
-                # Priority 2: Check user-level ZPL configuration (fallback)
-                user = self.env.user
-                if user.zpl_printer_id:
-                    # Use user preferences configuration
-                    mo._print_labels_with_user_preferences(lot_ids)
+                # Both configurations are complete, proceed with printing
+                # Priority: Use product-level ZPL configuration
+                mo._print_labels_with_product_config(product_template, lot_ids)
+                    
             except Exception as e:
                 _logger.error(f"Automatic ZPL label printing failed (Manufacturing Order {mo.name}): {e}")
                 # Do not interrupt the normal flow, only log the error
