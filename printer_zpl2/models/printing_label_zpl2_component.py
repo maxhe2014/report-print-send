@@ -64,6 +64,7 @@ class PrintingLabelZpl2Component(models.Model):
             (str(zpl2.BARCODE_CODE_128), "Code 128"),
             (str(zpl2.BARCODE_EAN_13), "EAN-13"),
             (str(zpl2.BARCODE_QR_CODE), "QR Code"),
+            (str(zpl2.BARCODE_QR_CODE_CUSTOM), "QR Code (Custom)"),
             ("sublabel", "Sublabel"),
             ("zpl2_raw", "ZPL2"),
         ],
@@ -269,6 +270,8 @@ class PrintingLabelZpl2Component(models.Model):
         for component in self:
             if component.component_type == "qr_code":
                 component.data_autofill = True
+            elif component.component_type == zpl2.BARCODE_QR_CODE_CUSTOM:
+                component.data_autofill = False
             else:
                 component.data_autofill = False
 

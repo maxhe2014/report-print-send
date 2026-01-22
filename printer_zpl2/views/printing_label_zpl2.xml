@@ -2,6 +2,10 @@
 <!--
     Copyright 2016 SUBTENO-IT
     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+    
+    Note: Component type strings used in this file correspond to constants defined in zpl2.py:
+    - 'qr_code' corresponds to BARCODE_QR_CODE
+    - 'qr_code_custom' corresponds to BARCODE_QR_CODE_CUSTOM
 -->
 <odoo>
     <record id="view_printing_label_zpl2_tree" model="ir.ui.view">
@@ -120,7 +124,7 @@
                                             />
                                             <field
                                                 name="data_autofill"
-                                                invisible="component_type != 'qr_code'"
+                                                invisible="component_type not in ('qr_code', 'qr_code_custom')"
                                             />
                                         </group>
                                         <group invisible="component_type == 'zpl2_raw'">
@@ -153,7 +157,7 @@
                                     <notebook colspan="4">
                                         <page
                                             string="Format"
-                                            invisible="component_type in ('sublabel', 'qr_code', 'zpl2_raw')"
+                                            invisible="component_type in ('sublabel', 'qr_code', 'qr_code_custom', 'zpl2_raw')"
                                         >
                                             <group>
                                                 <field name="height" />
@@ -197,7 +201,7 @@
                                         <!-- Barcode specific arguments -->
                                         <page
                                             string="Barcode Format"
-                                            invisible="component_type in ('text', 'rectangle', 'diagonal', 'circle', 'sublabel', 'graphic', 'qr_code', 'zpl2_raw')"
+                                            invisible="component_type in ('text', 'rectangle', 'diagonal', 'circle', 'sublabel', 'graphic', 'qr_code', 'qr_code_custom', 'zpl2_raw')"
                                         >
                                             <group>
                                                 <field name="check_digits" />
@@ -217,6 +221,18 @@
                                         <page
                                             string="2D Barcode Arguments"
                                             invisible="component_type != 'qr_code'"
+                                        >
+                                            <group>
+                                                <field name="model" />
+                                                <field name="magnification_factor" />
+                                                <field name="error_correction" />
+                                                <field name="mask_value" />
+                                            </group>
+                                        </page>
+                                        <!-- 2D Barcode arguments for custom QR code -->
+                                        <page
+                                            string="2D Barcode Arguments"
+                                            invisible="component_type != 'qr_code_custom'"
                                         >
                                             <group>
                                                 <field name="model" />

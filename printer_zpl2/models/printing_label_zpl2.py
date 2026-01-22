@@ -314,7 +314,7 @@ class PrintingLabelZpl2(models.Model):
                     label_offset_y=component_offset_y,
                 )
             else:
-                if component.component_type == zpl2.BARCODE_QR_CODE:
+                if component.component_type in (zpl2.BARCODE_QR_CODE, zpl2.BARCODE_QR_CODE_CUSTOM):
                     # Adding Control Arguments to QRCode data Label
                     data = f"{component.error_correction}A,{data}"
 

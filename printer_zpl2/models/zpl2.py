@@ -105,6 +105,7 @@ BARCODE_UPC_E = "upc-e"
 BARCODE_CODE_128 = "code_128"
 BARCODE_EAN_13 = "ean-13"
 BARCODE_QR_CODE = "qr_code"
+BARCODE_QR_CODE_CUSTOM = "qr_code_custom"
 
 
 class Zpl2:
@@ -351,6 +352,7 @@ class Zpl2:
             BARCODE_CODE_128: _code128,
             BARCODE_EAN_13: _ean13,
             BARCODE_QR_CODE: _qrcode,
+            BARCODE_QR_CODE_CUSTOM: _qrcode,
         }
         return "^B" + barcodeTypes[barcodeType](**barcode_format)
 
