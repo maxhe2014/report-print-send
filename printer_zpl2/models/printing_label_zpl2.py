@@ -317,6 +317,17 @@ class PrintingLabelZpl2(models.Model):
                 if component.component_type in (zpl2.BARCODE_QR_CODE, zpl2.BARCODE_QR_CODE_CUSTOM):
                     # Adding Control Arguments to QRCode data Label
                     data = f"{component.error_correction}A,{data}"
+                
+                # Data Matrix specific parameters - based on user example format
+                if component.component_type == zpl2.BARCODE_DATA_MATRIX:
+                    barcode_arguments.update({
+                        'quality': component.quality or 200,  # 用户示例使用200质量等级
+                        'columns': component.columns or 36,   # 用户示例使用36列
+                        'rows': component.rows or 36,         # 用户示例使用36行
+                        'format': component.format_type or 1,  # 用户示例使用1格式类型
+                        'escape': '_',  # 用户示例使用_转义字符
+                        'additional': 1,  # 用户示例使用1附加信息
+                    })
 
                 barcode_arguments = {
                     field_name: component[field_name]
