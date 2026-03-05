@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_inherit_zpl_picking_label" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.zpl.picking.label</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='preferences']" position="inside">
+                <group string="ZPL Label Printing">
+                    <group>
+                        <field name="zpl_picking_label_template_id" 
+                               widget="many2one" 
+                               options="{'no_create': True}"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

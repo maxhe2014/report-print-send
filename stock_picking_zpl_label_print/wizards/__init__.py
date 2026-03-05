@@ -1,0 +1,1 @@
+from . import print_picking_zpl_label_wizard
