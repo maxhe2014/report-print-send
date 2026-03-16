@@ -146,6 +146,7 @@ class PrintingLabelZpl2(models.Model):
             eval_args.update(
                 {
                     "object": record,
+                    "env": record.env,
                     "page_number": str(page_number + 1),
                     "page_count": str(page_count),
                     "time": wrap_module(
