@@ -74,6 +74,25 @@ class PrintRepairZplLabelWizard(models.TransientModel):
             if repair.exists():
                 result['repair_id'] = repair_id
         
+        # Set default label template for repair.order model
+        if 'label_template_id' in fields_list and not result.get('label_template_id'):
+            user = self.env.user
+            # Try to get user's last selected label template for repair.order
+            last_template = self.env['printing.label.zpl2.configuration'].search([
+                ('user_id', '=', user.id),
+                ('label_id.model_id.model', '=', 'repair.order')
+            ], order='write_date desc', limit=1)
+            if last_template and last_template.label_id:
+                result['label_template_id'] = last_template.label_id.id
+            else:
+                # Fallback to first available repair.order template
+                label_template = self.env['printing.label.zpl2'].search([
+                    ('model_id.model', '=', 'repair.order'),
+                    ('active', '=', True)
+                ], order='name', limit=1)
+                if label_template:
+                    result['label_template_id'] = label_template.id
+        
         return result
     
     def action_print_labels(self):
@@ -95,16 +114,48 @@ class PrintRepairZplLabelWizard(models.TransientModel):
                 if not self.repair_id:
                     raise UserError(_("No repair order found to print label for."))
                 
-                for i in range(self.copies_per_label):
+                # Calculate total copies
+                if self.print_exact_quantity:
+                    # Print exactly the number of copies specified
+                    total_copies = self.copies_per_label
+                else:
+                    # Calculate total copies: copies_per_label * repair order product quantity
+                    # Use product_qty if available and greater than 0, otherwise use 1
+                    product_quantity = self.repair_id.product_qty if hasattr(self.repair_id, 'product_qty') and self.repair_id.product_qty > 0 else 1
+                    total_copies = self.copies_per_label * int(product_quantity)
+                
+                # Print labels one by one to ensure correct quantity
+                for i in range(total_copies):
                     self.label_template_id.print_label(
                         self.printer_id,
                         self.repair_id,
                         copies=1
                     )
                 
+                # Save user's selected label template for future use
+                user = self.env.user
+                # Check if configuration exists
+                label_config = self.env['printing.label.zpl2.configuration'].search([
+                    ('user_id', '=', user.id),
+                    ('label_id', '=', self.label_template_id.id)
+                ], limit=1)
+                if not label_config:
+                    # Create new configuration
+                    self.env['printing.label.zpl2.configuration'].create({
+                        'name': f"{user.name}'s {self.label_template_id.name} configuration",
+                        'user_id': user.id,
+                        'label_id': self.label_template_id.id,
+                        'printer_id': self.printer_id.id
+                    })
+                else:
+                    # Update existing configuration
+                    label_config.write({
+                        'printer_id': self.printer_id.id
+                    })
+                
                 # Show success message
                 message = _("Successfully printed %d label(s) for repair order %s.") % (
-                    self.copies_per_label,
+                    total_copies,
                     self.repair_id.name
                 )
             
