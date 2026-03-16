@@ -1,0 +1,158 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#  * repair_order_zpl_label_print
+#
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,field_description:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__repair_id
+msgid "Repair Order"
+msgstr "维修单"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,field_description:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__printer_id
+msgid "Printer"
+msgstr "打印机"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,help:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__printer_id
+msgid "Default printer from user preferences"
+msgstr "用户偏好设置中的默认打印机"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,field_description:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__label_template_id
+msgid "Label Template"
+msgstr "标签模板"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,help:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__label_template_id
+msgid "Select the label template to use"
+msgstr "选择要使用的标签模板"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,field_description:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__move_line_ids
+msgid "Stock Move Lines"
+msgstr "库存移动行"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,help:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__move_line_ids
+msgid "Select the stock move lines to print labels for (only required for stock.move.line templates)"
+msgstr "选择要打印标签的库存移动行（仅在使用stock.move.line模板时需要）"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,field_description:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__copies_per_label
+msgid "Copies per Label"
+msgstr "每张标签的份数"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,help:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__copies_per_label
+msgid "Number of copies to print for each label"
+msgstr "每张标签要打印的份数"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,field_description:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__print_exact_quantity
+msgid "Print Exact Quantity"
+msgstr "按指定数量打印"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.model.fields,help:repair_order_zpl_label_print.field_print_repair_zpl_label_wizard__print_exact_quantity
+msgid "Print exactly the number of copies specified, without multiplying by qty_done"
+msgstr "按指定的数量打印，不乘以 完成数量"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.ui.view,arch_db:repair_order_zpl_label_print.view_print_repair_zpl_label_wizard_form
+msgid "Print ZPL Labels"
+msgstr "打印ZPL标签"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.ui.view,arch_db:repair_order_zpl_label_print.view_print_repair_zpl_label_wizard_form
+msgid "Print"
+msgstr "打印"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.ui.view,arch_db:repair_order_zpl_label_print.view_print_repair_zpl_label_wizard_form
+msgid "Cancel"
+msgstr "取消"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.ui.view,arch_db:repair_order_zpl_label_print.view_repair_order_form_inherit_zpl_label_print
+msgid "Print ZPL Labels"
+msgstr "打印ZPL标签"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:103
+#, python-format
+msgid "No default printer configured. Please set up a default ZPL printer in your user preferences."
+msgstr "未配置默认打印机。请在用户偏好设置中设置默认的ZPL打印机。"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:106
+#, python-format
+msgid "Please select a label template."
+msgstr "请选择标签模板。"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:115
+#, python-format
+msgid "No repair order found to print label for."
+msgstr "没有找到要打印标签的维修单。"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:125
+#, python-format
+msgid "Successfully printed %d label(s) for repair order %s."
+msgstr "已成功打印 %d 张标签，对应维修单 %s。"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:133
+#, python-format
+msgid "Please select at least one stock move line to print when using stock.move.line template."
+msgstr "使用 stock.move.line 模板时，请至少选择一个库存移动行进行打印。"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:138
+#, python-format
+msgid "No valid stock move lines found to print."
+msgstr "没有找到有效的库存移动行进行打印。"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:163
+#, python-format
+msgid "Successfully printed %d label(s) for %d stock move line(s)."
+msgstr "已成功打印 %d 张标签，对应 %d 个库存移动行。"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:169
+#, python-format
+msgid "Unsupported label template model: %s"
+msgstr "不支持的标签模板模型：%s"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/wizards/print_repair_zpl_label_wizard.py:183
+#, python-format
+msgid "Label printing failed: %s"
+msgstr "标签打印失败：%s"
+
+#. module: repair_order_zpl_label_print
+#: code:addons/repair_order_zpl_label_print/models/repair_order.py:15
+#, python-format
+msgid "Print ZPL Labels"
+msgstr "打印ZPL标签"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.module.module,description:repair_order_zpl_label_print.module_repair_order_zpl_label_print
+msgid "Add ZPL label printing functionality to Repair Orders\n        Integrates with report-print-send module for ZPL printing\n        \n        Features:\n        - ZPL label printing for Repair Orders\n        - ZPL label printing for Stock Move Lines\n        - ZPL label printing wizard with template selection\n        - User default printing configuration\n        - Print button on repair order form view"
+msgstr "为维修单添加ZPL标签打印功能\n        与report-print-send模块集成，用于ZPL打印\n        \n        功能：\n        - 维修单的ZPL标签打印\n        - 库存移动行的ZPL标签打印\n        - 带模板选择的ZPL标签打印向导\n        - 用户默认打印配置\n        - 维修单表单视图上的打印按钮"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.module.module,summary:repair_order_zpl_label_print.module_repair_order_zpl_label_print
+msgid "ZPL Label Printing for Repair Orders"
+msgstr "维修单的ZPL标签打印"
+
+#. module: repair_order_zpl_label_print
+#: model:ir.module.module,name:repair_order_zpl_label_print.module_repair_order_zpl_label_print
+msgid "Repair Order ZPL Label Print"
+msgstr "维修单ZPL标签打印"

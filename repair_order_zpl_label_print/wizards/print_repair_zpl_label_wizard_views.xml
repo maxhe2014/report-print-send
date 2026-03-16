@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_print_repair_zpl_label_wizard_form" model="ir.ui.view">
+        <field name="name">print.repair.zpl.label.wizard.form</field>
+        <field name="model">print.repair.zpl.label.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print ZPL Labels">
+                <group>
+                    <field name="repair_id"/>
+                    <field name="printer_id"/>
+                    <field name="label_template_id"/>
+                    <field name="move_line_ids" widget="many2many_tags" context="{'form_view_ref': 'stock.view_move_line_form'}"/>
+                    <field name="copies_per_label"/>
+                    <field name="print_exact_quantity"/>
+                </group>
+                <footer>
+                    <button name="action_print_labels" type="object" string="Print" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

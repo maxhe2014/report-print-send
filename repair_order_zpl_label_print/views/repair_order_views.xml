@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_repair_order_form_inherit_zpl_label_print" model="ir.ui.view">
+        <field name="name">repair.order.form.inherit.zpl.label.print</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_zpl_label_wizard" 
+                        type="object" 
+                        string="Print ZPL Labels" 
+                        class="btn-primary"
+                        groups="stock.group_production_lot"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
