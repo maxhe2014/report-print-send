@@ -315,4 +315,224 @@ msgstr "ZPL标签打印的默认打印机"
 #. module: mrp_zpl_label_print
 #: model:ir.ui.view,arch_db:mrp_zpl_label_print.view_users_form_zpl_label_print
 msgid "ZPL Label Printing"
-msgstr "ZPL标签打印""ZPL份数-生产订单"
+msgstr "ZPL标签打印"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "No lots/serial numbers found for this manufacturing order."
+msgstr "此制造订单未找到批次/序列号。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "No ZPL label printing configuration found. Please configure either product-level or user-level printing settings."
+msgstr "未找到ZPL标签打印配置。请配置产品级或用户级打印设置。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "No label template configured for this product. Please configure the product-level ZPL label template."
+msgstr "此产品未配置标签模板。请配置产品级ZPL标签模板。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "No ZPL printer configured. Please configure your ZPL label printer in your user preferences (Settings → Users & Companies → Users → Preferences → ZPL Label Printing)."
+msgstr "未配置ZPL打印机。请在用户偏好设置中配置您的ZPL标签打印机（设置 → 用户和公司 → 用户 → 偏好设置 → ZPL标签打印）。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "No printer available for ZPL label printing."
+msgstr "没有可用的ZPL标签打印机。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "No manufacturing order label template configured for this product."
+msgstr "此产品未配置制造订单标签模板。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "Failed to print label for lot %s: %s"
+msgstr "批次 %s 打印失败: %s"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "Failed to print label for manufacturing order %s: %s"
+msgstr "制造订单 %s 打印失败: %s"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "Unsupported label template model: %s"
+msgstr "不支持的标签模板模型: %s"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "Successfully printed %d labels"
+msgstr "成功打印 %d 个标签"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/models/mrp_production.py:0
+#, python-format
+msgid "%d labels failed to print"
+msgstr "%d 个标签打印失败"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "Please select at least one lot/serial number to print."
+msgstr "请至少选择一个批次/序列号进行打印。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "No default printer configured. Please set up a default ZPL printer in your user preferences."
+msgstr "未配置默认打印机。请在用户偏好设置中设置默认ZPL打印机。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "Please select a label template."
+msgstr "请选择标签模板。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "Successfully printed %d labels"
+msgstr "成功打印 %d 个标签"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid " but %d labels failed to print"
+msgstr " 但 %d 个标签打印失败"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "All labels failed to print. Please check printer configuration and network connection.\nError details: %s"
+msgstr "所有标签打印失败。请检查打印机配置和网络连接。\n错误详情: %s"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "Printer %s is not online. Test print may fail."
+msgstr "打印机 %s 不在线。测试打印可能会失败。"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "Test print sent to printer %s for lot %s"
+msgstr "测试打印已发送到打印机 %s，批次 %s"
+
+#. module: mrp_zpl_label_print
+#. odoo-python
+#: code:addons/mrp_zpl_label_print/wizards/print_mrp_zpl_label_wizard.py:0
+#, python-format
+msgid "Test print failed: %s"
+msgstr "测试打印失败: %s"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__production_id
+msgid "Manufacturing Order"
+msgstr "制造订单"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__printer_id
+msgid "Printer"
+msgstr "打印机"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__label_template_id
+msgid "Label Template"
+msgstr "标签模板"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__lot_ids
+msgid "Lots/Serials"
+msgstr "批次/序列号"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__copies_per_label
+msgid "Copies per Label"
+msgstr "每标签份数"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,help:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__copies_per_label
+msgid "Number of copies to print for each label"
+msgstr "每个标签的打印份数"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__available_printer_ids
+msgid "Available Printers"
+msgstr "可用打印机"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,field_description:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__available_lot_ids
+msgid "Available Lots"
+msgstr "可用批次"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.constraint,message:mrp_zpl_label_print.constraint_print_mrp_zpl_label_wizard_copies_per_label
+msgid "Copies per label must be between 1 and 500."
+msgstr "每标签份数必须在1到500之间。"
+
+#. module: mrp_zpl_label_print
+#: model:ir.model.fields,help:mrp_zpl_label_print.field_print_mrp_zpl_label_wizard__printer_id
+msgid "Default printer from user preferences"
+msgstr "用户偏好设置中的默认打印机"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_form
+msgid "Print ZPL Labels"
+msgstr "打印ZPL标签"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_form
+msgid "Print Labels"
+msgstr "打印标签"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_form
+msgid "Test Print"
+msgstr "测试打印"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_form
+msgid "Cancel"
+msgstr "取消"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_form
+msgid "Print Settings"
+msgstr "打印设置"
+
+#. module: mrp_zpl_label_print
+#: model_terms:ir.ui.view,arch_db:mrp_zpl_label_print.print_mrp_zpl_label_wizard_form
+msgid "Lots/Serial Numbers"
+msgstr "批次/序列号"

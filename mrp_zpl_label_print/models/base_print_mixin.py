@@ -13,10 +13,49 @@ class BasePrintMixin(models.AbstractModel):
 
     def _get_printer_with_fallback(self):
         """Get printer with fallback logic: user default printer -> first active printer"""
-        # Priority 1: User's default printer
+        # Priority 1: User's default ZPL printer
+        if self.env.user.zpl_printer_id and self.env.user.zpl_printer_id.status == 'online':
+            return self.env.user.zpl_printer_id
+            
+        # Priority 2: User's default printer
         if self.env.user.printing_printer_id and self.env.user.printing_printer_id.status == 'online':
             return self.env.user.printing_printer_id
 
-        # Priority 2: First active printer
-        printer = self.env['printing.printer'].search([('active', '=', True), ('status', '=', 'online')], limit=1)
-        return printer
+        # Priority 3: First active printer
+        printer = self.env['printing.printer'].search([('active', '=', True)], limit=1)
+        if printer:
+            return printer
+        
+        # No printer found
+        return None
+        
+    def _print_labels(self, printer, label_template, records, copies_per_label=1):
+        """Print labels for given records
+        
+        Args:
+            printer: printing.printer record
+            label_template: printing.label.zpl2 record
+            records: records to print labels for
+            copies_per_label: number of copies per label
+            
+        Returns:
+            dict: {'success_count': int, 'error_messages': list}
+        """
+        success_count = 0
+        error_messages = []
+        
+        try:
+            # Ensure copies_per_label is an integer
+            copies_per_label = int(copies_per_label)
+            
+            for record in records:
+                try:
+                    for i in range(copies_per_label):
+                        label_template.print_label(printer, record)
+                    success_count += 1
+                except Exception:
+                    error_messages.append(f"Failed to print label for {record._name} {record.name}")
+        except Exception:
+            error_messages.append("Unexpected error during label printing")
+        
+        return {'success_count': success_count, 'error_messages': error_messages}

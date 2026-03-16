@@ -28,7 +28,7 @@
             <field name="arch" type="xml">
                 <!-- Add ZPL Print Button after name field -->
                 <xpath expr="//field[@name='name']" position="after">
-                    <button name="action_open_mrp_zpl_label_wizard" 
+                    <button name="action_print_zpl_direct" 
                             string="Print ZPL" 
                             type="object" 
                             class="btn-secondary"

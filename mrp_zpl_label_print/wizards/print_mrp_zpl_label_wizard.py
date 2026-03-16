@@ -9,11 +9,13 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     _name = 'print.mrp.zpl.label.wizard'
     _description = 'Print ZPL Labels for Manufacturing Order'
 
-    production_id = fields.Many2one('mrp.production', string='Manufacturing Order', required=True)
-    printer_id = fields.Many2one('printing.printer', string='Printer', required=True,
-                                domain="[('id', 'in', available_printer_ids)]")
+    production_id = fields.Many2one('mrp.production', string='Manufacturing Order', required=True, readonly=True)
+    printer_id = fields.Many2one('printing.printer', string='Printer',
+                                compute='_compute_default_printer',
+                                readonly=True, store=False,
+                                help='Default printer from user preferences')
     label_template_id = fields.Many2one('printing.label.zpl2', string='Label Template', required=True,
-                                       domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production'])]")
+                                       domain="[('model_id.model', 'in', ['stock.lot', 'mrp.production']), ('active', '=', True)]")
     lot_ids = fields.Many2many('stock.lot', string='Lots/Serials',
                               domain="[('id', 'in', available_lot_ids)]")
     copies_per_label = fields.Integer(string='Copies per Label', default=1,
@@ -27,17 +29,23 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     def _check_copies_per_label(self):
         """Validate copies per label value"""
         for record in self:
-            if record.copies_per_label < 1 or record.copies_per_label > 10:
-                raise ValidationError(_('Copies per label must be between 1 and 10.'))
+            if record.copies_per_label < 1 or record.copies_per_label > 500:
+                raise ValidationError(_('Copies per label must be between 1 and 500.'))
+    
+    @api.depends('label_template_id')
+    def _compute_default_printer(self):
+        """Compute default printer from user preferences"""
+        user = self.env.user
+        for wizard in self:
+            # Use user's default ZPL printer
+            wizard.printer_id = user.zpl_printer_id
 
     @api.depends('production_id')
     def _compute_available_lots(self):
         for wizard in self:
             if wizard.production_id:
-                # 优化：使用prefetch_related减少数据库查询
-                production = wizard.production_id.with_prefetch(wizard._prefetch)
-                # 优化：一次性获取所有相关数据
-                move_lines = production.move_finished_ids.move_line_ids
+                # 一次性获取所有相关数据
+                move_lines = wizard.production_id.move_finished_ids.move_line_ids
                 lot_ids = move_lines.mapped('lot_id').filtered(lambda l: l).ids
                 wizard.available_lot_ids = [(6, 0, lot_ids)]
                 # Set default lots if not set
@@ -46,13 +54,11 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
             else:
                 wizard.available_lot_ids = False
 
-    @api.depends('printer_id')
     def _compute_available_printers(self):
         """Compute available printers for ZPL printing."""
-        # 优化：缓存打印机列表，避免重复查询
-        printers_cache = self.env['printing.printer'].search([('active', '=', True)])
+        # This method is kept for backward compatibility
         for wizard in self:
-            wizard.available_printer_ids = printers_cache
+            wizard.available_printer_ids = self.env['printing.printer'].search([('active', '=', True)])
 
     @api.model
     def default_get(self, fields_list):
@@ -93,16 +99,7 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
                 if label_template:
                     res['label_template_id'] = label_template.id
         
-        # Printer selection: ALWAYS use user configuration (regardless of product config)
-        # Multi-level printer selection priority:
-        # 1. User's default ZPL printer (new field)
-        # 2. User's default printer (original field)
-        # 3. First active printer
-        
-        # Get printer (with fallback logic)
-        printer = self._get_printer_with_fallback()
-        if printer:
-            res['printer_id'] = printer.id
+        # Printer is now set via _compute_default_printer method
              
         return res
 
@@ -110,58 +107,29 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
         """Print ZPL labels for selected lots"""
         self.ensure_one()
         
+        # Validate inputs
         if not self.lot_ids:
             raise ValidationError(_("Please select at least one lot/serial number to print."))
         
         if not self.printer_id:
-            raise ValidationError(_("No printer configured. Please configure a printer in user settings."))
+            raise ValidationError(_("No default printer configured. Please set up a default ZPL printer in your user preferences."))
             
         if not self.label_template_id:
-            raise ValidationError(_("No label template configured. Please configure a label template in user settings or product configuration."))
+            raise ValidationError(_("Please select a label template."))
         
-        success_count = 0
-        error_messages = []
-        
-        # 优化：批量处理打印任务，减少API调用次数
-        try:
-            # 使用批量打印API（如果支持）
-            if hasattr(self.label_template_id, 'print_labels_batch'):
-                # 批量打印所有标签
-                labels_to_print = []
-                for lot in self.lot_ids:
-                    for i in range(self.copies_per_label):
-                        labels_to_print.append(lot)
-                
-                if labels_to_print:
-                    success_count = self.label_template_id.print_labels_batch(self.printer_id, labels_to_print)
-            else:
-                # 回退到逐条打印，但优化循环
-                for lot in self.lot_ids:
-                    try:
-                        # 优化：预生成ZPL内容，减少模板渲染时间
-                        zpl_content = self.label_template_id._generate_zpl_content(lot)
-                        for i in range(self.copies_per_label):
-                            # 直接发送ZPL内容，避免重复模板渲染
-                            self.printer_id.print_document(
-                                None, 
-                                zpl_content, 
-                                format='raw', 
-                                copies=1
-                            )
-                            success_count += 1
-                    except Exception as e:
-                        error_msg = f"Lot {lot.name} failed to print: {str(e)}"
-                        error_messages.append(error_msg)
-                        _logger.error(error_msg)
-        except Exception as e:
-            error_messages.append(f"Batch printing failed: {str(e)}")
-            _logger.error(f"Batch printing error: {e}")
+        # Use common print method
+        result = self._print_labels(
+            printer=self.printer_id,
+            label_template=self.label_template_id,
+            records=self.lot_ids,
+            copies_per_label=self.copies_per_label
+        )
         
         # Show result message
-        if success_count > 0:
-            message = _("Successfully printed %d labels") % success_count
-            if error_messages:
-                message += _(" but %d labels failed to print") % len(error_messages)
+        if result['success_count'] > 0:
+            message = _("Successfully printed %d labels") % result['success_count']
+            if result['error_messages']:
+                message += _(" but %d labels failed to print") % len(result['error_messages'])
             
             return {
                 'type': 'ir.actions.client',
@@ -170,11 +138,11 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
                     'title': _('Printing Result'),
                     'message': message,
                     'sticky': False,
-                    'type': 'success' if not error_messages else 'warning',
+                    'type': 'success' if not result['error_messages'] else 'warning',
                 }
             }
         else:
-            raise UserError(_("All labels failed to print. Please check printer configuration and network connection.\nError details: %s") % '\n'.join(error_messages))
+            raise UserError(_("All labels failed to print. Please check printer configuration and network connection.\nError details: %s") % '\n'.join(result['error_messages']))
         
         return {'type': 'ir.actions.act_window_close'}
 
@@ -183,20 +151,59 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
         self.ensure_one()
         
         if not self.lot_ids:
-            raise models.ValidationError(_("Please select at least one lot to test print."))
+            raise ValidationError(_("Please select at least one lot to test print."))
         
-        # Test print the first lot
-        test_lot = self.lot_ids[0]
+        if not self.printer_id:
+            raise ValidationError(_("Please select a printer first."))
         
-        # Create test content
-        test_content = f"TEST PRINT - {test_lot.name}"
+        # Check printer status
+        if self.printer_id.status != 'online':
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Printer Status'),
+                    'message': _('Printer %s is not online. Test print may fail.') % self.printer_id.name,
+                    'sticky': False,
+                    'type': 'warning',
+                }
+            }
         
-        # Send test print
-        self.printer_id.print_document(
-            None, 
-            test_content, 
-            format='raw', 
-            copies=1
-        )
-        
-        return {'type': 'ir.actions.act_window_close'}
+        try:
+            # Test print the first lot
+            test_lot = self.lot_ids[0]
+            
+            # Create test content
+            test_content = f"TEST PRINT - {test_lot.name}"
+            
+            # Send test print
+            self.printer_id.print_document(
+                None, 
+                test_content, 
+                format='raw', 
+                copies=1
+            )
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Test Print'),
+                    'message': _('Test print sent to printer %s for lot %s') % (self.printer_id.name, test_lot.name),
+                    'sticky': False,
+                    'type': 'success',
+                }
+            }
+        except Exception as e:
+            error_message = _('Test print failed: %s') % str(e)
+            _logger.error(error_message)
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Test Print Failed'),
+                    'message': error_message,
+                    'sticky': True,
+                    'type': 'danger',
+                }
+            }

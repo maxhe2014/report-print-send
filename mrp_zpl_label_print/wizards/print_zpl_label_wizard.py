@@ -92,30 +92,24 @@ class PrintZplLabelWizard(models.TransientModel, BasePrintMixin):
         if not self.label_template_id:
             raise UserError(_('No label template configured. Please configure a label template in user settings or product configuration.'))
         
-        success_count = 0
-        error_messages = []
-        
-        for lot in self.lot_ids:
-            try:
-                # Print specified number of copies
-                for copy in range(self.copies_per_label):
-                    self.label_template_id.print_label(self.printer_id, lot)
-                success_count += 1
-            except Exception as e:
-                error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
-                error_messages.append(error_message)
-                _logger.error(error_message)
+        # Use common print method
+        result = self._print_labels(
+            printer=self.printer_id,
+            label_template=self.label_template_id,
+            records=self.lot_ids,
+            copies_per_label=self.copies_per_label
+        )
         
         # Display result message
         message_parts = []
-        if success_count > 0:
-            message_parts.append(_('Successfully printed %d labels') % success_count)
+        if result['success_count'] > 0:
+            message_parts.append(_('Successfully printed %d labels') % result['success_count'])
         
-        if error_messages:
-            message_parts.append(_('%d labels failed to print') % len(error_messages))
+        if result['error_messages']:
+            message_parts.append(_('%d labels failed to print') % len(result['error_messages']))
         
         if message_parts:
-            message_type = 'warning' if error_messages else 'success'
+            message_type = 'warning' if result['error_messages'] else 'success'
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
@@ -139,22 +133,43 @@ class PrintZplLabelWizard(models.TransientModel, BasePrintMixin):
         if not self.printer_id:
             raise UserError(_('Please select a printer first.'))
         
-        # Set test mode and printer for label template
-        self.label_template_id.write({
-            'test_print_mode': True,
-            'printer_id': self.printer_id.id
-        })
-        
-        # Execute test print
-        self.label_template_id.print_test_label()
-        
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Test Print'),
-                'message': _('Test print sent to printer'),
-                'sticky': False,
-                'type': 'success',
+        # Check printer status
+        if self.printer_id.status != 'online':
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Printer Status'),
+                    'message': _('Printer %s is not online. Test print may fail.') % self.printer_id.name,
+                    'sticky': False,
+                    'type': 'warning',
+                }
             }
-        }
+        
+        try:
+            # Execute test print
+            self.label_template_id.print_test_label(self.printer_id)
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Test Print'),
+                    'message': _('Test print sent to printer %s') % self.printer_id.name,
+                    'sticky': False,
+                    'type': 'success',
+                }
+            }
+        except Exception as e:
+            error_message = _('Test print failed: %s') % str(e)
+            _logger.error(error_message)
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Test Print Failed'),
+                    'message': error_message,
+                    'sticky': True,
+                    'type': 'danger',
+                }
+            }
