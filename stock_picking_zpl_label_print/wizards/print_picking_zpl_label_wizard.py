@@ -27,15 +27,8 @@ class PrintPickingZplLabelWizard(models.TransientModel):
         comodel_name='printing.label.zpl2',
         string='Label Template',
         required=True,
-        domain="[('model_id.model', 'in', ['stock.picking', 'stock.move', 'stock.move.line']), ('active', '=', True)]",
+        domain="[('model_id.model', 'in', ['stock.picking', 'stock.move.line']), ('active', '=', True)]",
         help='Select the label template to use'
-    )
-    
-    move_ids = fields.Many2many(
-        comodel_name='stock.move',
-        string='Stock Moves',
-        required=False,
-        help='Select the stock moves to print labels for (only required for stock.move templates)'
     )
     
     move_line_ids = fields.Many2many(
@@ -49,6 +42,12 @@ class PrintPickingZplLabelWizard(models.TransientModel):
         string='Copies per Label',
         default=1,
         help='Number of copies to print for each label'
+    )
+    
+    print_exact_quantity = fields.Boolean(
+        string='Print Exact Quantity',
+        default=False,
+        help='Print exactly the number of copies specified, without multiplying by qty_done'
     )
     
     @api.depends('label_template_id')
@@ -74,16 +73,6 @@ class PrintPickingZplLabelWizard(models.TransientModel):
         
 
         
-        # Set default stock moves (if available and valid)
-        if self.env.context.get('default_move_ids'):
-            # Ensure the move IDs are valid
-            move_ids_data = self.env.context.get('default_move_ids')
-            if move_ids_data and move_ids_data[0] == 6:  # [(6, 0, [ids])]
-                move_ids = move_ids_data[2]
-                valid_move_ids = self.env['stock.move'].browse(move_ids).filtered(lambda m: m.exists()).ids
-                if valid_move_ids:
-                    result['move_ids'] = [(6, 0, valid_move_ids)]
-        
         # Set default stock move lines (if available and valid)
         if self.env.context.get('default_move_line_ids'):
             # Ensure the move line IDs are valid
@@ -100,10 +89,6 @@ class PrintPickingZplLabelWizard(models.TransientModel):
             picking = self.env['stock.picking'].browse(picking_id)
             if picking.exists():
                 result['picking_id'] = picking_id
-                # Automatically set stock moves from the picking
-                move_ids = picking.move_ids.filtered(lambda m: m.state != 'cancel').ids
-                if move_ids:
-                    result['move_ids'] = [(6, 0, move_ids)]
                 # Automatically set stock move lines from the picking
                 move_line_ids = picking.move_line_ids.filtered(lambda m: m.state != 'cancel').ids
                 if move_line_ids:
@@ -145,45 +130,6 @@ class PrintPickingZplLabelWizard(models.TransientModel):
                     self.picking_id.name
                 )
                 
-
-            
-            elif template_model == 'stock.move':
-                # Print move labels
-                if not self.move_ids:
-                    raise UserError(_("Please select at least one stock move to print when using stock.move template."))
-                
-                # Filter out any deleted or invalid move records
-                valid_moves = self.move_ids.filtered(lambda m: m.exists())
-                if not valid_moves:
-                    raise UserError(_("No valid stock moves found to print."))
-                
-                total_labels = 0
-                for move in valid_moves:
-                    # Calculate total copies: copies_per_label * move quantity
-                    # Get total done quantity from move lines
-                    total_done = sum(line.qty_done for line in move.move_line_ids if line.qty_done > 0)
-                    # Use total done quantity if available, otherwise use product_uom_qty
-                    move_quantity = total_done if total_done > 0 else move.product_uom_qty
-                    # Ensure move_quantity is at least 1
-                    move_quantity = max(1, move_quantity)
-                    total_copies = self.copies_per_label * int(move_quantity)
-                    _logger.info(f"Printing label for move {move.id}, product: {move.product_id.name}, quantity: {move_quantity}, copies per label: {self.copies_per_label}, total copies: {total_copies}")
-                    if total_copies > 0:
-                        # Print labels one by one to ensure correct quantity
-                        for i in range(total_copies):
-                            self.label_template_id.print_label(
-                                self.printer_id,
-                                move,
-                                copies=1
-                            )
-                            total_labels += 1
-                
-                # Show success message
-                message = _("Successfully printed %d label(s) for %d stock move(s).") % (
-                    total_labels,
-                    len(valid_moves)
-                )
-            
             elif template_model == 'stock.move.line':
                 # Print move line labels
                 if not self.move_line_ids:
@@ -196,13 +142,16 @@ class PrintPickingZplLabelWizard(models.TransientModel):
                 
                 total_labels = 0
                 for move_line in valid_move_lines:
-                    # Calculate total copies: copies_per_label * move line quantity
-                    # Use qty_done if available, otherwise use product_uom_qty
-                    line_quantity = move_line.qty_done if move_line.qty_done > 0 else move_line.product_uom_qty
-                    # Ensure line_quantity is at least 1
-                    line_quantity = max(1, line_quantity)
-                    total_copies = self.copies_per_label * int(line_quantity)
-                    _logger.info(f"Printing label for move line {move_line.id}, product: {move_line.product_id.name}, quantity: {line_quantity}, copies per label: {self.copies_per_label}, total copies: {total_copies}")
+                    # Calculate total copies
+                    if self.print_exact_quantity:
+                        # Print exactly the number of copies specified
+                        total_copies = self.copies_per_label
+                    else:
+                        # Calculate total copies: copies_per_label * move line quantity
+                        # Use qty_done if available and greater than 0, otherwise use 1
+                        line_quantity = move_line.qty_done if hasattr(move_line, 'qty_done') and move_line.qty_done > 0 else 1
+                        total_copies = self.copies_per_label * int(line_quantity)
+                    _logger.info(f"Printing label for move line {move_line.id}, product: {move_line.product_id.name}, copies per label: {self.copies_per_label}, total copies: {total_copies}, exact quantity: {self.print_exact_quantity}")
                     if total_copies > 0:
                         # Print labels one by one to ensure correct quantity
                         for i in range(total_copies):

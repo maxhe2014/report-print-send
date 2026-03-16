@@ -11,18 +11,10 @@ class StockPicking(models.Model):
         """Open ZPL label printing wizard for the current picking"""
         self.ensure_one()
         
-        # Get lots from the picking (if any)
-        lot_ids = self.move_line_ids.mapped('lot_id').ids
-        
-        # Open the wizard even if no lots found
-        # User can choose to print picking label or wait for lots to be available
+        # Open the wizard with the current picking
         context = {
             'default_picking_id': self.id,
-            'default_lot_ids': [(6, 0, lot_ids)] if lot_ids else False,
         }
-        
-        if lot_ids:
-            context['active_ids'] = lot_ids
         
         return {
             'type': 'ir.actions.act_window',

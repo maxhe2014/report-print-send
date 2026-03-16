@@ -13,14 +13,10 @@
                     <group>
                         <field name="label_template_id" required="1"/>
                         <field name="copies_per_label"/>
+                        <field name="print_exact_quantity"/>
                     </group>
                 </group>
                 
-                <field name="move_ids" 
-                       widget="many2many_tags" 
-                       options="{'no_create': True}"
-                       required="0"
-                       context="{'display_name': 'product_id.name'}"/>
                 <field name="move_line_ids" 
                        widget="many2many_tags" 
                        options="{'no_create': True}"

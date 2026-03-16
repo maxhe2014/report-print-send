@@ -1,6 +1,6 @@
 {
     'name': 'Stock Picking ZPL Label Print',
-    'version': '17.0.1.0.17',
+    'version': '17.0.1.0.23',
     'category': 'Inventory',
     'summary': 'ZPL Label Printing for Stock Pickings',
     'description': """
@@ -9,18 +9,16 @@
         
         Features:
         - ZPL label printing for Stock Pickings
-        - ZPL label printing for Stock Moves
+        - ZPL label printing for Stock Move Lines
         - ZPL label printing wizard with template selection
         - User default printing configuration
         - Print button on picking form view
-        - Print button on move form and tree views
     """,
     'depends': ['stock', 'printer_zpl2', 'mrp_zpl_label_print'],
     'data': [
         'security/ir.model.access.csv',
         'views/printing_label_zpl2_configuration.xml',
         'views/stock_picking_views.xml',
-        'views/stock_move_views.xml',
         'wizards/print_picking_zpl_label_wizard_views.xml',
     ],
     'i18n': [

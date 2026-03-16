@@ -82,27 +82,47 @@ msgid "Printer"
 msgstr "打印机"
 
 #. module: stock_picking_zpl_label_print
-#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__move_ids
-msgid "Stock Moves"
-msgstr "库存移动"
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__copies_per_label
+msgid "Copies per Label"
+msgstr "每张标签的份数"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,help:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__copies_per_label
+msgid "Number of copies to print for each label"
+msgstr "每张标签要打印的份数"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__move_line_ids
+msgid "Stock Move Lines"
+msgstr "库存移动行"
 
 #. module: stock_picking_zpl_label_print
 #: code:addons/stock_picking_zpl_label_print/wizards/print_picking_zpl_label_wizard.py:0
 #, python-format
-msgid "Please select at least one stock move to print when using stock.move template."
-msgstr "使用 stock.move 模板时，请至少选择一个库存移动进行打印。"
+msgid "Please select at least one stock move line to print when using stock.move.line template."
+msgstr "使用 stock.move.line 模板时，请至少选择一个库存移动行进行打印。"
 
 #. module: stock_picking_zpl_label_print
 #: code:addons/stock_picking_zpl_label_print/wizards/print_picking_zpl_label_wizard.py:0
 #, python-format
-msgid "No valid stock moves found to print."
-msgstr "未找到有效的库存移动进行打印。"
+msgid "No valid stock move lines found to print."
+msgstr "未找到有效的库存移动行进行打印。"
 
 #. module: stock_picking_zpl_label_print
 #: code:addons/stock_picking_zpl_label_print/wizards/print_picking_zpl_label_wizard.py:0
 #, python-format
-msgid "Successfully printed %d label(s) for %d stock move(s)."
-msgstr "已成功为 %d 个库存移动打印 %d 张标签。"
+msgid "Successfully printed %d label(s) for %d stock move line(s)."
+msgstr "已成功为 %d 个库存移动行打印 %d 张标签。"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__print_exact_quantity
+msgid "Print Exact Quantity"
+msgstr "按指定数量打印"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,help:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__print_exact_quantity
+msgid "Print exactly the number of copies specified, without multiplying by qty_done"
+msgstr "按指定的数量打印，不乘以 完成数量"
 
 #. module: stock_picking_zpl_label_print
 #: model:ir.actions.act_window,name:stock_picking_zpl_label_print.print_picking_zpl_label_wizard_action
@@ -130,8 +150,4 @@ msgstr "打印 ZPL 标签"
 msgid "Print ZPL"
 msgstr "打印 ZPL"
 
-#. module: stock_picking_zpl_label_print
-#: code:addons/stock_picking_zpl_label_print/models/stock_move.py:0
-#, python-format
-msgid "Please select at least one stock move to print."
-msgstr "请至少选择一个库存移动进行打印。"
+
