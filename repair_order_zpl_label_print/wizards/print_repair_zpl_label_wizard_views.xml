@@ -9,7 +9,6 @@
                     <field name="repair_id"/>
                     <field name="printer_id"/>
                     <field name="label_template_id"/>
-                    <field name="move_line_ids" widget="many2many_tags" context="{'form_view_ref': 'stock.view_move_line_form'}"/>
                     <field name="copies_per_label"/>
                     <field name="print_exact_quantity"/>
                 </group>

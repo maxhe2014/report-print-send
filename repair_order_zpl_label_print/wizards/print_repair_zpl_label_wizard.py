@@ -28,16 +28,11 @@ class PrintRepairZplLabelWizard(models.TransientModel):
         comodel_name='printing.label.zpl2',
         string='Label Template',
         required=True,
-        domain="[('model_id.model', 'in', ['repair.order', 'stock.move.line']), ('active', '=', True)]",
+        domain="[('model_id.model', '=', 'repair.order'), ('active', '=', True)]",
         help='Select the label template to use'
     )
     
-    move_line_ids = fields.Many2many(
-        comodel_name='stock.move.line',
-        string='Stock Move Lines',
-        required=False,
-        help='Select the stock move lines to print labels for (only required for stock.move.line templates)'
-    )
+
     
     copies_per_label = fields.Integer(
         string='Copies per Label',
@@ -72,31 +67,17 @@ class PrintRepairZplLabelWizard(models.TransientModel):
     def default_get(self, fields_list):
         result = super(PrintRepairZplLabelWizard, self).default_get(fields_list)
         
-        # Set default stock move lines (if available and valid)
-        if self.env.context.get('default_move_line_ids'):
-            # Ensure the move line IDs are valid
-            move_line_ids_data = self.env.context.get('default_move_line_ids')
-            if move_line_ids_data and move_line_ids_data[0] == 6:  # [(6, 0, [ids])]
-                move_line_ids = move_line_ids_data[2]
-                valid_move_line_ids = self.env['stock.move.line'].browse(move_line_ids).filtered(lambda m: m.exists()).ids
-                if valid_move_line_ids:
-                    result['move_line_ids'] = [(6, 0, valid_move_line_ids)]
-        
         # Set default repair order
         if self.env.context.get('default_repair_id'):
             repair_id = self.env.context.get('default_repair_id')
             repair = self.env['repair.order'].browse(repair_id)
             if repair.exists():
                 result['repair_id'] = repair_id
-                # Automatically set stock move lines from the repair order
-                move_line_ids = repair.move_line_ids.filtered(lambda m: m.state != 'cancel').ids
-                if move_line_ids:
-                    result['move_line_ids'] = [(6, 0, move_line_ids)]
         
         return result
     
     def action_print_labels(self):
-        """Print ZPL labels for the repair order or stock move lines"""
+        """Print ZPL labels for the repair order"""
         self.ensure_one()
         
         if not self.printer_id:
@@ -125,44 +106,6 @@ class PrintRepairZplLabelWizard(models.TransientModel):
                 message = _("Successfully printed %d label(s) for repair order %s.") % (
                     self.copies_per_label,
                     self.repair_id.name
-                )
-                
-            elif template_model == 'stock.move.line':
-                # Print move line labels
-                if not self.move_line_ids:
-                    raise UserError(_("Please select at least one stock move line to print when using stock.move.line template."))
-                
-                # Filter out any deleted or invalid move line records
-                valid_move_lines = self.move_line_ids.filtered(lambda m: m.exists())
-                if not valid_move_lines:
-                    raise UserError(_("No valid stock move lines found to print."))
-                
-                total_labels = 0
-                for move_line in valid_move_lines:
-                    # Calculate total copies
-                    if self.print_exact_quantity:
-                        # Print exactly the number of copies specified
-                        total_copies = self.copies_per_label
-                    else:
-                        # Calculate total copies: copies_per_label * move line quantity
-                        # Use qty_done if available and greater than 0, otherwise use 1
-                        line_quantity = move_line.qty_done if hasattr(move_line, 'qty_done') and move_line.qty_done > 0 else 1
-                        total_copies = self.copies_per_label * int(line_quantity)
-                    _logger.info(f"Printing label for move line {move_line.id}, product: {move_line.product_id.name}, copies per label: {self.copies_per_label}, total copies: {total_copies}, exact quantity: {self.print_exact_quantity}")
-                    if total_copies > 0:
-                        # Print labels one by one to ensure correct quantity
-                        for i in range(total_copies):
-                            self.label_template_id.print_label(
-                                self.printer_id,
-                                move_line,
-                                copies=1
-                            )
-                            total_labels += 1
-                
-                # Show success message
-                message = _("Successfully printed %d label(s) for %d stock move line(s).") % (
-                    total_labels,
-                    len(valid_move_lines)
                 )
             
             else:
