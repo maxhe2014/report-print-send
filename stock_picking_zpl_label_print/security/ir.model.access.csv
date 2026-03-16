@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_print_picking_zpl_label_wizard,print.picking.zpl.label.wizard,model_print_picking_zpl_label_wizard,base.group_user,1,1,1,0
+access_printing_label_zpl2_configuration,printing.label.zpl2.configuration,model_printing_label_zpl2_configuration,base.group_user,1,1,1,1

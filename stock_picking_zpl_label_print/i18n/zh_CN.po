@@ -1,0 +1,137 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#  * stock_picking_zpl_label_print
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-13 15:36+0000\n"
+"PO-Revision-Date: 2026-03-13 15:36+0000\n"
+"Last-Translator: \n"
+"Language-Team: Chinese (China)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model,name:stock_picking_zpl_label_print.model_printing_label_zpl2_configuration
+msgid "ZPL Label Printer Configuration"
+msgstr "ZPL 标签打印机配置"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_printing_label_zpl2_configuration__name
+msgid "Name"
+msgstr "名称"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_printing_label_zpl2_configuration__user_id
+msgid "User"
+msgstr "用户"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_printing_label_zpl2_configuration__label_id
+msgid "Label Template"
+msgstr "标签模板"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_printing_label_zpl2_configuration__printer_id
+msgid "Printer"
+msgstr "打印机"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.actions.act_window,name:stock_picking_zpl_label_print.printing_label_zpl2_configuration_action
+msgid "ZPL Label Printer Configurations"
+msgstr "ZPL 标签打印机配置"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.menu,name:stock_picking_zpl_label_print.printing_label_zpl2_configuration_menu
+msgid "ZPL Label Configurations"
+msgstr "ZPL 标签配置"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.printing_label_zpl2_configuration_view_form
+msgid "Copy"
+msgstr "复制"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.printing_label_zpl2_configuration_view_tree
+msgid "Delete"
+msgstr "删除"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.printing_label_zpl2_configuration_view_tree
+msgid "Are you sure you want to delete this configuration?"
+msgstr "确定要删除此配置吗？"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.printing_label_zpl2_configuration_view_search
+msgid "ZPL Label Configurations"
+msgstr "ZPL 标签配置"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__label_template_id
+msgid "Label Template"
+msgstr "标签模板"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__printer_id
+msgid "Printer"
+msgstr "打印机"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.model.fields,field_description:stock_picking_zpl_label_print.field_print_picking_zpl_label_wizard__move_ids
+msgid "Stock Moves"
+msgstr "库存移动"
+
+#. module: stock_picking_zpl_label_print
+#: code:addons/stock_picking_zpl_label_print/wizards/print_picking_zpl_label_wizard.py:0
+#, python-format
+msgid "Please select at least one stock move to print when using stock.move template."
+msgstr "使用 stock.move 模板时，请至少选择一个库存移动进行打印。"
+
+#. module: stock_picking_zpl_label_print
+#: code:addons/stock_picking_zpl_label_print/wizards/print_picking_zpl_label_wizard.py:0
+#, python-format
+msgid "No valid stock moves found to print."
+msgstr "未找到有效的库存移动进行打印。"
+
+#. module: stock_picking_zpl_label_print
+#: code:addons/stock_picking_zpl_label_print/wizards/print_picking_zpl_label_wizard.py:0
+#, python-format
+msgid "Successfully printed %d label(s) for %d stock move(s)."
+msgstr "已成功为 %d 个库存移动打印 %d 张标签。"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.actions.act_window,name:stock_picking_zpl_label_print.print_picking_zpl_label_wizard_action
+msgid "Print ZPL Labels"
+msgstr "打印 ZPL 标签"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.print_picking_zpl_label_wizard_form
+msgid "Print"
+msgstr "打印"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.stock_picking_view_form_inherit
+msgid "Print ZPL Label"
+msgstr "打印 ZPL 标签"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.view_move_form_inherit_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.view_move_tree_inherit_zpl_label_print
+msgid "Print ZPL Labels"
+msgstr "打印 ZPL 标签"
+
+#. module: stock_picking_zpl_label_print
+#: model:ir.ui.view,arch_db:stock_picking_zpl_label_print.view_move_tree_inherit_zpl_label_print
+msgid "Print ZPL"
+msgstr "打印 ZPL"
+
+#. module: stock_picking_zpl_label_print
+#: code:addons/stock_picking_zpl_label_print/models/stock_move.py:0
+#, python-format
+msgid "Please select at least one stock move to print."
+msgstr "请至少选择一个库存移动进行打印。"
