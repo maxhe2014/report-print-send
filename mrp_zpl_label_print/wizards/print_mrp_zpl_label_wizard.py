@@ -108,28 +108,52 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
         self.ensure_one()
         
         # Validate inputs
-        if not self.lot_ids:
-            raise ValidationError(_("Please select at least one lot/serial number to print."))
-        
         if not self.printer_id:
             raise ValidationError(_("No default printer configured. Please set up a default ZPL printer in your user preferences."))
             
         if not self.label_template_id:
             raise ValidationError(_("Please select a label template."))
         
-        # Use common print method
-        result = self._print_labels(
-            printer=self.printer_id,
-            label_template=self.label_template_id,
-            records=self.lot_ids,
-            copies_per_label=self.copies_per_label
-        )
+        # Direct printing without using the mixin method
+        success_count = 0
+        error_messages = []
+        
+        try:
+            copies_per_label = int(self.copies_per_label)
+            label_template_model = self.label_template_id.model_id.model
+            
+            if label_template_model == 'stock.lot':
+                # Print lots/serial numbers
+                if not self.lot_ids:
+                    raise ValidationError(_("Please select at least one lot/serial number to print."))
+                
+                for lot in self.lot_ids:
+                    try:
+                        for i in range(copies_per_label):
+                            self.label_template_id.print_label(self.printer_id, lot)
+                        success_count += 1
+                    except Exception as e:
+                        error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
+                        error_messages.append(error_message)
+            elif label_template_model == 'mrp.production':
+                # Print manufacturing order
+                try:
+                    for i in range(copies_per_label):
+                        self.label_template_id.print_label(self.printer_id, self.production_id)
+                    success_count += 1
+                except Exception as e:
+                    error_message = _('Failed to print label for manufacturing order %s: %s') % (self.production_id.name, str(e))
+                    error_messages.append(error_message)
+            else:
+                error_messages.append(_('Unsupported label template model: %s') % label_template_model)
+        except Exception as e:
+            error_messages.append(str(e))
         
         # Show result message
-        if result['success_count'] > 0:
-            message = _("Successfully printed %d labels") % result['success_count']
-            if result['error_messages']:
-                message += _(" but %d labels failed to print") % len(result['error_messages'])
+        if success_count > 0:
+            message = _("Successfully printed %d labels") % success_count
+            if error_messages:
+                message += _(" but %d labels failed to print") % len(error_messages)
             
             return {
                 'type': 'ir.actions.client',
@@ -138,11 +162,11 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
                     'title': _('Printing Result'),
                     'message': message,
                     'sticky': False,
-                    'type': 'success' if not result['error_messages'] else 'warning',
+                    'type': 'success' if not error_messages else 'warning',
                 }
             }
         else:
-            raise UserError(_("All labels failed to print. Please check printer configuration and network connection.\nError details: %s") % '\n'.join(result['error_messages']))
+            raise UserError(_("All labels failed to print. Please check printer configuration and network connection.\nError details: %s") % '\n'.join(error_messages))
         
         return {'type': 'ir.actions.act_window_close'}
 
