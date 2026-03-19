@@ -124,10 +124,13 @@ class MrpProduction(models.Model, BasePrintMixin):
         """Open ZPL label printing wizard for manufacturing orders"""
         self.ensure_one()
         
-        # Get lots from finished product move lines
-        lot_ids = self.move_finished_ids.mapped('move_line_ids.lot_id')
-        if not lot_ids:
-            raise UserError(_('No lots/serial numbers found for this manufacturing order.'))
+        # Get lots from all move lines (both raw materials and finished products)
+        # This allows printing labels even before the manufacturing order is completed
+        move_lines = self.move_raw_ids.mapped('move_line_ids') + self.move_finished_ids.mapped('move_line_ids')
+        lot_ids = move_lines.mapped('lot_id').filtered(lambda l: l)
+        
+        # Don't raise error if no lots found, as we can still print using mrp.production template
+        # The wizard will handle the case based on the selected template model
         
         # Open the ZPL label printing wizard
         return {
@@ -275,31 +278,46 @@ class MrpProduction(models.Model, BasePrintMixin):
         success_count = 0
         error_messages = []
         
+        # 批量生成ZPL数据
+        zpl_content = b""
+        
         if label_template_model == 'stock.lot':
-            # Print each lot record
+            # 批量生成标签数据
             for lot in lot_ids:
                 try:
                     for i in range(copies_per_label):
-                        label_template.print_label(printer, lot)
+                        # 生成单个标签的ZPL数据
+                        label_content = label_template._generate_zpl2_data(lot)
+                        zpl_content += label_content
                     success_count += 1
                 except Exception as e:
-                    error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
+                    error_message = _('Failed to generate label for lot %s: %s') % (lot.name, str(e))
                     error_messages.append(error_message)
                     _logger.error(error_message)
         elif label_template_model == 'mrp.production':
-            # Print the manufacturing order record itself
+            # 批量生成标签数据
             try:
                 for i in range(copies_per_label):
-                    label_template.print_label(printer, self)
+                    label_content = label_template._generate_zpl2_data(self)
+                    zpl_content += label_content
                 success_count += 1
             except Exception as e:
-                error_message = _('Failed to print label for manufacturing order %s: %s') % (self.name, str(e))
+                error_message = _('Failed to generate label for manufacturing order %s: %s') % (self.name, str(e))
                 error_messages.append(error_message)
                 _logger.error(error_message)
         else:
             error_message = _('Unsupported label template model: %s') % label_template_model
             error_messages.append(error_message)
             _logger.error(error_message)
+        
+        # 一次性发送所有标签
+        if zpl_content:
+            try:
+                printer.print_document(None, zpl_content, format='raw')
+            except Exception as e:
+                error_message = _('Failed to send print job: %s') % str(e)
+                error_messages.append(error_message)
+                _logger.error(error_message)
         
         # Show result notification
         message_parts = []

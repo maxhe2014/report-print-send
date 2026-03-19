@@ -44,8 +44,9 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     def _compute_available_lots(self):
         for wizard in self:
             if wizard.production_id:
-                # 一次性获取所有相关数据
-                move_lines = wizard.production_id.move_finished_ids.move_line_ids
+                # 一次性获取所有相关数据，包括原材料和成品的移动行
+                # 这样即使制造单未完成，只要有批次号就可以打印标签
+                move_lines = wizard.production_id.move_raw_ids.mapped('move_line_ids') + wizard.production_id.move_finished_ids.mapped('move_line_ids')
                 lot_ids = move_lines.mapped('lot_id').filtered(lambda l: l).ids
                 wizard.available_lot_ids = [(6, 0, lot_ids)]
                 # Set default lots if not set
@@ -114,7 +115,7 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
         if not self.label_template_id:
             raise ValidationError(_("Please select a label template."))
         
-        # Direct printing without using the mixin method
+        # Optimized printing with batch processing
         success_count = 0
         error_messages = []
         
@@ -127,20 +128,38 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
                 if not self.lot_ids:
                     raise ValidationError(_("Please select at least one lot/serial number to print."))
                 
+                # 批量生成ZPL数据
+                zpl_content = b""
                 for lot in self.lot_ids:
                     try:
                         for i in range(copies_per_label):
-                            self.label_template_id.print_label(self.printer_id, lot)
+                            # 生成单个标签的ZPL数据
+                            label_content = self.label_template_id._generate_zpl2_data(lot)
+                            zpl_content += label_content
                         success_count += 1
                     except Exception as e:
-                        error_message = _('Failed to print label for lot %s: %s') % (lot.name, str(e))
+                        error_message = _('Failed to generate label for lot %s: %s') % (lot.name, str(e))
                         error_messages.append(error_message)
+                
+                # 一次性发送所有标签
+                if zpl_content:
+                    try:
+                        self.printer_id.print_document(None, zpl_content, format='raw')
+                    except Exception as e:
+                        error_messages.append(_('Failed to send print job: %s') % str(e))
             elif label_template_model == 'mrp.production':
                 # Print manufacturing order
                 try:
+                    # 批量生成ZPL数据
+                    zpl_content = b""
                     for i in range(copies_per_label):
-                        self.label_template_id.print_label(self.printer_id, self.production_id)
-                    success_count += 1
+                        label_content = self.label_template_id._generate_zpl2_data(self.production_id)
+                        zpl_content += label_content
+                    
+                    # 一次性发送所有标签
+                    if zpl_content:
+                        self.printer_id.print_document(None, zpl_content, format='raw')
+                        success_count += 1
                 except Exception as e:
                     error_message = _('Failed to print label for manufacturing order %s: %s') % (self.production_id.name, str(e))
                     error_messages.append(error_message)
@@ -174,7 +193,9 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
         """Test print functionality"""
         self.ensure_one()
         
-        if not self.lot_ids:
+        # Check if we need lot_ids based on label template model
+        label_template_model = self.label_template_id.model_id.model
+        if label_template_model == 'stock.lot' and not self.lot_ids:
             raise ValidationError(_("Please select at least one lot to test print."))
         
         if not self.printer_id:
@@ -194,11 +215,18 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
             }
         
         try:
-            # Test print the first lot
-            test_lot = self.lot_ids[0]
+            # Create test content based on label template model
+            label_template_model = self.label_template_id.model_id.model
             
-            # Create test content
-            test_content = f"TEST PRINT - {test_lot.name}"
+            if label_template_model == 'stock.lot':
+                # Test print with lot
+                test_lot = self.lot_ids[0]
+                test_content = f"TEST PRINT - {test_lot.name}"
+                message = _('Test print sent to printer %s for lot %s') % (self.printer_id.name, test_lot.name)
+            else:
+                # Test print with manufacturing order
+                test_content = f"TEST PRINT - {self.production_id.name}"
+                message = _('Test print sent to printer %s for manufacturing order %s') % (self.printer_id.name, self.production_id.name)
             
             # Send test print
             self.printer_id.print_document(
@@ -213,7 +241,7 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Test Print'),
-                    'message': _('Test print sent to printer %s for lot %s') % (self.printer_id.name, test_lot.name),
+                    'message': message,
                     'sticky': False,
                     'type': 'success',
                 }

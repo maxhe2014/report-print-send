@@ -48,13 +48,24 @@ class BasePrintMixin(models.AbstractModel):
             # Ensure copies_per_label is an integer
             copies_per_label = int(copies_per_label)
             
+            # 批量生成ZPL数据
+            zpl_content = b""
             for record in records:
                 try:
                     for i in range(copies_per_label):
-                        label_template.print_label(printer, record)
+                        # 生成单个标签的ZPL数据
+                        label_content = label_template._generate_zpl2_data(record)
+                        zpl_content += label_content
                     success_count += 1
                 except Exception:
-                    error_messages.append(f"Failed to print label for {record._name} {record.name}")
+                    error_messages.append(f"Failed to generate label for {record._name} {record.name}")
+            
+            # 一次性发送所有标签
+            if zpl_content:
+                try:
+                    printer.print_document(None, zpl_content, format='raw')
+                except Exception:
+                    error_messages.append("Failed to send print job")
         except Exception:
             error_messages.append("Unexpected error during label printing")
         
