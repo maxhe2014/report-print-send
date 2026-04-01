@@ -25,10 +25,10 @@ class ProductTemplate(models.Model):
     def _check_zpl_copies_per_label(self):
         """Validate ZPL copies per label value
         
-        Ensures that the number of copies per label is between 1 and 500.
+        Ensures that the number of copies per label is between 1 and 6.
         """
         for record in self:
             # Allow empty value (None/False) to use user configuration
             if record.zpl_copies_per_label is not None and record.zpl_copies_per_label is not False:
-                if record.zpl_copies_per_label < 1 or record.zpl_copies_per_label > 500:
-                    raise ValidationError(_('ZPL copies per label must be between 1 and 500.'))
+                if record.zpl_copies_per_label < 1 or record.zpl_copies_per_label > 6:
+                    raise ValidationError(_('ZPL copies per label must be between 1 and 6.'))

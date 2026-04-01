@@ -29,8 +29,8 @@ class PrintMrpZplLabelWizard(models.TransientModel, BasePrintMixin):
     def _check_copies_per_label(self):
         """Validate copies per label value"""
         for record in self:
-            if record.copies_per_label < 1 or record.copies_per_label > 500:
-                raise ValidationError(_('Copies per label must be between 1 and 500.'))
+            if record.copies_per_label < 1 or record.copies_per_label > 6:
+                raise ValidationError(_('Copies per label must be between 1 and 6.'))
     
     @api.depends('label_template_id')
     def _compute_default_printer(self):

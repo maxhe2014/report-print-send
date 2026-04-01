@@ -37,6 +37,13 @@ class PrintZplLabelWizard(models.TransientModel, BasePrintMixin):
         help='Number of copies to print for each label'
     )
     
+    @api.constrains('copies_per_label')
+    def _check_copies_per_label(self):
+        """Validate copies per label value"""
+        for record in self:
+            if record.copies_per_label < 1 or record.copies_per_label > 6:
+                raise UserError(_('Copies per label must be between 1 and 6.'))
+    
     @api.model
     def default_get(self, fields_list):
         result = super(PrintZplLabelWizard, self).default_get(fields_list)
