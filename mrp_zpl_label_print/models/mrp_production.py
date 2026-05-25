@@ -2,12 +2,29 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from .base_print_mixin import BasePrintMixin
 import logging
+import time
 
 _logger = logging.getLogger(__name__)
 
 
 class MrpProduction(models.Model, BasePrintMixin):
     _inherit = 'mrp.production'
+    
+    # Class-level cache to track printed MOs across function calls
+    # Format: {mo_id: timestamp}
+    _zpl_printed_mo_cache = {}
+    # Cache cleanup threshold (seconds) - clean up entries older than 5 minutes
+    _ZPL_CACHE_CLEANUP_THRESHOLD = 300
+
+    def _cleanup_zpl_cache(self):
+        """Clean up old entries from the ZPL print cache"""
+        now = time.time()
+        expired_ids = [
+            mo_id for mo_id, timestamp in MrpProduction._zpl_printed_mo_cache.items()
+            if now - timestamp > MrpProduction._ZPL_CACHE_CLEANUP_THRESHOLD
+        ]
+        for mo_id in expired_ids:
+            del MrpProduction._zpl_printed_mo_cache[mo_id]
 
     def button_mark_done(self):
         """Override the mark as done button to automatically print labels with priority:
@@ -15,16 +32,31 @@ class MrpProduction(models.Model, BasePrintMixin):
         If either is missing, skip printing."""
         result = super().button_mark_done()
         
+        # Clean up cache periodically to prevent memory leaks
+        self._cleanup_zpl_cache()
+        
         # Handle batch operations by iterating through each manufacturing order
         for mo in self:
             try:
+                # Skip if already printed (using class-level cache to prevent duplicate printing)
+                if mo.id in MrpProduction._zpl_printed_mo_cache:
+                    _logger.info(f"[ZPL PRINT] MO {mo.name} - Skipping (already printed in this session)")
+                    continue
+                
                 # Re-fetch the manufacturing order to get the latest move_finished_ids
                 mo = self.env['mrp.production'].browse(mo.id)
                 
                 # Get lots from finished product move lines
                 lot_ids = mo.move_finished_ids.mapped('move_line_ids.lot_id')
-                if not lot_ids:
-                    continue
+                
+                # Remove duplicates - same lot may appear in multiple move lines
+                seen = set()
+                unique_lot_ids = []
+                for lot in lot_ids:
+                    if lot.id not in seen:
+                        seen.add(lot.id)
+                        unique_lot_ids.append(lot.id)
+                lot_ids = self.env['stock.lot'].browse(unique_lot_ids)
                 
                 # Check both configurations: product-level AND user-level
                 product_template = mo.product_id.product_tmpl_id
@@ -41,6 +73,9 @@ class MrpProduction(models.Model, BasePrintMixin):
                 # Both configurations are complete, proceed with printing
                 # Priority: Use product-level ZPL configuration
                 mo._print_labels_with_product_config(product_template, lot_ids)
+                
+                # Mark as printed in class-level cache with timestamp
+                MrpProduction._zpl_printed_mo_cache[mo.id] = time.time()
                     
             except Exception as e:
                 _logger.error(f"Automatic ZPL label printing failed (Manufacturing Order {mo.name}): {e}")
@@ -94,13 +129,16 @@ class MrpProduction(models.Model, BasePrintMixin):
             return
         
         # Determine copies per label: use product configuration if available, otherwise default to 1
-        # Multiply by production quantity
         base_copies = product_template.zpl_copies_per_label or 1
-        production_qty = self.product_qty
-        copies_per_label = int(base_copies * production_qty)
         
-        # Determine which records to print based on label template model
+        # Multiply by production quantity only for mrp.production template
+        # For stock.lot template, each lot represents one product unit, so no need to multiply
+        production_qty = self.product_qty
         label_template_model = label_template.model_id.model
+        if label_template_model == 'mrp.production':
+            copies_per_label = int(base_copies * production_qty)
+        else:
+            copies_per_label = int(base_copies)
         
         # Use common print method
         if label_template_model == 'stock.lot':
@@ -154,6 +192,16 @@ class MrpProduction(models.Model, BasePrintMixin):
         
         # Get lots from finished product move lines
         lot_ids = self.move_finished_ids.mapped('move_line_ids.lot_id')
+        
+        # Remove duplicates - same lot may appear in multiple move lines
+        seen = set()
+        unique_lot_ids = []
+        for lot in lot_ids:
+            if lot.id not in seen:
+                seen.add(lot.id)
+                unique_lot_ids.append(lot.id)
+        lot_ids = self.env['stock.lot'].browse(unique_lot_ids)
+        
         if not lot_ids:
             raise UserError(_('No lots/serial numbers found for this manufacturing order.'))
         
