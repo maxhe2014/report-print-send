@@ -9,10 +9,11 @@
     "author": "Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/report-print-send",
     "license": "AGPL-3",
-    "depends": ["printer_zpl2", "stock", "base_report_to_label_printer"],
+    "depends": ["printer_zpl2", "stock", "base_report_to_label_printer", "mrp"],
     "data": [
         "views/product_template_views.xml",
         "views/stock_picking_type_views.xml",
+        "views/mrp_stock_picking_type_views.xml",
     ],
     "installable": True,
 }

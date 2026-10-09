@@ -9,60 +9,56 @@
         <field name="model">stock.picking.type</field>
         <field name="inherit_id" ref="stock.view_picking_type_form" />
         <field name="arch" type="xml">
-            <!-- Add custom ZPL II label selector for Lot/SN Labels -->
+            <!-- Add custom ZPL II label selector for Lot/SN Labels (stacked rows, full width) -->
             <xpath
-                expr="//field[@name='lot_label_format']"
+                expr="//field[@name='lot_label_format']/.."
                 position="after"
             >
-                <label
-                    for="lot_zpl2_label_id"
-                    string="Custom ZPL Label:"
+                <div
+                    colspan="2"
+                    groups="stock.group_production_lot"
                     invisible="not auto_print_lot_labels"
-                    class="fw-bold"
-                />
-                <field
-                    name="lot_zpl2_label_id"
-                    invisible="not auto_print_lot_labels"
-                    options="{'no_create': True, 'no_create_edit': True}"
-                />
-                <label
-                    for="lot_zpl2_copies"
-                    string="Copies:"
-                    invisible="not auto_print_lot_labels"
-                    class="fw-bold"
-                />
-                <field
-                    name="lot_zpl2_copies"
-                    invisible="not auto_print_lot_labels"
-                />
+                >
+                    <div class="o_row">
+                        <label for="lot_zpl2_label_id" string="Custom ZPL Label:" class="fw-bold" style="min-width: 120px;"/>
+                        <field
+                            name="lot_zpl2_label_id"
+                            nolabel="1"
+                            options="{'no_create': True, 'no_create_edit': True}"
+                            style="flex: 1 1 auto;"
+                        />
+                    </div>
+                    <div class="o_row">
+                        <label for="lot_zpl2_copies" string="Copies:" class="fw-bold" style="min-width: 120px;"/>
+                        <field name="lot_zpl2_copies" nolabel="1" style="flex: 1 1 auto;"/>
+                    </div>
+                </div>
             </xpath>
 
-            <!-- Add custom ZPL II label selector for Package Label -->
+            <!-- Add custom ZPL II label selector for Package Label (stacked rows, full width) -->
             <xpath
-                expr="//field[@name='package_label_to_print']"
+                expr="//field[@name='package_label_to_print']/.."
                 position="after"
             >
-                <label
-                    for="package_zpl2_label_id"
-                    string="Custom ZPL Label:"
+                <div
+                    colspan="2"
+                    groups="stock.group_tracking_lot"
                     invisible="not auto_print_package_label"
-                    class="fw-bold"
-                />
-                <field
-                    name="package_zpl2_label_id"
-                    invisible="not auto_print_package_label"
-                    options="{'no_create': True, 'no_create_edit': True}"
-                />
-                <label
-                    for="package_zpl2_copies"
-                    string="Copies:"
-                    invisible="not auto_print_package_label"
-                    class="fw-bold"
-                />
-                <field
-                    name="package_zpl2_copies"
-                    invisible="not auto_print_package_label"
-                />
+                >
+                    <div class="o_row">
+                        <label for="package_zpl2_label_id" string="Custom ZPL Label:" class="fw-bold" style="min-width: 120px;"/>
+                        <field
+                            name="package_zpl2_label_id"
+                            nolabel="1"
+                            options="{'no_create': True, 'no_create_edit': True}"
+                            style="flex: 1 1 auto;"
+                        />
+                    </div>
+                    <div class="o_row">
+                        <label for="package_zpl2_copies" string="Copies:" class="fw-bold" style="min-width: 120px;"/>
+                        <field name="package_zpl2_copies" nolabel="1" style="flex: 1 1 auto;"/>
+                    </div>
+                </div>
             </xpath>
         </field>
     </record>

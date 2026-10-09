@@ -17,11 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_inherit_mrp_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_zpl2
 msgid "Copies:"
 msgstr "份数："
 
 #. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_inherit_mrp_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_zpl2
 msgid "Custom ZPL Label:"
 msgstr "自定义 ZPL 标签："
@@ -30,13 +32,18 @@ msgstr "自定义 ZPL 标签："
 #: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_label_id
 msgid ""
 "Default ZPL II label for lot/SN printing. Used when the product does not "
-"define its own ZPL label template."
-msgstr "批号/序列号打印的默认 ZPL II 标签。当产品未定义自身的 ZPL 标签模板时使用此标签。"
+"define its own ZPL label template. When a custom ZPL label is selected, the "
+"official IoT printing method is replaced by direct ZPL II printing to the "
+"configured printer."
+msgstr "批号/序列号打印的默认 ZPL II 标签。当产品未定义自身的 ZPL 标签模板时使用此标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
 
 #. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__package_zpl2_label_id
-msgid "Default ZPL II label for package printing."
-msgstr "包装打印的默认 ZPL II 标签。"
+msgid ""
+"Default ZPL II label for package printing. When a custom ZPL label is "
+"selected, the official IoT printing method is replaced by direct ZPL II "
+"printing to the configured printer."
+msgstr "包装打印的默认 ZPL II 标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
 
 #. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_copies
@@ -141,3 +148,55 @@ msgstr "ZPL 标签模板"
 #: code:addons/printer_zpl2_stock/models/product_template.py:0
 msgid "ZPL copies per label must be between 1 and 6."
 msgstr "ZPL 标签份数必须在 1 到 6 之间。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
+msgid "Done Lot Custom ZPL Label"
+msgstr "已完成批号自定义 ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
+msgid ""
+"Custom ZPL II label for lot/SN printing when a manufacturing order is done. "
+"Used when the product does not define its own ZPL label template. When a "
+"custom ZPL label is selected, the official IoT printing method is replaced by "
+"direct ZPL II printing to the configured printer."
+msgstr "制造订单完成时批号/序列号打印的自定义 ZPL II 标签。当产品未定义自身的 ZPL 标签模板时使用此标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
+msgid "Done Lot Label Copies"
+msgstr "已完成批号标签份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
+msgid "Default number of copies for done lot/SN labels."
+msgstr "已完成批号/序列号标签的默认打印份数。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
+msgid "Generated Lot Custom ZPL Label"
+msgstr "生成批号自定义 ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
+msgid ""
+"Custom ZPL II label for lot/SN printing when a new lot/SN is generated. When "
+"a custom ZPL label is selected, the official IoT printing method is replaced "
+"by direct ZPL II printing to the configured printer."
+msgstr "生成新批号/序列号时打印的自定义 ZPL II 标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
+msgid "Generated Lot Label Copies"
+msgstr "生成批号标签份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
+msgid "Default number of copies for generated lot/SN labels."
+msgstr "生成批号/序列号标签的默认打印份数。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model,name:printer_zpl2_stock.model_mrp_production
+msgid "Production Order"
+msgstr "生产订单"
