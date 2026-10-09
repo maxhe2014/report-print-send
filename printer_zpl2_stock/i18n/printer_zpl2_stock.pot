@@ -1,0 +1,142 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* printer_zpl2_stock
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-09 08:03+0000\n"
+"PO-Revision-Date: 2026-10-09 08:03+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_zpl2
+msgid "Copies:"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_zpl2
+msgid "Custom ZPL Label:"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_label_id
+msgid ""
+"Default ZPL II label for lot/SN printing. Used when the product does not "
+"define its own ZPL label template."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__package_zpl2_label_id
+msgid "Default ZPL II label for package printing."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_copies
+msgid "Default number of copies for lot/SN labels."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__package_zpl2_copies
+msgid "Default number of copies for package labels."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__display_name
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_move_line__display_name
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking__display_name
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__id
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_move_line__id
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking__id
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__id
+msgid "ID"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_copies
+msgid "Lot Label Copies"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_label_id
+msgid "Lot/SN Custom ZPL Label"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_copies_per_label
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_copies_per_label
+msgid "Number of copies to print for each label."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__package_zpl2_label_id
+msgid "Package Custom ZPL Label"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__package_zpl2_copies
+msgid "Package Label Copies"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model,name:printer_zpl2_stock.model_stock_picking_type
+msgid "Picking Type"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model,name:printer_zpl2_stock.model_product_template
+msgid "Product"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model,name:printer_zpl2_stock.model_stock_move_line
+msgid "Product Moves (Stock Move Line)"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_label_template_id
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_label_template_id
+msgid ""
+"Select the ZPL label template to use for this product. This template takes "
+"priority over the operation type's default ZPL label during automatic "
+"printing."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model,name:printer_zpl2_stock.model_stock_picking
+msgid "Transfer"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_copies_per_label
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_copies_per_label
+msgid "ZPL Copies per Label"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "ZPL Label Configuration"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_label_template_id
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_label_template_id
+msgid "ZPL Label Template"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/product_template.py:0
+msgid "ZPL copies per label must be between 1 and 6."
+msgstr ""
