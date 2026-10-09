@@ -49,6 +49,11 @@ class PrintingLabelZpl2(models.Model):
         default=480,
         help="Width of the label, will be set on the printer before printing.",
     )
+    darkness = fields.Integer(
+        string="Print Darkness",
+        default=0,
+        help="Control the print darkness from -30 (lightest) to 30 (darkest). 0 is the default value.",
+    )
     component_ids = fields.One2many(
         comodel_name="printing.label.zpl2.component",
         inverse_name="label_id",
@@ -227,6 +232,9 @@ class PrintingLabelZpl2(models.Model):
                         zpl2.ARG_BLOCK_LEFT_MARGIN,
                     ]
                 }
+                # Pass custom font name when font is Custom Font
+                if component.font == str(zpl2.FONT_CUSTOM) and component.custom_font_name:
+                    barcode_arguments["font_name"] = component.custom_font_name
                 label_data.font_data(
                     component_offset_x, component_offset_y, barcode_arguments, data
                 )
@@ -348,6 +356,9 @@ class PrintingLabelZpl2(models.Model):
             label_data.label_start()
             if not labelary_emul:
                 label_data.print_width(self.width)
+                # Set print darkness if not zero
+                if self.darkness != 0:
+                    label_data._write_command(f"^MD{self.darkness}")
             label_data.label_encoding()
 
             label_data.label_home(self.origin_x, self.origin_y)

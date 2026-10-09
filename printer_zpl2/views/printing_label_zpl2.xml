@@ -54,6 +54,7 @@
                         <field name="model_id" />
                         <field name="description" />
                         <field name="width" />
+                        <field name="darkness" />
                         <field name="origin_x" />
                         <field name="origin_y" />
                         <field name="restore_saved_config" />
@@ -170,6 +171,10 @@
                                                 <field
                                                     name="font"
                                                     invisible="component_type != 'text'"
+                                                />
+                                                <field
+                                                    name="custom_font_name"
+                                                    invisible="component_type != 'text' or font != '@'"
                                                 />
                                                 <field
                                                     name="in_block"
