@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Copyright 2026
+    License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+    <record id="view_product_template_form_zpl2" model="ir.ui.view">
+        <field name="name">product.template.form.zpl2</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//page[@name='general_information']/group/group[@name='group_standard_price']"
+                position="after"
+            >
+                <group string="ZPL Label Configuration" name="zpl_label_config" invisible="type not in ('consu', 'product')">
+                    <field name="zpl_label_template_id" options="{'no_create': True, 'no_create_edit': True}" />
+                    <field name="zpl_copies_per_label" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
