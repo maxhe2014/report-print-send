@@ -200,3 +200,49 @@ msgstr "生成批号/序列号标签的默认打印份数。"
 #: model:ir.model,name:printer_zpl2_stock.model_mrp_production
 msgid "Production Order"
 msgstr "生产订单"
+
+#. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/stock_picking_type.py:0
+msgid "%(field)s must be between 1 and 10."
+msgstr "%(field)s 必须在 1 到 10 之间。"
+
+#. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
+#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
+#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
+msgid ""
+"Default label printer is not configured.\n"
+"Please set it in Preferences → Default Label Printer before continuing."
+msgstr ""
+"默认标签打印机未配置。\n"
+"请在「首选项 → 默认标签打印机」中设置后再继续。"
+
+#. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
+#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
+#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
+msgid ""
+"Default label printer '%(printer)s' is not available (status: %(status)s).\n"
+"Please check the printer connection or change the default printer."
+msgstr ""
+"默认标签打印机「%(printer)s」当前不可用（状态：%(status)s）。\n"
+"请检查打印机连接或更换默认打印机。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_no_print
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_no_print
+msgid "No Print ZPL Label"
+msgstr "不打印 ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_no_print
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_no_print
+msgid ""
+"When checked, lot/SN labels for this product are skipped during automatic "
+"printing (both ZPL and standard flows)."
+msgstr ""
+"勾选后，该产品的批次/序列号标签在自动打印时将被跳过"
+"（ZPL 和标准流程均跳过）。"

@@ -1,7 +1,8 @@
 # Copyright (C) 2026
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class StockPickingType(models.Model):
@@ -75,3 +76,24 @@ class StockPickingType(models.Model):
         default=1,
         help="Default number of copies for generated lot/SN labels.",
     )
+
+    @api.constrains(
+        "lot_zpl2_copies",
+        "package_zpl2_copies",
+        "done_mrp_lot_zpl2_copies",
+        "generated_mrp_lot_zpl2_copies",
+    )
+    def _check_zpl2_copies(self):
+        for record in self:
+            for field_name in [
+                "lot_zpl2_copies",
+                "package_zpl2_copies",
+                "done_mrp_lot_zpl2_copies",
+                "generated_mrp_lot_zpl2_copies",
+            ]:
+                value = record[field_name]
+                if value is not None and value is not False:
+                    if value < 1 or value > 10:
+                        raise ValidationError(
+                            _("%(field)s must be between 1 and 10.", field=record._fields[field_name].string)
+                        )

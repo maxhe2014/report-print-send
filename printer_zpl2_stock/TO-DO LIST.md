@@ -1,149 +1,192 @@
-# printer_zpl2_stock — 实现方案与 TO-DO LIST
+# printer_zpl2_stock — 第二阶段改动方案与 TO-DO LIST
 
-> 模块：`printer_zpl2_stock`（桥接 `printer_zpl2` 与 `stock`）
-> 参考：`/run/media/max/DATA1/projects/odoo-dev/17.0/addons/report-print-send/mrp_zpl_label_print`
-
----
-
-## 一、需求概述
-
-在 Odoo 19 库存模块中，让用户能为**批号/序号标签**和**包装标签**选择自定义 ZPL II 标签模板并自动打印。支持三级配置优先级：产品级 > 作业类型级 > 系统默认，打印机取自用户首选项。
+> 模块：`printer_zpl2_stock`
+> 阶段：第二阶段（打印机选择强制化 + 产品免打印标记 + 标准批次过滤）
 
 ---
 
-## 二、配置界面设计
+## 一、本次改动目标
 
-### 2.1 用户首选项 — 默认标签打印机（复用现有字段，不新增）
-
-**位置**：设置 → 用户与公司 → 用户 → 偏好（Preferences）页签 → Printing 组
-
-**复用字段**：`default_label_printer_id`（由 `base_report_to_label_printer` 模块提供，string="Default Label Printer"）
-
-> 本模块**不新增**任何用户字段。直接使用用户首选项中已有的 "Default Label Printer"（`default_label_printer_id`）作为 ZPL 标签打印的默认打印机。该字段已由 `base_report_to_label_printer` 加入 `SELF_READABLE_FIELDS` / `SELF_WRITEABLE_FIELDS`，用户可自行配置。
->
-> **依赖说明**：`printer_zpl2_stock` 的 `__manifest__.py` 需添加 `base_report_to_label_printer` 到 `depends`（该模块依赖 `base_report_to_printer`，而 `printer_zpl2` 已依赖 `base_report_to_printer_cups` → `base_report_to_printer`，不会产生循环依赖）。
-
-### 2.2 产品 — ZPL 标签模板与份数
-
-**位置**：产品 → 常规信息（General Information）页签
-
-**字段**：
-
-| 字段 | 类型 | domain / 约束 | 说明 |
-|------|------|---------------|------|
-| `zpl_label_template_id` | Many2one → `printing.label.zpl2` | `[('model_id.model', 'in', ['stock.lot', 'stock.package'])]` | 产品专属 ZPL 标签模板，优先级最高 |
-| `zpl_copies_per_label` | Integer | 1 ~ 6，default=1 | 每个标签打印份数 |
-
-**视图锚点**：`product.product_template_form_view` 的 `<page name="general_information">` 内，在 `group_standard_price` 之后追加 "ZPL Label Configuration" 组（仅 `type == 'product'` 时可见）。
-
-### 2.3 作业类型 — Hardware 页签默认配置
-
-**位置**：库存 → 作业类型 → Hardware 页签
-
-**字段**（追加到现有 Lot/SN Labels 和 Package Label 行）：
-
-| 字段 | 类型 | domain | 说明 |
-|------|------|--------|------|
-| `lot_zpl2_label_id` | Many2one → `printing.label.zpl2` | `[('model_id.model', '=', 'stock.lot')]` | 批号/序号默认标签模板（产品级未配置时使用） |
-| `lot_zpl2_copies` | Integer | default=1 | 批号标签默认份数 |
-| `package_zpl2_label_id` | Many2one → `printing.label.zpl2` | `[('model_id.model', '=', 'stock.package')]` | 包装默认标签模板 |
-| `package_zpl2_copies` | Integer | default=1 | 包装标签默认份数 |
-
-**UI 布局**（在 `lot_label_format` 和 `package_label_to_print` 字段之后追加）：
-
-```
-[✓] Lot/SN Labels   Print label as: [4x12 Lots ▾]   Custom ZPL Label: [选择 ▾]   Copies: [1]
-[✓] Package Label   Print label as: [PDF ▾]          Custom ZPL Label: [选择 ▾]   Copies: [1]
-```
-
-显隐：与 `auto_print_lot_labels` / `auto_print_package_label` 联动。
+1. **打印机选择强制化**：取消 `label.printer_id` 和首个 active 打印机的回退，只允许使用用户默认标签打印机；未配置或不可用时抛 `UserError` 阻止验证。
+2. **产品免打印标记**：新增 `zpl_no_print` 字段，勾选后该产品的批次/序列号在自动打印时跳过。
+3. **标准批次标签一并过滤**：`zpl_no_print` 同时作用于标准（非 ZPL）批次标签流程。
+4. **保留错误提示区分**：未配置 vs 不可用（离线）两种消息。
 
 ---
 
-## 三、优先级逻辑
+## 二、打印机选择逻辑（改动后）
 
-### 3.1 标签模板选择
-
-| 场景 | 优先级 | 来源 |
-|------|--------|------|
-| 批号标签 | 1（最高） | `lot.product_id.product_tmpl_id.zpl_label_template_id` |
-|          | 2 | `picking_type.lot_zpl2_label_id` |
-|          | 3（最低） | 走标准 QWeb 流程（不使用自定义 ZPL） |
-| 包装标签 | 1 | `picking_type.package_zpl2_label_id`（包装可能含多产品，取作业类型默认） |
-|          | 2 | 走标准 QWeb 流程 |
-
-> 批号标签按 lot 逐个解析：每个 lot 先看其产品是否配置了专属模板，没有再回退到作业类型默认。
-
-### 3.2 打印机选择
+### 2.1 改动前（3 级优先级）
 
 | 优先级 | 来源 | 条件 |
 |--------|------|------|
-| 1 | `env.user.default_label_printer_id` | 在线（status='online'） |
-| 2 | `label.printer_id` | 标签模板自身配置的打印机 |
+| 1 | `env.user.default_label_printer_id` | status == 'available' |
+| 2 | `label.printer_id` | 标签模板自身配置 |
 | 3 | 第一个 active 打印机 | — |
-| 4 | 无 | 记 warning 日志，跳过打印 |
+| 4 | 无 | 记 warning，跳过 |
 
-### 3.3 打印份数
+### 2.2 改动后（仅用户默认打印机）
 
-| 场景 | 优先级 | 来源 |
-|------|--------|------|
-| 批号标签 | 1 | `lot.product_id.product_tmpl_id.zpl_copies_per_label`（>0 时） |
-|          | 2 | `picking_type.lot_zpl2_copies` |
-|          | 3 | 1 |
-| 包装标签 | 1 | `picking_type.package_zpl2_copies` |
-|          | 2 | 1 |
+```python
+def _get_zpl_printer(self):
+    self.ensure_one()
+    user = self.env.user
+    printer = user.default_label_printer_id
+    if not printer:
+        raise UserError(_(
+            "用户默认打印机未配置。\n"
+            "请在「用户首选项 → 默认标签打印机」中设置后再继续。"
+        ))
+    if printer.status != "available":
+        status_label = dict(printer._fields["status"].selection).get(
+            printer.status, printer.status
+        )
+        raise UserError(_(
+            "用户默认打印机「%(printer)s」当前不可用（状态：%(status)s）。\n"
+            "请检查打印机连接或更换默认打印机。",
+            printer=printer.name,
+            status=status_label,
+        ))
+    return printer
+```
+
+- 移除 `label` 参数
+- 无回退，直接抛异常阻止操作
+- 若该操作类型未配置任何 ZPL 标签 → 不触发打印机检查，不影响验证
+
+### 2.3 阻止验证的场景
+
+| 场景 | 触发方法 | 无打印机时 |
+|------|----------|------------|
+| 收/发货批次标签 | `stock.picking._get_autoprint_report_actions` | ❌ 阻止 `button_validate` |
+| 生产工单/完成批次 | `mrp.production._get_autoprint_report_actions` | ❌ 阻止 `button_mark_done` |
+| 生成批次（单个） | `mrp.production._autoprint_generated_lot` | ❌ 阻止生成 |
+| 生成批次（批量） | `mrp.production._autoprint_mass_generated_lots` | ❌ 阻止生成 |
+| 装箱打包标签 | `stock.move.line._post_put_in_pack_hook` | ❌ 阻止打包 |
 
 ---
 
-## 四、打印流程实现原理
+## 三、产品免打印标记（zpl_no_print）
 
-### 4.1 批号标签（拣货单验证时自动打印）
+### 3.1 新增字段
 
-**入口**：重写 `stock.picking._get_autoprint_report_actions()`
+`product.template`：
 
-**流程**：
-1. 筛选 `auto_print_lot_labels=True` 且有 `lot_id` 的拣货单
-2. 按 lot 分组，对每个 lot 解析模板和份数：
-   - 模板 = 产品级模板 or 作业类型默认模板
-   - 若两者都无 → 归入"标准流程"（走 `lot.label.layout` wizard）
-3. 对有自定义模板的 lot：
-   - 解析打印机（按 3.2 优先级）
-   - 批量生成 ZPL 内容（`for _ in range(copies): zpl += label._generate_zpl2_data(lot)`）
-   - 一次 `printer.print_document(report=None, content=zpl, doc_format='raw')` 发送
-4. 标准流程的拣货单走原有 `lot.label.layout` wizard，返回 report action
+```python
+zpl_no_print = fields.Boolean(
+    string="不打印 ZPL 标签",
+    help="勾选后，该产品的批次/序列号在自动打印时将跳过标签打印（ZPL 与标准流程均跳过）。",
+)
+```
 
-**容错**：每个 lot 的打印用 `try/except` 包裹，失败记日志不阻断验证。
+### 3.2 生效逻辑
 
-### 4.2 包装标签（"Put in Pack" 时自动打印）
+**ZPL 流程**：
 
-**入口**：重写 `stock.move.line._post_put_in_pack_hook(package)`
+| 位置 | 改动 |
+|------|------|
+| `stock.picking._resolve_lot_label` | `if product.zpl_no_print: return False, 0` |
+| `mrp.production._resolve_lot_label` | `if product.zpl_no_print: return False, 0` |
+| `mrp.production._autoprint_generated_lot` | `if pt.zpl_no_print: return None`（不走 `super()` 标准流程） |
 
-**流程**：
-1. 若 `picking_type.package_zpl2_label_id` 已设置：
-   - 解析打印机
-   - 生成 ZPL 内容（循环 `package_zpl2_copies` 次）
-   - 发送打印
-   - 返回 `package`（不走标准 report action）
-2. 否则 → `super()` 走原有 PDF / 标准 ZPL 流程
+**标准流程**（lot.label.layout wizard）：
+
+| 位置 | 改动 |
+|------|------|
+| `stock.picking._get_autoprint_report_actions` 标准批次分支 | 传入 wizard 的 `move_line_ids` 过滤掉 `product_id.product_tmpl_id.zpl_no_print == True` 的行 |
+| `mrp.production._get_autoprint_report_actions` 标准批次分支 | 同上，过滤 `move_finished_ids.move_line_ids` |
+| `mrp.production._autoprint_mass_generated_lots` 标准分支 | 过滤 `lot_producing_ids` 中 `zpl_no_print` 的批次 |
+
+### 3.3 视图
+
+`views/product_template_views.xml` 的 "ZPL Label Configuration" 组中追加：
+
+```xml
+<field name="zpl_no_print" />
+```
+
+### 3.4 边界行为
+
+- 单据中产品 A（需打印）+ 产品 B（勾选不打印）：仅打印 A 的标签
+- 全部产品勾选不打印：不打印、不检查打印机、不报错
+- 装箱标签（package 级）不受 `zpl_no_print` 影响
 
 ---
 
-## 五、模块文件结构
+## 四、批次标签打印数量（Copies）逻辑整理
+
+### 4.1 份数配置字段总览
+
+| 字段 | 所属模型 | 默认值 | 约束 | 说明 |
+|------|----------|--------|------|------|
+| `zpl_copies_per_label` | `product.template` | 1 | 1 ~ 6（`@api.constrains`） | 产品级每份标签打印份数，优先级最高 |
+| `lot_zpl2_copies` | `stock.picking.type` | 1 | 无约束 | 收/发货批号标签默认份数 |
+| `package_zpl2_copies` | `stock.picking.type` | 1 | 无约束 | 包装标签默认份数 |
+| `done_mrp_lot_zpl2_copies` | `stock.picking.type` | 1 | 无约束 | 生产完成批号标签默认份数 |
+| `generated_mrp_lot_zpl2_copies` | `stock.picking.type` | 1 | 无约束 | 生产生成批号标签默认份数 |
+
+> ⚠️ **当前差异**：产品级 `zpl_copies_per_label` 有 1~6 约束，但作业类型级的 4 个 `*_copies` 字段**无约束**，可填 0 或负数。`zpl_no_print` 改动时建议统一加约束（1 ~ 10），避免 0 份或负数导致 `range(0)` 不打印或 `range(-1)` 报错。
+
+### 4.2 份数解析优先级
+
+**批号标签（收/发货、生产完成、生产生成）**：
 
 ```
-printer_zpl2_stock/
-├── __manifest__.py                    # depends: printer_zpl2, stock, base_report_to_label_printer
-├── __init__.py
-├── models/
-│   ├── __init__.py
-│   ├── product_template.py            # zpl_label_template_id, zpl_copies_per_label
-│   ├── stock_picking_type.py          # lot/package_zpl2_label_id, *_copies
-│   ├── stock_picking.py               # 重写 _get_autoprint_report_actions
-│   └── stock_move_line.py             # 重写 _post_put_in_pack_hook
-└── views/
-    ├── product_template_views.xml     # 产品 ZPL 配置
-    └── stock_picking_type_views.xml   # 作业类型 Hardware 页签
+copies = 1
+if product.zpl_copies_per_label > 0:
+    copies = product.zpl_copies_per_label      # 优先级 1：产品级
+elif picking_type.<场景>_zpl2_copies > 0:
+    copies = picking_type.<场景>_zpl2_copies    # 优先级 2：作业类型级
+# 否则 copies = 1
 ```
+
+**包装标签**（无产品级配置，包装可能含多产品）：
+
+```
+copies = picking_type.package_zpl2_copies or 1   # 仅作业类型级
+```
+
+### 4.3 各场景对应字段
+
+| 场景 | label 字段 | copies 字段（作业类型级） |
+|------|-----------|--------------------------|
+| 收/发货批号 | `lot_zpl2_label_id` | `lot_zpl2_copies` |
+| 生产完成批号 | `done_mrp_lot_zpl2_label_id` | `done_mrp_lot_zpl2_copies` |
+| 生产生成批号 | `generated_mrp_lot_zpl2_label_id` | `generated_mrp_lot_zpl2_copies` |
+| 包装 | `package_zpl2_label_id` | `package_zpl2_copies` |
+
+### 4.4 打印执行方式
+
+ZPL 内容按份数循环拼接后**一次性**发送：
+
+```python
+zpl_content = b""
+for _ in range(int(copies)):
+    zpl_content += label._generate_zpl2_data(record)
+printer.print_document(report=None, content=zpl_content, doc_format="raw")
+```
+
+> 即：N 份 = N 个 `^XA...^XZ` 块拼接为单次打印任务。
+
+### 4.5 本次改动对份数逻辑的影响
+
+`zpl_no_print` 不改动份数解析，仅在模板解析阶段返回 `(False, 0)` 跳过该产品。份数逻辑保持不变。
+
+**可选优化**（本次一并处理）：为作业类型级 4 个 `*_copies` 字段增加 `@api.constrains`，约束 1 ~ 10，与产品级保持一致。
+
+---
+
+## 五、涉及修改的文件清单
+
+| 文件 | 改动内容 |
+|------|----------|
+| `models/stock_picking.py` | `_get_zpl_printer` 简化抛错；`_resolve_lot_label` 加 `zpl_no_print` 判断；标准批次流程过滤 `zpl_no_print` 行；删除 `if not printer` 防御块 |
+| `models/mrp_production.py` | `_get_zpl_printer` 简化抛错；`_resolve_lot_label` 加 `zpl_no_print` 判断；`_autoprint_generated_lot` 加 `zpl_no_print` 判断；标准批次/生成流程过滤；删除 `if not printer` 防御块 |
+| `models/stock_move_line.py` | `_get_zpl_printer` 简化抛错；删除 `if not printer` 防御块 |
+| `models/product_template.py` | 新增 `zpl_no_print` 字段 |
+| `models/stock_picking_type.py` | 4 个 `*_copies` 字段加 `@api.constrains`（1~10） |
+| `views/product_template_views.xml` | 追加 `zpl_no_print` 字段 |
+| `i18n/zh_CN.po` / `.pot` | 新增翻译条目 |
 
 ---
 
@@ -151,28 +194,20 @@ printer_zpl2_stock/
 
 | # | 任务 | 涉及文件 | 状态 |
 |---|------|---------|------|
-| 1 | 创建 `models/product_template.py`：`zpl_label_template_id` + `zpl_copies_per_label` + 约束 | `models/product_template.py` | ✅ 已完成 |
-| 2 | 创建 `models/stock_picking_type.py`：4 个字段（2 模板 + 2 份数） | `models/stock_picking_type.py` | ✅ 已完成 |
-| 3 | 创建 `models/stock_picking.py`：重写 `_get_autoprint_report_actions`（批号标签三级优先级 + 批量打印） | `models/stock_picking.py` | ✅ 已完成 |
-| 4 | 创建 `models/stock_move_line.py`：重写 `_post_put_in_pack_hook`（包装标签） | `models/stock_move_line.py` | ✅ 已完成 |
-| 5 | 创建 `views/product_template_views.xml`：产品常规信息追加 ZPL 配置组 | `views/product_template_views.xml` | ✅ 已完成 |
-| 6 | 创建 `views/stock_picking_type_views.xml`：Hardware 页签追加字段 | `views/stock_picking_type_views.xml` | ✅ 已完成 |
-| 7 | 更新 `__manifest__.py`：depends 加 `base_report_to_label_printer`，data 列表加视图；`models/__init__.py` 加 product_template 导入 | `__manifest__.py`, `models/__init__.py` | ✅ 已完成 |
-| 8 | 安装模块 `-i printer_zpl2_stock`，验证无报错 | — | ✅ 已完成 |
-| 9 | 验证 UI：产品 / 作业类型 字段正确显示 | — | ✅ 已完成（shell 验证字段注册） |
-| 10 | 验证批号标签打印：产品级模板优先 > 作业类型默认 > 标准流程 | — | ✅ 已完成（shell 验证） |
-| 11 | 验证包装标签打印：自定义模板 vs 标准流程切换 | — | ✅ 已完成（shell 验证） |
-| 12 | 验证打印机优先级：用户 Default Label Printer (`default_label_printer_id`) > 标签打印机 > 首个活跃打印机 | — | ✅ 已完成（shell 验证） |
-
----
-
-## 七、关键避坑（参考 lessons_learned.md）
-
-1. **xpath 锚点用 `@name` 不用 `@string`**：视图继承一律 `//field[@name='xxx']` / `//group[@name='xxx']`
-2. **Owl QWeb 用 JS 运算符**：`!` / `&&` / `||`，XML 中 `&&` 转义为 `&amp;&amp;`；但 field domain 属 Python 域语法，可用 `not`
-3. **`clean_action` 导入**：`from odoo.addons.web.controllers.utils import clean_action`
-4. **XML 修改必须 `-u` 升级**：`dev_mode=reload` 只热更 Python
-5. **Odoo 19 包装模型名**：`stock.package`（非旧版 `stock.quant.package`）
-6. **`print_label` 内部校验模型**：`record._name == label.model_id.model`，domain 必须保证一致
-7. **复用现有标签打印机字段**：不新增用户打印机字段，直接用 `base_report_to_label_printer` 的 `default_label_printer_id`（用户首选项 "Default Label Printer"），其已加入 `SELF_READABLE_FIELDS` / `SELF_WRITEABLE_FIELDS`；需在 `__manifest__.py` 的 `depends` 中添加 `base_report_to_label_printer`
-8. **批量打印性能**：多个 label 的 ZPL 内容拼接后一次 `print_document` 发送，而非逐个调用
+| 1 | `stock_picking.py`：`_get_zpl_printer` 改为仅用户默认打印机，未配置/不可用抛 `UserError` | `models/stock_picking.py` | ✅ 已完成 |
+| 2 | `mrp_production.py`：同上 | `models/mrp_production.py` | ✅ 已完成 |
+| 3 | `stock_move_line.py`：同上 | `models/stock_move_line.py` | ✅ 已完成 |
+| 4 | 清理所有调用处的 `if not printer: ... continue/return` 防御代码 | 3 个 models 文件 | ✅ 已完成 |
+| 5 | `product_template.py`：新增 `zpl_no_print` 字段 | `models/product_template.py` | ✅ 已完成 |
+| 6 | `stock_picking.py` `_resolve_lot_label`：`zpl_no_print` 返回 `(False, 0)` | `models/stock_picking.py` | ✅ 已完成 |
+| 7 | `mrp_production.py` `_resolve_lot_label` + `_autoprint_generated_lot`：`zpl_no_print` 跳过 | `models/mrp_production.py` | ✅ 已完成 |
+| 8 | 标准批次流程过滤 `zpl_no_print` 的产品行（stock.picking + mrp.production） | 2 个 models 文件 | ✅ 已完成 |
+| 9 | `stock_picking_type.py`：4 个 `*_copies` 加 `@api.constrains`（1~10） | `models/stock_picking_type.py` | ✅ 已完成 |
+| 10 | `product_template_views.xml`：追加 `zpl_no_print` 字段 | `views/product_template_views.xml` | ✅ 已完成 |
+| 11 | 更新 `.pot` / `zh_CN.po` 翻译 | `i18n/` | ✅ 已完成 |
+| 12 | `-u printer_zpl2_stock` 升级模块 | — | ✅ 已完成 |
+| 13 | 验证：无默认打印机时阻止验证并提示 | — | ✅ 已完成 |
+| 14 | 验证：默认打印机离线时阻止验证并提示 | — | ✅ 已完成 |
+| 15 | 验证：`zpl_no_print` 产品批次跳过 ZPL 打印 | — | ✅ 已完成 |
+| 16 | 验证：`zpl_no_print` 产品批次跳过标准流程打印 | — | ✅ 已完成 |
+| 17 | 验证：`*_copies` 约束 1~10 生效 | — | ✅ 已完成 |

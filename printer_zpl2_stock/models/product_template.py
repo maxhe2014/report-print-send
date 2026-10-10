@@ -23,6 +23,10 @@ class ProductTemplate(models.Model):
         default=1,
         help="Number of copies to print for each label.",
     )
+    zpl_no_print = fields.Boolean(
+        string="No Print ZPL Label",
+        help="When checked, lot/SN labels for this product are skipped during automatic printing (both ZPL and standard flows).",
+    )
 
     @api.constrains("zpl_copies_per_label")
     def _check_zpl_copies_per_label(self):

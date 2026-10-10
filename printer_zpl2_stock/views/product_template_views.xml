@@ -16,6 +16,7 @@
                 <group string="ZPL Label Configuration" name="zpl_label_config" invisible="type not in ('consu', 'product')">
                     <field name="zpl_label_template_id" options="{'no_create': True, 'no_create_edit': True}" />
                     <field name="zpl_copies_per_label" />
+                    <field name="zpl_no_print" />
                 </group>
             </xpath>
         </field>

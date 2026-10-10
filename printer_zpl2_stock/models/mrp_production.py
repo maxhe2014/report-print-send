@@ -4,7 +4,8 @@
 import logging
 import math
 
-from odoo import models
+from odoo import _, models
+from odoo.exceptions import UserError
 
 from odoo.addons.web.controllers.utils import clean_action
 
@@ -14,25 +15,32 @@ _logger = logging.getLogger(__name__)
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    def _get_zpl_printer(self, label=False):
-        """Resolve the printer for ZPL label printing.
+    def _get_zpl_printer(self):
+        """Return the user's default label printer or raise UserError.
 
-        Priority:
-            1. User's Default Label Printer (online)
-            2. Label template's own printer
-            3. First active printer
-            4. None
+        Only the user's default label printer is used. If it is not
+        configured or not available, a UserError is raised to block the
+        validation.
         """
         self.ensure_one()
         user = self.env.user
-        if user.default_label_printer_id and user.default_label_printer_id.status == "available":
-            return user.default_label_printer_id
-        if label and label.printer_id:
-            return label.printer_id
-        printer = self.env["printing.printer"].search(
-            [("active", "=", True)], limit=1
-        )
-        return printer or False
+        printer = user.default_label_printer_id
+        if not printer:
+            raise UserError(_(
+                "Default label printer is not configured.\n"
+                "Please set it in Preferences → Default Label Printer before continuing."
+            ))
+        if printer.status != "available":
+            status_label = dict(printer._fields["status"].selection).get(
+                printer.status, printer.status
+            )
+            raise UserError(_(
+                "Default label printer '%(printer)s' is not available (status: %(status)s).\n"
+                "Please check the printer connection or change the default printer.",
+                printer=printer.name,
+                status=status_label,
+            ))
+        return printer
 
     def _resolve_lot_label(self, lot, picking_type, label_field, copies_field):
         """Resolve ZPL label template and copies for a lot.
@@ -41,6 +49,9 @@ class MrpProduction(models.Model):
         Copies priority: product-level > picking-type-level > 1
         """
         product = lot.product_id.product_tmpl_id
+        # Skip products marked as "no print"
+        if product.zpl_no_print:
+            return False, 0
         label = product.zpl_label_template_id or picking_type[label_field]
         copies = 1
         if product.zpl_copies_per_label and product.zpl_copies_per_label > 0:
@@ -152,14 +163,7 @@ class MrpProduction(models.Model):
                     )
                     if not label:
                         continue
-                    printer = production._get_zpl_printer(label=label)
-                    if not printer:
-                        _logger.warning(
-                            "No printer available for done MO ZPL lot label %s, "
-                            "skipping lot %s",
-                            label.name, lot.name,
-                        )
-                        continue
+                    printer = production._get_zpl_printer()
                     try:
                         zpl_content = b""
                         for _ in range(int(copies)):
@@ -184,6 +188,12 @@ class MrpProduction(models.Model):
                 lots_to_print = lots_to_print.move_finished_ids.move_line_ids.mapped(
                     "lot_id"
                 )
+                # Filter out lots whose product is marked as "no print"
+                lots_to_print = lots_to_print.filtered(
+                    lambda l: not l.product_id.product_tmpl_id.zpl_no_print
+                )
+                if not lots_to_print:
+                    continue
                 if print_format == "pdf":
                     action = self.env.ref(
                         "stock.action_report_lot_label"
@@ -200,21 +210,17 @@ class MrpProduction(models.Model):
 
     def _autoprint_generated_lot(self, lot_id):
         picking_type = self.picking_type_id
+        pt = lot_id.product_id.product_tmpl_id
+        # Skip products marked as "no print"
+        if pt.zpl_no_print:
+            return None
         label = (
-            lot_id.product_id.product_tmpl_id.zpl_label_template_id
+            pt.zpl_label_template_id
             or picking_type.generated_mrp_lot_zpl2_label_id
         )
         if label:
-            printer = self._get_zpl_printer(label=label)
-            if not printer:
-                _logger.warning(
-                    "No printer available for generated lot ZPL label %s, "
-                    "skipping lot %s",
-                    label.name, lot_id.name,
-                )
-                return None
+            printer = self._get_zpl_printer()
             copies = 1
-            pt = lot_id.product_id.product_tmpl_id
             if pt.zpl_copies_per_label and pt.zpl_copies_per_label > 0:
                 copies = pt.zpl_copies_per_label
             elif (
@@ -248,7 +254,36 @@ class MrpProduction(models.Model):
             )
         )
         if standard_productions:
-            actions = super(MrpProduction, standard_productions)._autoprint_mass_generated_lots()
+            # Replicate core standard flow but filter out zpl_no_print lots
+            productions_to_print = standard_productions.filtered(
+                lambda p: p.picking_type_id.auto_print_generated_mrp_lot
+            )
+            productions_by_print_formats = productions_to_print.grouped(
+                lambda p: p.picking_type_id.generated_mrp_lot_label_to_print
+            )
+            for print_format in productions_to_print.picking_type_id.mapped(
+                "generated_mrp_lot_label_to_print"
+            ):
+                grouped_productions = productions_by_print_formats.get(print_format)
+                lots_to_print = grouped_productions.mapped("lot_producing_ids")
+                # Filter out lots whose product is marked as "no print"
+                lots_to_print = lots_to_print.filtered(
+                    lambda l: not l.product_id.product_tmpl_id.zpl_no_print
+                )
+                if not lots_to_print:
+                    continue
+                if print_format == "pdf":
+                    action = self.env.ref(
+                        "stock.action_report_lot_label"
+                    ).report_action(lots_to_print.ids, config=False)
+                elif print_format == "zpl":
+                    action = self.env.ref(
+                        "stock.label_lot_template"
+                    ).report_action(lots_to_print.ids, config=False)
+                else:
+                    continue
+                clean_action(action, self.env)
+                actions.append(action)
 
         # Custom ZPL flow
         custom_productions = self - standard_productions
@@ -263,14 +298,7 @@ class MrpProduction(models.Model):
                 )
                 if not label:
                     continue
-                printer = production._get_zpl_printer(label=label)
-                if not printer:
-                    _logger.warning(
-                        "No printer available for mass generated lot ZPL label %s, "
-                        "skipping lot %s",
-                        label.name, lot.name,
-                    )
-                    continue
+                printer = production._get_zpl_printer()
                 try:
                     zpl_content = b""
                     for _ in range(int(copies)):

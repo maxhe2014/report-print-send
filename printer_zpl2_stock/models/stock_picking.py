@@ -4,7 +4,8 @@
 import logging
 import math
 
-from odoo import models
+from odoo import _, models
+from odoo.exceptions import UserError
 
 from odoo.addons.web.controllers.utils import clean_action
 
@@ -14,29 +15,32 @@ _logger = logging.getLogger(__name__)
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    def _get_zpl_printer(self, label=False):
-        """Resolve the printer to use for ZPL label printing.
+    def _get_zpl_printer(self):
+        """Return the user's default label printer or raise UserError.
 
-        Priority:
-            1. User's Default Label Printer (default_label_printer_id)
-               if online
-            2. The label template's own printer (label.printer_id)
-            3. First active printer found
-            4. None
+        Only the user's default label printer is used. If it is not
+        configured or not available, a UserError is raised to block the
+        validation.
         """
         self.ensure_one()
         user = self.env.user
-        # Priority 1: user default label printer (available/online)
-        if user.default_label_printer_id and user.default_label_printer_id.status == "available":
-            return user.default_label_printer_id
-        # Priority 2: label's own printer
-        if label and label.printer_id:
-            return label.printer_id
-        # Priority 3: first active printer
-        printer = self.env["printing.printer"].search(
-            [("active", "=", True)], limit=1
-        )
-        return printer or False
+        printer = user.default_label_printer_id
+        if not printer:
+            raise UserError(_(
+                "Default label printer is not configured.\n"
+                "Please set it in Preferences → Default Label Printer before continuing."
+            ))
+        if printer.status != "available":
+            status_label = dict(printer._fields["status"].selection).get(
+                printer.status, printer.status
+            )
+            raise UserError(_(
+                "Default label printer '%(printer)s' is not available (status: %(status)s).\n"
+                "Please check the printer connection or change the default printer.",
+                printer=printer.name,
+                status=status_label,
+            ))
+        return printer
 
     def _resolve_lot_label(self, lot, picking_type):
         """Resolve the ZPL label template and copies for a given lot.
@@ -52,6 +56,9 @@ class StockPicking(models.Model):
             3. 1
         """
         product = lot.product_id.product_tmpl_id
+        # Skip products marked as "no print"
+        if product.zpl_no_print:
+            return False, 0
         label = product.zpl_label_template_id or picking_type.lot_zpl2_label_id
         copies = 1
         if product.zpl_copies_per_label and product.zpl_copies_per_label > 0:
@@ -164,15 +171,7 @@ class StockPicking(models.Model):
                     label, copies = self._resolve_lot_label(lot, picking_type)
                     if not label:
                         continue
-                    printer = picking._get_zpl_printer(label=label)
-                    if not printer:
-                        _logger.warning(
-                            "No printer available for ZPL lot label %s, "
-                            "skipping lot %s",
-                            label.name,
-                            lot.name,
-                        )
-                        continue
+                    printer = picking._get_zpl_printer()
                     try:
                         # Batch-generate ZPL content for all copies
                         zpl_content = b""
@@ -198,9 +197,15 @@ class StockPicking(models.Model):
                 "lot_label_format"
             ):
                 pickings = pickings_by_print_formats.get(print_format)
+                # Filter out move lines whose product is marked as "no print"
+                move_lines = pickings.move_line_ids.filtered(
+                    lambda ml: not ml.product_id.product_tmpl_id.zpl_no_print
+                )
+                if not move_lines:
+                    continue
                 wizard = self.env["lot.label.layout"].create(
                     {
-                        "move_line_ids": pickings.move_line_ids.ids,
+                        "move_line_ids": move_lines.ids,
                         "label_quantity": "lots"
                         if "_lots" in print_format
                         else "units",

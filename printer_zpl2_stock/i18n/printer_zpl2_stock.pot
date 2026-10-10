@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 08:03+0000\n"
-"PO-Revision-Date: 2026-10-09 08:03+0000\n"
+"POT-Creation-Date: 2026-10-10 00:51+0000\n"
+"PO-Revision-Date: 2026-10-10 00:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,32 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/stock_picking_type.py:0
+msgid "%(field)s must be between 1 and 10."
+msgstr ""
+
+#. module: printer_zpl2_stock
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_inherit_mrp_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_zpl2
 msgid "Copies:"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
+msgid ""
+"Custom ZPL II label for lot/SN printing when a manufacturing order is done. "
+"Used when the product does not define its own ZPL label template. When a "
+"custom ZPL label is selected, the official IoT printing method is replaced "
+"by direct ZPL II printing to the configured printer."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
+msgid ""
+"Custom ZPL II label for lot/SN printing when a new lot/SN is generated. When"
+" a custom ZPL label is selected, the official IoT printing method is "
+"replaced by direct ZPL II printing to the configured printer."
 msgstr ""
 
 #. module: printer_zpl2_stock
@@ -45,6 +68,36 @@ msgid ""
 msgstr ""
 
 #. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
+#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
+#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
+msgid ""
+"Default label printer '%(printer)s' is not available (status: %(status)s).\n"
+"Please check the printer connection or change the default printer."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
+#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
+#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
+msgid ""
+"Default label printer is not configured.\n"
+"Please set it in Preferences → Default Label Printer before continuing."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
+msgid "Default number of copies for done lot/SN labels."
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
+msgid "Default number of copies for generated lot/SN labels."
+msgstr ""
+
+#. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_copies
 msgid "Default number of copies for lot/SN labels."
 msgstr ""
@@ -55,6 +108,7 @@ msgid "Default number of copies for package labels."
 msgstr ""
 
 #. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_mrp_production__display_name
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__display_name
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_move_line__display_name
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking__display_name
@@ -63,6 +117,27 @@ msgid "Display Name"
 msgstr ""
 
 #. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
+msgid "Done Lot Custom ZPL Label"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
+msgid "Done Lot Label Copies"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
+msgid "Generated Lot Custom ZPL Label"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
+msgid "Generated Lot Label Copies"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_mrp_production__id
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__id
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_move_line__id
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking__id
@@ -78,6 +153,17 @@ msgstr ""
 #. module: printer_zpl2_stock
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_label_id
 msgid "Lot/SN Custom ZPL Label"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model,name:printer_zpl2_stock.model_mrp_production
+msgid "Manufacturing Order"
+msgstr ""
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_no_print
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_no_print
+msgid "No Print ZPL Label"
 msgstr ""
 
 #. module: printer_zpl2_stock
@@ -126,6 +212,14 @@ msgid "Transfer"
 msgstr ""
 
 #. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_no_print
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_no_print
+msgid ""
+"When checked, lot/SN labels for this product are skipped during automatic "
+"printing (both ZPL and standard flows)."
+msgstr ""
+
+#. module: printer_zpl2_stock
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_copies_per_label
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_copies_per_label
 msgid "ZPL Copies per Label"
@@ -146,56 +240,4 @@ msgstr ""
 #. odoo-python
 #: code:addons/printer_zpl2_stock/models/product_template.py:0
 msgid "ZPL copies per label must be between 1 and 6."
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
-msgid "Done Lot Custom ZPL Label"
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
-msgid ""
-"Custom ZPL II label for lot/SN printing when a manufacturing order is done. "
-"Used when the product does not define its own ZPL label template. When a "
-"custom ZPL label is selected, the official IoT printing method is replaced by "
-"direct ZPL II printing to the configured printer."
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
-msgid "Done Lot Label Copies"
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
-msgid "Default number of copies for done lot/SN labels."
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
-msgid "Generated Lot Custom ZPL Label"
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
-msgid ""
-"Custom ZPL II label for lot/SN printing when a new lot/SN is generated. When "
-"a custom ZPL label is selected, the official IoT printing method is replaced "
-"by direct ZPL II printing to the configured printer."
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
-msgid "Generated Lot Label Copies"
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
-msgid "Default number of copies for generated lot/SN labels."
-msgstr ""
-
-#. module: printer_zpl2_stock
-#: model:ir.model,name:printer_zpl2_stock.model_mrp_production
-msgid "Production Order"
 msgstr ""
