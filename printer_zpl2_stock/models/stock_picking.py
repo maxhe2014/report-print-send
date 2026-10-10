@@ -26,8 +26,8 @@ class StockPicking(models.Model):
         """
         self.ensure_one()
         user = self.env.user
-        # Priority 1: user default label printer (online)
-        if user.default_label_printer_id and user.default_label_printer_id.status == "online":
+        # Priority 1: user default label printer (available/online)
+        if user.default_label_printer_id and user.default_label_printer_id.status == "available":
             return user.default_label_printer_id
         # Priority 2: label's own printer
         if label and label.printer_id:

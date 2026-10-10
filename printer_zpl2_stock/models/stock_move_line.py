@@ -22,7 +22,7 @@ class StockMoveLine(models.Model):
         """
         self.ensure_one()
         user = self.env.user
-        if user.default_label_printer_id and user.default_label_printer_id.status == "online":
+        if user.default_label_printer_id and user.default_label_printer_id.status == "available":
             return user.default_label_printer_id
         if label and label.printer_id:
             return label.printer_id
