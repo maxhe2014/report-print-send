@@ -60,7 +60,7 @@ class MrpProduction(models.Model):
             copies = picking_type[copies_field]
         return label, copies
 
-    def _get_autoprint_report_actions(self):
+    def _get_autoprint_done_report_actions(self):
         report_actions = []
         productions_to_print = self.filtered(
             lambda p: p.picking_type_id.auto_print_done_production_order
