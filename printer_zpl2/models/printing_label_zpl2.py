@@ -76,6 +76,15 @@ class PrintingLabelZpl2(models.Model):
     record_id = fields.Integer(string="Record ID", default=1)
     extra = fields.Text(default="{}")
     printer_id = fields.Many2one(comodel_name="printing.printer", string="Printer")
+    user_action_ids = fields.One2many(
+        comodel_name="printing.label.zpl2.user.action",
+        inverse_name="label_id",
+        string="User Printers",
+        help="Per-user printer overrides for this label. "
+        "If a user has a record here with an active printer, that printer "
+        "takes priority over the label's default printer and the user's "
+        "default label printer.",
+    )
     labelary_image = fields.Binary(
         string="Image from Labelary", compute="_compute_labelary_image"
     )

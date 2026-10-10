@@ -15,16 +15,42 @@ _logger = logging.getLogger(__name__)
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    def _get_zpl_printer(self):
-        """Return the user's default label printer or raise UserError.
+    def _get_zpl_printer(self, label=False):
+        """Resolve the printer for ZPL label printing.
 
-        Only the user's default label printer is used. If it is not
-        configured or not available, a UserError is raised to block the
-        validation.
+        Priority:
+            1. Per-user per-label printer (printing.label.zpl2.user.action)
+            2. Label template default printer (printing.label.zpl2.printer_id)
+            3. User's default label printer (res.users.default_label_printer_id)
+
+        Raises UserError if no printer is configured or the resolved printer
+        is not available.
         """
         self.ensure_one()
         user = self.env.user
-        printer = user.default_label_printer_id
+        printer = False
+
+        # Priority 1: user-label specific printer
+        if label:
+            user_action = self.env["printing.label.zpl2.user.action"].search(
+                [
+                    ("label_id", "=", label.id),
+                    ("user_id", "=", user.id),
+                    ("active", "=", True),
+                ],
+                limit=1,
+            )
+            if user_action.printer_id:
+                printer = user_action.printer_id
+
+        # Priority 2: label template default printer
+        if not printer and label and label.printer_id:
+            printer = label.printer_id
+
+        # Priority 3: user default label printer
+        if not printer:
+            printer = user.default_label_printer_id
+
         if not printer:
             raise UserError(_(
                 "Default label printer is not configured.\n"
@@ -166,13 +192,12 @@ class MrpProduction(models.Model):
         standard_productions = productions_to_print - custom_productions
 
         # Custom ZPL II direct printing for product labels
-        printer = False
         if custom_productions:
-            printer = self._get_zpl_printer()
             for production in custom_productions:
                 label, copies = self._resolve_product_zpl_label(production)
                 if not label:
                     continue
+                printer = self._get_zpl_printer(label=label)
                 record = self._get_zpl_record_for_label(production, label)
                 zpl_content = b""
                 for _ in range(int(copies)):
@@ -275,7 +300,7 @@ class MrpProduction(models.Model):
                     )
                     if not label:
                         continue
-                    printer = production._get_zpl_printer()
+                    printer = production._get_zpl_printer(label=label)
                     try:
                         zpl_content = b""
                         for _ in range(int(copies)):
@@ -334,7 +359,7 @@ class MrpProduction(models.Model):
             scenario="created",
         )
         if label:
-            printer = self._get_zpl_printer()
+            printer = self._get_zpl_printer(label=label)
             try:
                 zpl_content = b""
                 for _ in range(int(copies)):
@@ -408,7 +433,7 @@ class MrpProduction(models.Model):
                 )
                 if not label:
                     continue
-                printer = production._get_zpl_printer()
+                printer = production._get_zpl_printer(label=label)
                 try:
                     zpl_content = b""
                     for _ in range(int(copies)):

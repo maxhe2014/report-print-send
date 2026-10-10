@@ -313,6 +313,22 @@
                                 />
                             </group>
                         </page>
+                        <page string="User Printers">
+                            <group string="Per-User Printer Overrides">
+                                <field name="user_action_ids" nolabel="1" colspan="2" />
+                            </group>
+                            <group string="Printer Resolution Priority">
+                                <p class="text-muted">
+                                    When a user prints this label, the printer is
+                                    resolved in the following order:
+                                </p>
+                                <ol class="text-muted">
+                                    <li>The user-specific printer configured above (only when <em>Active</em> is on).</li>
+                                    <li>The label's default printer, set in the <b>Test Mode</b> page.</li>
+                                    <li>The user's default label printer (Preferences → Default Label Printer).</li>
+                                </ol>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
@@ -365,4 +381,15 @@
         sequence="20"
         action="act_open_printing_label_zpl2_view"
     />
+    <!-- List view for printing.label.zpl2.user.action -->
+    <record id="view_printing_label_zpl2_user_action_tree" model="ir.ui.view">
+        <field name="model">printing.label.zpl2.user.action</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" string="User Printers">
+                <field name="user_id" required="1" />
+                <field name="printer_id" />
+                <field name="active" widget="boolean_toggle" />
+            </list>
+        </field>
+    </record>
 </odoo>
