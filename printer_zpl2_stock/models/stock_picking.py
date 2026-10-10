@@ -46,26 +46,76 @@ class StockPicking(models.Model):
         """Resolve the ZPL label template and copies for a given lot.
 
         Template priority:
-            1. lot.product_id.product_tmpl_id.zpl_label_template_id
+            1. product.zpl_label_template_id
             2. picking_type.lot_zpl2_label_id
-            3. False (use standard QWeb flow)
+            3. picking_type.product_zpl2_label_id
+            4. False (use standard QWeb flow)
 
         Copies priority:
-            1. lot.product_id.product_tmpl_id.zpl_copies_per_label (if > 0)
-            2. picking_type.lot_zpl2_copies
-            3. 1
+            1. product.zpl_copies_per_label (if > 0)
+            2. picking_type.lot_zpl2_copies (if > 0)
+            3. picking_type.product_zpl2_copies (if > 0)
+            4. 1
         """
         product = lot.product_id.product_tmpl_id
         # Skip products marked as "no print"
         if product.zpl_no_print:
             return False, 0
-        label = product.zpl_label_template_id or picking_type.lot_zpl2_label_id
+        label = (
+            product.zpl_label_template_id
+            or picking_type.lot_zpl2_label_id
+            or picking_type.product_zpl2_label_id
+        )
         copies = 1
         if product.zpl_copies_per_label and product.zpl_copies_per_label > 0:
             copies = product.zpl_copies_per_label
         elif picking_type.lot_zpl2_copies and picking_type.lot_zpl2_copies > 0:
             copies = picking_type.lot_zpl2_copies
+        elif picking_type.product_zpl2_copies and picking_type.product_zpl2_copies > 0:
+            copies = picking_type.product_zpl2_copies
         return label, copies
+
+    def _resolve_product_zpl_label(self, move):
+        """Resolve the ZPL label template and copies for a stock move's product.
+
+        Template priority:
+            1. product.zpl_label_template_id
+            2. picking_type.product_zpl2_label_id
+
+        Copies priority:
+            1. product.zpl_copies_per_label
+            2. picking_type.product_zpl2_copies
+            3. 1
+
+        Returns (label, copies). label is False if no ZPL label configured.
+        """
+        product = move.product_id.product_tmpl_id
+        if product.zpl_no_print:
+            return False, 0
+
+        pt = move.picking_id.picking_type_id
+        label = product.zpl_label_template_id or pt.product_zpl2_label_id
+        if not label:
+            return False, 0
+
+        copies = 1
+        if product.zpl_copies_per_label and product.zpl_copies_per_label > 0:
+            copies = product.zpl_copies_per_label
+        elif pt.product_zpl2_copies and pt.product_zpl2_copies > 0:
+            copies = pt.product_zpl2_copies
+        return label, copies
+
+    def _get_zpl_record_for_move(self, move, label):
+        """Return the record to pass to ZPL label based on label's model_id."""
+        model_name = label.model_id.model if label.model_id else False
+        if model_name == "stock.move":
+            return move
+        elif model_name == "product.product":
+            return move.product_id
+        elif model_name == "product.template":
+            return move.product_id.product_tmpl_id
+        # Default to move record
+        return move
 
     def _get_autoprint_report_actions(self):
         report_actions = []
@@ -128,10 +178,40 @@ class StockPicking(models.Model):
         pickings_print_product_label = self.filtered(
             lambda p: p.picking_type_id.auto_print_product_labels
         )
-        pickings_by_print_formats = pickings_print_product_label.grouped(
+        # Separate pickings that use a custom ZPL II product label
+        custom_pickings = pickings_print_product_label.filtered(
+            lambda p: any(
+                self._resolve_product_zpl_label(move)[0]
+                for move in p.move_ids
+            )
+        )
+        standard_pickings = pickings_print_product_label - custom_pickings
+
+        # Custom ZPL II direct printing for product labels
+        if custom_pickings:
+            printer = self._get_zpl_printer()
+            for picking in custom_pickings:
+                for move in picking.move_ids:
+                    label, copies = self._resolve_product_zpl_label(move)
+                    if not label:
+                        continue
+                    record = self._get_zpl_record_for_move(move, label)
+                    zpl_content = b""
+                    for _ in range(int(copies)):
+                        zpl_content += label._generate_zpl2_data(record)
+                    _logger.info(
+                        "ZPL direct print: product label '%s' for move %s (%d copies)",
+                        label.name, move.reference or move.id, copies,
+                    )
+                    printer.print_document(
+                        report=None, content=zpl_content, doc_format="raw"
+                    )
+
+        # Standard product label printing via product.label.layout wizard
+        pickings_by_print_formats = standard_pickings.grouped(
             lambda p: p.picking_type_id.product_label_format
         )
-        for print_format in pickings_print_product_label.picking_type_id.mapped(
+        for print_format in standard_pickings.picking_type_id.mapped(
             "product_label_format"
         ):
             pickings = pickings_by_print_formats.get(print_format)

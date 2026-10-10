@@ -42,23 +42,107 @@ class MrpProduction(models.Model):
             ))
         return printer
 
-    def _resolve_lot_label(self, lot, picking_type, label_field, copies_field):
+    def _resolve_lot_label(self, lot, picking_type, label_field, copies_field, scenario="lot"):
         """Resolve ZPL label template and copies for a lot.
 
-        Template priority: product-level > picking-type-level > False
-        Copies priority: product-level > picking-type-level > 1
+        Template priority (created/done scenario):
+            1. product.zpl_<scenario>_lot_label_id
+            2. product.zpl_label_template_id
+            3. picking_type[label_field]
+            4. picking_type.product_zpl2_label_id
+        Template priority (lot scenario, stock picking):
+            1. product.zpl_label_template_id
+            2. picking_type[label_field]
+            3. picking_type.product_zpl2_label_id
+
+        Copies priority (created/done):
+            1. product.zpl_<scenario>_lot_copies
+            2. product.zpl_copies_per_label
+            3. picking_type[copies_field]
+            4. picking_type.product_zpl2_copies
+            5. 1
+        Copies priority (lot):
+            1. product.zpl_copies_per_label
+            2. picking_type[copies_field]
+            3. picking_type.product_zpl2_copies
+            4. 1
+
+        A value of 0 for copies means "not set, fall back to next level".
         """
         product = lot.product_id.product_tmpl_id
         # Skip products marked as "no print"
         if product.zpl_no_print:
             return False, 0
-        label = product.zpl_label_template_id or picking_type[label_field]
+
+        # Resolve label template
+        if scenario == "created":
+            product_label = product.zpl_created_lot_label_id or product.zpl_label_template_id
+            product_copies = product.zpl_created_lot_copies or product.zpl_copies_per_label
+        elif scenario == "done":
+            product_label = product.zpl_done_lot_label_id or product.zpl_label_template_id
+            product_copies = product.zpl_done_lot_copies or product.zpl_copies_per_label
+        else:  # "lot"
+            product_label = product.zpl_label_template_id
+            product_copies = product.zpl_copies_per_label
+
+        label = (
+            product_label
+            or picking_type[label_field]
+            or picking_type.product_zpl2_label_id
+        )
+
+        # Resolve copies (0 means "not set")
+        copies = 1
+        if product_copies and product_copies > 0:
+            copies = product_copies
+        elif picking_type[copies_field] and picking_type[copies_field] > 0:
+            copies = picking_type[copies_field]
+        elif picking_type.product_zpl2_copies and picking_type.product_zpl2_copies > 0:
+            copies = picking_type.product_zpl2_copies
+        return label, copies
+
+    def _resolve_product_zpl_label(self, production):
+        """Resolve the ZPL label template and copies for a production's product.
+
+        Template priority:
+            1. product.zpl_label_template_id
+            2. picking_type.product_zpl2_label_id
+
+        Copies priority:
+            1. product.zpl_copies_per_label
+            2. picking_type.product_zpl2_copies
+            3. 1
+
+        Returns (label, copies). label is False if no ZPL label configured.
+        """
+        if production.product_id.product_tmpl_id.zpl_no_print:
+            return False, 0
+
+        pt = production.picking_type_id
+        product = production.product_id.product_tmpl_id
+
+        label = product.zpl_label_template_id or pt.product_zpl2_label_id
+        if not label:
+            return False, 0
+
         copies = 1
         if product.zpl_copies_per_label and product.zpl_copies_per_label > 0:
             copies = product.zpl_copies_per_label
-        elif picking_type[copies_field] and picking_type[copies_field] > 0:
-            copies = picking_type[copies_field]
+        elif pt.product_zpl2_copies and pt.product_zpl2_copies > 0:
+            copies = pt.product_zpl2_copies
         return label, copies
+
+    def _get_zpl_record_for_label(self, production, label):
+        """Return the record to pass to ZPL label based on label's model_id."""
+        model_name = label.model_id.model if label.model_id else False
+        if model_name == "mrp.production":
+            return production
+        elif model_name == "product.product":
+            return production.product_id
+        elif model_name == "product.template":
+            return production.product_id.product_tmpl_id
+        # Default to production record
+        return production
 
     def _get_autoprint_done_report_actions(self):
         report_actions = []
@@ -75,10 +159,37 @@ class MrpProduction(models.Model):
         productions_to_print = self.filtered(
             lambda p: p.picking_type_id.auto_print_done_mrp_product_labels
         )
-        productions_by_print_formats = productions_to_print.grouped(
+        # Separate productions that use a custom ZPL II product label
+        custom_productions = productions_to_print.filtered(
+            lambda p: self._resolve_product_zpl_label(p)[0]
+        )
+        standard_productions = productions_to_print - custom_productions
+
+        # Custom ZPL II direct printing for product labels
+        printer = False
+        if custom_productions:
+            printer = self._get_zpl_printer()
+            for production in custom_productions:
+                label, copies = self._resolve_product_zpl_label(production)
+                if not label:
+                    continue
+                record = self._get_zpl_record_for_label(production, label)
+                zpl_content = b""
+                for _ in range(int(copies)):
+                    zpl_content += label._generate_zpl2_data(record)
+                _logger.info(
+                    "ZPL direct print: product label '%s' for MO %s (%d copies)",
+                    label.name, production.name, copies,
+                )
+                printer.print_document(
+                    report=None, content=zpl_content, doc_format="raw"
+                )
+
+        # Standard product label printing (PDF / native ZPL report)
+        productions_by_print_formats = standard_productions.grouped(
             lambda p: p.picking_type_id.mrp_product_label_to_print
         )
-        for print_format in productions_to_print.picking_type_id.mapped(
+        for print_format in standard_productions.picking_type_id.mapped(
             "mrp_product_label_to_print"
         ):
             labels_to_print = productions_by_print_formats.get(print_format)
@@ -160,6 +271,7 @@ class MrpProduction(models.Model):
                         lot, picking_type,
                         "done_mrp_lot_zpl2_label_id",
                         "done_mrp_lot_zpl2_copies",
+                        scenario="done",
                     )
                     if not label:
                         continue
@@ -214,20 +326,15 @@ class MrpProduction(models.Model):
         # Skip products marked as "no print"
         if pt.zpl_no_print:
             return None
-        label = (
-            pt.zpl_label_template_id
-            or picking_type.generated_mrp_lot_zpl2_label_id
+        # Resolve label and copies for "created" scenario
+        label, copies = self._resolve_lot_label(
+            lot_id, picking_type,
+            "generated_mrp_lot_zpl2_label_id",
+            "generated_mrp_lot_zpl2_copies",
+            scenario="created",
         )
         if label:
             printer = self._get_zpl_printer()
-            copies = 1
-            if pt.zpl_copies_per_label and pt.zpl_copies_per_label > 0:
-                copies = pt.zpl_copies_per_label
-            elif (
-                picking_type.generated_mrp_lot_zpl2_copies
-                and picking_type.generated_mrp_lot_zpl2_copies > 0
-            ):
-                copies = picking_type.generated_mrp_lot_zpl2_copies
             try:
                 zpl_content = b""
                 for _ in range(int(copies)):
@@ -285,8 +392,10 @@ class MrpProduction(models.Model):
                 clean_action(action, self.env)
                 actions.append(action)
 
-        # Custom ZPL flow
-        custom_productions = self - standard_productions
+        # Custom ZPL flow - only for productions with auto-print enabled
+        custom_productions = (self - standard_productions).filtered(
+            lambda p: p.picking_type_id.auto_print_generated_mrp_lot
+        )
         for production in custom_productions:
             picking_type = production.picking_type_id
             lots = production.lot_producing_ids
@@ -295,6 +404,7 @@ class MrpProduction(models.Model):
                     lot, picking_type,
                     "generated_mrp_lot_zpl2_label_id",
                     "generated_mrp_lot_zpl2_copies",
+                    scenario="created",
                 )
                 if not label:
                     continue

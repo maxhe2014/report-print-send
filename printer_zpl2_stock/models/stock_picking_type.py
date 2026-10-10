@@ -76,12 +76,28 @@ class StockPickingType(models.Model):
         default=1,
         help="Default number of copies for generated lot/SN labels.",
     )
+    product_zpl2_label_id = fields.Many2one(
+        comodel_name="printing.label.zpl2",
+        string="Product Custom ZPL Label",
+        domain="[('model_id.model', 'in', ['product.template', 'product.product', 'stock.move', 'mrp.production', 'stock.lot', 'stock.package'])]",
+        help=(
+            "Default ZPL II label for product printing. Used as a fallback "
+            "when neither the product nor the scenario-specific (lot/done/"
+            "generated) ZPL label is configured."
+        ),
+    )
+    product_zpl2_copies = fields.Integer(
+        string="Product Label Copies",
+        default=1,
+        help="Default number of copies for product labels. 0 = use default 1.",
+    )
 
     @api.constrains(
         "lot_zpl2_copies",
         "package_zpl2_copies",
         "done_mrp_lot_zpl2_copies",
         "generated_mrp_lot_zpl2_copies",
+        "product_zpl2_copies",
     )
     def _check_zpl2_copies(self):
         for record in self:
@@ -90,10 +106,12 @@ class StockPickingType(models.Model):
                 "package_zpl2_copies",
                 "done_mrp_lot_zpl2_copies",
                 "generated_mrp_lot_zpl2_copies",
+                "product_zpl2_copies",
             ]:
                 value = record[field_name]
                 if value is not None and value is not False:
-                    if value < 1 or value > 10:
+                    if value < 0 or value > 10:
                         raise ValidationError(
-                            _("%(field)s must be between 1 and 10.", field=record._fields[field_name].string)
+                            _("%(field)s must be between 0 and 10 (0 = use default).",
+                              field=record._fields[field_name].string)
                         )

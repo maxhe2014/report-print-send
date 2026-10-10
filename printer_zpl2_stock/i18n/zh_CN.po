@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 08:03+0000\n"
-"PO-Revision-Date: 2026-10-09 08:03+0000\n"
+"POT-Creation-Date: 2026-10-10 02:30+0000\n"
+"PO-Revision-Date: 2026-10-10 02:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -17,16 +17,68 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/product_template.py:0
+#: code:addons/printer_zpl2_stock/models/stock_picking_type.py:0
+msgid "%(field)s must be between 0 and 10 (0 = use default)."
+msgstr "%(field)s 必须在 0 到 10 之间（0 = 使用默认值）。"
+
+#. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/product_template.py:0
+msgid "%(field)s must be between 0 and 6 (0 = use operation type setting)."
+msgstr "%(field)s 必须在 0 到 6 之间（0 = 使用作业类型配置）。"
+
+#. module: printer_zpl2_stock
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_inherit_mrp_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_zpl2
 msgid "Copies:"
 msgstr "份数："
 
 #. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "Created Copies"
+msgstr "创建份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_created_lot_copies
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_created_lot_copies
+msgid "Created Lot Label Copies"
+msgstr "创建批号标签份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_created_lot_label_id
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_created_lot_label_id
+msgid "Created Lot/SN ZPL Label Template"
+msgstr "创建批号/SN ZPL 标签模板"
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "Created Lot/SN ZPL Label"
+msgstr "创建批号/SN ZPL 标签"
+
+#. module: printer_zpl2_stock
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_inherit_mrp_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_picking_type_form_zpl2
 msgid "Custom ZPL Label:"
 msgstr "自定义 ZPL 标签："
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
+msgid ""
+"Custom ZPL II label for lot/SN printing when a manufacturing order is done. "
+"Used when the product does not define its own ZPL label template. When a "
+"custom ZPL label is selected, the official IoT printing method is replaced "
+"by direct ZPL II printing to the configured printer."
+msgstr "制造订单完成时批号/序列号打印的自定义 ZPL II 标签。当产品未定义自身的 ZPL 标签模板时使用此标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
+msgid ""
+"Custom ZPL II label for lot/SN printing when a new lot/SN is generated. When"
+" a custom ZPL label is selected, the official IoT printing method is "
+"replaced by direct ZPL II printing to the configured printer."
+msgstr "生成新批号/序列号时打印的自定义 ZPL II 标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
 
 #. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_label_id
@@ -46,6 +98,40 @@ msgid ""
 msgstr "包装打印的默认 ZPL II 标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
 
 #. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
+#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
+#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
+msgid ""
+"Default label printer '%(printer)s' is not available (status: %(status)s).\n"
+"Please check the printer connection or change the default printer."
+msgstr ""
+"默认标签打印机「%(printer)s」当前不可用（状态：%(status)s）。\n"
+"请检查打印机连接或更换默认打印机。"
+
+#. module: printer_zpl2_stock
+#. odoo-python
+#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
+#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
+#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
+msgid ""
+"Default label printer is not configured.\n"
+"Please set it in Preferences → Default Label Printer before continuing."
+msgstr ""
+"默认标签打印机未配置。\n"
+"请在「首选项 → 默认标签打印机」中设置后再继续。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
+msgid "Default number of copies for done lot/SN labels."
+msgstr "已完成批号/序列号标签的默认打印份数。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
+msgid "Default number of copies for generated lot/SN labels."
+msgstr "生成批号/序列号标签的默认打印份数。"
+
+#. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__lot_zpl2_copies
 msgid "Default number of copies for lot/SN labels."
 msgstr "批号/序列号标签的默认打印份数。"
@@ -56,6 +142,7 @@ msgid "Default number of copies for package labels."
 msgstr "包装标签的默认打印份数。"
 
 #. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_mrp_production__display_name
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__display_name
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_move_line__display_name
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking__display_name
@@ -64,6 +151,49 @@ msgid "Display Name"
 msgstr "显示名称"
 
 #. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
+msgid "Done Lot Custom ZPL Label"
+msgstr "已完成批号自定义 ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
+msgid "Done Lot Label Copies"
+msgstr "已完成批号标签份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_done_lot_copies
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_done_lot_copies
+msgid "Done Lot Label Copies"
+msgstr "完成批号标签份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_done_lot_label_id
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_done_lot_label_id
+msgid "Done Lot/SN ZPL Label Template"
+msgstr "完成批号/SN ZPL 标签模板"
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "Done Copies"
+msgstr "完成份数"
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "Done Lot/SN ZPL Label"
+msgstr "完成批号/SN ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
+msgid "Generated Lot Custom ZPL Label"
+msgstr "生成批号自定义 ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
+msgid "Generated Lot Label Copies"
+msgstr "生成批号标签份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_mrp_production__id
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__id
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_move_line__id
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking__id
@@ -82,10 +212,21 @@ msgid "Lot/SN Custom ZPL Label"
 msgstr "批号/序列号自定义 ZPL 标签"
 
 #. module: printer_zpl2_stock
+#: model:ir.model,name:printer_zpl2_stock.model_mrp_production
+msgid "Manufacturing Order"
+msgstr "制造订单"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_no_print
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_no_print
+msgid "No Print ZPL Label"
+msgstr "不打印 ZPL 标签"
+
+#. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_copies_per_label
 #: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_copies_per_label
-msgid "Number of copies to print for each label."
-msgstr "每个标签的打印份数。"
+msgid "Number of copies for the product ZPL label. 0 = use the operation type setting."
+msgstr "产品 ZPL 标签的打印份数。0 = 使用作业类型配置。"
 
 #. module: printer_zpl2_stock
 #: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__package_zpl2_label_id
@@ -108,134 +249,68 @@ msgid "Product"
 msgstr "产品"
 
 #. module: printer_zpl2_stock
-#: model:ir.model,name:printer_zpl2_stock.model_stock_move_line
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__product_zpl2_copies
+msgid "Product Label Copies"
+msgstr "产品标签份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__product_zpl2_copies
+msgid "Default number of copies for product labels. 0 = use default 1."
+msgstr "产品标签的默认打印份数。0 = 使用默认值 1。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__product_zpl2_label_id
+msgid "Product Custom ZPL Label"
+msgstr "产品自定义 ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__product_zpl2_label_id
+msgid ""
+"Default ZPL II label for product printing. Used as a fallback when neither "
+"the product nor the scenario-specific (lot/done/generated) ZPL label is "
+"configured."
+msgstr "产品打印的默认 ZPL II 标签。当产品和场景专用（批号/完成/生成）ZPL 标签均未配置时，作为回退使用。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_move_line__display_name
 msgid "Product Moves (Stock Move Line)"
 msgstr "产品移动（库存移动行）"
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "Product Copies"
+msgstr "产品份数"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_copies_per_label
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_copies_per_label
+msgid "Product ZPL Label Copies"
+msgstr "产品 ZPL 标签份数"
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "Product ZPL Label"
+msgstr "产品 ZPL 标签"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_label_template_id
+#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_label_template_id
+msgid "Product ZPL Label Template"
+msgstr "产品 ZPL 标签模板"
 
 #. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_label_template_id
 #: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_label_template_id
 msgid ""
-"Select the ZPL label template to use for this product. This template takes "
-"priority over the operation type's default ZPL label during automatic "
-"printing."
-msgstr "选择此产品使用的 ZPL 标签模板。自动打印时，此模板优先于作业类型的默认 ZPL 标签。"
+"General ZPL label template for this product. Used as fallback when the "
+"scenario-specific (created/done) template is not set. Takes priority over "
+"the operation type's default ZPL label during automatic printing."
+msgstr "此产品的通用 ZPL 标签模板。当场景专用（创建/完成）模板未设置时作为回退使用。自动打印时，优先于作业类型的默认 ZPL 标签。"
 
 #. module: printer_zpl2_stock
 #: model:ir.model,name:printer_zpl2_stock.model_stock_picking
 msgid "Transfer"
 msgstr "调拨"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_copies_per_label
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_copies_per_label
-msgid "ZPL Copies per Label"
-msgstr "ZPL 标签份数"
-
-#. module: printer_zpl2_stock
-#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
-msgid "ZPL Label Configuration"
-msgstr "ZPL 标签配置"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_label_template_id
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_label_template_id
-msgid "ZPL Label Template"
-msgstr "ZPL 标签模板"
-
-#. module: printer_zpl2_stock
-#. odoo-python
-#: code:addons/printer_zpl2_stock/models/product_template.py:0
-msgid "ZPL copies per label must be between 1 and 6."
-msgstr "ZPL 标签份数必须在 1 到 6 之间。"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
-msgid "Done Lot Custom ZPL Label"
-msgstr "已完成批号自定义 ZPL 标签"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_label_id
-msgid ""
-"Custom ZPL II label for lot/SN printing when a manufacturing order is done. "
-"Used when the product does not define its own ZPL label template. When a "
-"custom ZPL label is selected, the official IoT printing method is replaced by "
-"direct ZPL II printing to the configured printer."
-msgstr "制造订单完成时批号/序列号打印的自定义 ZPL II 标签。当产品未定义自身的 ZPL 标签模板时使用此标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
-msgid "Done Lot Label Copies"
-msgstr "已完成批号标签份数"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__done_mrp_lot_zpl2_copies
-msgid "Default number of copies for done lot/SN labels."
-msgstr "已完成批号/序列号标签的默认打印份数。"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
-msgid "Generated Lot Custom ZPL Label"
-msgstr "生成批号自定义 ZPL 标签"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_label_id
-msgid ""
-"Custom ZPL II label for lot/SN printing when a new lot/SN is generated. When "
-"a custom ZPL label is selected, the official IoT printing method is replaced "
-"by direct ZPL II printing to the configured printer."
-msgstr "生成新批号/序列号时打印的自定义 ZPL II 标签。选择自定义 ZPL 标签后，官方的 IoT 打印方式将被替换为直接向配置的打印机发送 ZPL II 指令打印。"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
-msgid "Generated Lot Label Copies"
-msgstr "生成批号标签份数"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,help:printer_zpl2_stock.field_stock_picking_type__generated_mrp_lot_zpl2_copies
-msgid "Default number of copies for generated lot/SN labels."
-msgstr "生成批号/序列号标签的默认打印份数。"
-
-#. module: printer_zpl2_stock
-#: model:ir.model,name:printer_zpl2_stock.model_mrp_production
-msgid "Production Order"
-msgstr "生产订单"
-
-#. module: printer_zpl2_stock
-#. odoo-python
-#: code:addons/printer_zpl2_stock/models/stock_picking_type.py:0
-msgid "%(field)s must be between 1 and 10."
-msgstr "%(field)s 必须在 1 到 10 之间。"
-
-#. module: printer_zpl2_stock
-#. odoo-python
-#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
-#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
-#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
-msgid ""
-"Default label printer is not configured.\n"
-"Please set it in Preferences → Default Label Printer before continuing."
-msgstr ""
-"默认标签打印机未配置。\n"
-"请在「首选项 → 默认标签打印机」中设置后再继续。"
-
-#. module: printer_zpl2_stock
-#. odoo-python
-#: code:addons/printer_zpl2_stock/models/mrp_production.py:0
-#: code:addons/printer_zpl2_stock/models/stock_move_line.py:0
-#: code:addons/printer_zpl2_stock/models/stock_picking.py:0
-msgid ""
-"Default label printer '%(printer)s' is not available (status: %(status)s).\n"
-"Please check the printer connection or change the default printer."
-msgstr ""
-"默认标签打印机「%(printer)s」当前不可用（状态：%(status)s）。\n"
-"请检查打印机连接或更换默认打印机。"
-
-#. module: printer_zpl2_stock
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_product__zpl_no_print
-#: model:ir.model.fields,field_description:printer_zpl2_stock.field_product_template__zpl_no_print
-msgid "No Print ZPL Label"
-msgstr "不打印 ZPL 标签"
 
 #. module: printer_zpl2_stock
 #: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_no_print
@@ -246,3 +321,36 @@ msgid ""
 msgstr ""
 "勾选后，该产品的批次/序列号标签在自动打印时将被跳过"
 "（ZPL 和标准流程均跳过）。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_created_lot_copies
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_created_lot_copies
+msgid "Number of copies for created lot/SN labels. 0 = use the product/operation type setting."
+msgstr "创建批号/序列号标签的打印份数。0 = 使用产品/作业类型配置。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_created_lot_label_id
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_created_lot_label_id
+msgid ""
+"ZPL label template used when a lot/SN is created (generated). If not set, "
+"falls back to the product ZPL label template."
+msgstr "创建（生成）批号/SN 时使用的 ZPL 标签模板。未设置时回退到产品 ZPL 标签模板。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_done_lot_copies
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_done_lot_copies
+msgid "Number of copies for done lot/SN labels. 0 = use the product/operation type setting."
+msgstr "完成批号/序列号标签的打印份数。0 = 使用产品/作业类型配置。"
+
+#. module: printer_zpl2_stock
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_product__zpl_done_lot_label_id
+#: model:ir.model.fields,help:printer_zpl2_stock.field_product_template__zpl_done_lot_label_id
+msgid ""
+"ZPL label template used when a manufacturing order is done. If not set, "
+"falls back to the product ZPL label template."
+msgstr "制造订单完成时使用的 ZPL 标签模板。未设置时回退到产品 ZPL 标签模板。"
+
+#. module: printer_zpl2_stock
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_stock.view_product_template_form_zpl2
+msgid "ZPL Label Configuration"
+msgstr "ZPL 标签配置"

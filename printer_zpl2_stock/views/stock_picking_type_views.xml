@@ -35,6 +35,31 @@
                 </div>
             </xpath>
 
+            <!-- Add custom ZPL II label selector for Product Labels -->
+            <xpath
+                expr="//field[@name='product_label_format']/.."
+                position="after"
+            >
+                <div
+                    colspan="2"
+                    invisible="not auto_print_product_labels"
+                >
+                    <div class="o_row">
+                        <label for="product_zpl2_label_id" string="Custom ZPL Label:" class="fw-bold" style="min-width: 120px;"/>
+                        <field
+                            name="product_zpl2_label_id"
+                            nolabel="1"
+                            options="{'no_create': True, 'no_create_edit': True}"
+                            style="flex: 1 1 auto;"
+                        />
+                    </div>
+                    <div class="o_row">
+                        <label for="product_zpl2_copies" string="Copies:" class="fw-bold" style="min-width: 120px;"/>
+                        <field name="product_zpl2_copies" nolabel="1" style="flex: 1 1 auto;"/>
+                    </div>
+                </div>
+            </xpath>
+
             <!-- Add custom ZPL II label selector for Package Label (stacked rows, full width) -->
             <xpath
                 expr="//field[@name='package_label_to_print']/.."
