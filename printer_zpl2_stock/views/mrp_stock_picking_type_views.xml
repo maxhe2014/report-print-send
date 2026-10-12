@@ -11,81 +11,61 @@
         <field name="inherit_id" ref="mrp.view_picking_type_form_inherit_mrp"/>
         <field name="arch" type="xml">
 
-            <!-- Add custom ZPL II label selector for Product Labels -->
-            <xpath
-                expr="//field[@name='mrp_product_label_to_print']/.."
-                position="after"
-            >
-                <div
-                    colspan="2"
+            <!-- Done Product Labels: hide standard IoT format selector, show ZPL label + copies inline -->
+            <xpath expr="//field[@name='mrp_product_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//label[@for='mrp_product_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mrp_product_label_to_print']" position="after">
+                <label for="product_zpl2_label_id" string="ZPL Label Template:" invisible="not auto_print_done_mrp_product_labels" class="fw-bold"/>
+                <field
+                    name="product_zpl2_label_id"
+                    nolabel="1"
                     invisible="not auto_print_done_mrp_product_labels"
-                >
-                    <div class="o_row">
-                        <label for="product_zpl2_label_id" string="Custom ZPL Label:" class="fw-bold" style="min-width: 120px;"/>
-                        <field
-                            name="product_zpl2_label_id"
-                            nolabel="1"
-                            options="{'no_create': True, 'no_create_edit': True}"
-                            style="flex: 1 1 auto;"
-                        />
-                    </div>
-                    <div class="o_row">
-                        <label for="product_zpl2_copies" string="Copies:" class="fw-bold" style="min-width: 120px;"/>
-                        <field name="product_zpl2_copies" nolabel="1" style="flex: 1 1 auto;"/>
-                    </div>
-                </div>
+                    options="{'no_create': True, 'no_create_edit': True}"
+                />
+                <label for="product_zpl2_copies" string="Copies:" invisible="not auto_print_done_mrp_product_labels" class="fw-bold"/>
+                <field name="product_zpl2_copies" nolabel="1" invisible="not auto_print_done_mrp_product_labels"/>
             </xpath>
 
-            <!-- Add custom ZPL II label selector for "Done" Lot/SN Labels -->
-            <xpath
-                expr="//field[@name='done_mrp_lot_label_to_print']/.."
-                position="after"
-            >
-                <div
-                    colspan="2"
-                    groups="stock.group_production_lot"
+            <!-- Done Lot/SN Labels: hide standard IoT format selector, show ZPL label + copies inline -->
+            <xpath expr="//field[@name='done_mrp_lot_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//label[@for='done_mrp_lot_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='done_mrp_lot_label_to_print']" position="after">
+                <label for="done_mrp_lot_zpl2_label_id" string="ZPL Label Template:" invisible="not auto_print_done_mrp_lot" class="fw-bold"/>
+                <field
+                    name="done_mrp_lot_zpl2_label_id"
+                    nolabel="1"
                     invisible="not auto_print_done_mrp_lot"
-                >
-                    <div class="o_row">
-                        <label for="done_mrp_lot_zpl2_label_id" string="Custom ZPL Label:" class="fw-bold" style="min-width: 120px;"/>
-                        <field
-                            name="done_mrp_lot_zpl2_label_id"
-                            nolabel="1"
-                            options="{'no_create': True, 'no_create_edit': True}"
-                            style="flex: 1 1 auto;"
-                        />
-                    </div>
-                    <div class="o_row">
-                        <label for="done_mrp_lot_zpl2_copies" string="Copies:" class="fw-bold" style="min-width: 120px;"/>
-                        <field name="done_mrp_lot_zpl2_copies" nolabel="1" style="flex: 1 1 auto;"/>
-                    </div>
-                </div>
+                    options="{'no_create': True, 'no_create_edit': True}"
+                />
+                <label for="done_mrp_lot_zpl2_copies" string="Copies:" invisible="not auto_print_done_mrp_lot" class="fw-bold"/>
+                <field name="done_mrp_lot_zpl2_copies" nolabel="1" invisible="not auto_print_done_mrp_lot"/>
             </xpath>
 
-            <!-- Add custom ZPL II label selector for "Generated" Lot/SN Labels -->
-            <xpath
-                expr="//field[@name='generated_mrp_lot_label_to_print']/.."
-                position="after"
-            >
-                <div
-                    colspan="2"
-                    groups="stock.group_production_lot"
+            <!-- Generated Lot/SN Labels: hide standard IoT format selector, show ZPL label + copies inline -->
+            <xpath expr="//field[@name='generated_mrp_lot_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//label[@for='generated_mrp_lot_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='generated_mrp_lot_label_to_print']" position="after">
+                <label for="generated_mrp_lot_zpl2_label_id" string="ZPL Label Template:" invisible="not auto_print_generated_mrp_lot" class="fw-bold"/>
+                <field
+                    name="generated_mrp_lot_zpl2_label_id"
+                    nolabel="1"
                     invisible="not auto_print_generated_mrp_lot"
-                >
-                    <div class="o_row">
-                        <label for="generated_mrp_lot_zpl2_label_id" string="Custom ZPL Label:" class="fw-bold" style="min-width: 120px;"/>
-                        <field
-                            name="generated_mrp_lot_zpl2_label_id"
-                            nolabel="1"
-                            options="{'no_create': True, 'no_create_edit': True}"
-                            style="flex: 1 1 auto;"
-                        />
-                    </div>
-                    <div class="o_row">
-                        <label for="generated_mrp_lot_zpl2_copies" string="Copies:" class="fw-bold" style="min-width: 120px;"/>
-                        <field name="generated_mrp_lot_zpl2_copies" nolabel="1" style="flex: 1 1 auto;"/>
-                    </div>
-                </div>
+                    options="{'no_create': True, 'no_create_edit': True}"
+                />
+                <label for="generated_mrp_lot_zpl2_copies" string="Copies:" invisible="not auto_print_generated_mrp_lot" class="fw-bold"/>
+                <field name="generated_mrp_lot_zpl2_copies" nolabel="1" invisible="not auto_print_generated_mrp_lot"/>
             </xpath>
 
         </field>
