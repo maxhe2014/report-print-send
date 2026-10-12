@@ -76,6 +76,16 @@ class PrintingLabelZpl2(models.Model):
     record_id = fields.Integer(string="Record ID", default=1)
     extra = fields.Text(default="{}")
     printer_id = fields.Many2one(comodel_name="printing.printer", string="Printer")
+    default_printer_id = fields.Many2one(
+        comodel_name="printing.printer",
+        string="Default Printer",
+        help=(
+            "Default printer used for automatic printing of this label. "
+            "Takes priority over the user's default label printer, but is "
+            "overridden by a per-user printer configured in the User "
+            "Printers list below."
+        ),
+    )
     user_action_ids = fields.One2many(
         comodel_name="printing.label.zpl2.user.action",
         inverse_name="label_id",

@@ -20,7 +20,7 @@ class MrpProduction(models.Model):
 
         Priority:
             1. Per-user per-label printer (printing.label.zpl2.user.action)
-            2. Label template default printer (printing.label.zpl2.printer_id)
+            2. Label template default printer (printing.label.zpl2.default_printer_id)
             3. User's default label printer (res.users.default_label_printer_id)
 
         Raises UserError if no printer is configured or the resolved printer
@@ -44,8 +44,8 @@ class MrpProduction(models.Model):
                 printer = user_action.printer_id
 
         # Priority 2: label template default printer
-        if not printer and label and label.printer_id:
-            printer = label.printer_id
+        if not printer and label and label.default_printer_id:
+            printer = label.default_printer_id
 
         # Priority 3: user default label printer
         if not printer:

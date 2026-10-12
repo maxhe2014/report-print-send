@@ -314,6 +314,9 @@
                             </group>
                         </page>
                         <page string="User Printers">
+                            <group string="Default Printer for This Label">
+                                <field name="default_printer_id" options="{'no_create': True}" />
+                            </group>
                             <group string="Per-User Printer Overrides">
                                 <field name="user_action_ids" nolabel="1" colspan="2" />
                             </group>
@@ -324,7 +327,7 @@
                                 </p>
                                 <ol class="text-muted">
                                     <li>The user-specific printer configured above (only when <em>Active</em> is on).</li>
-                                    <li>The label's default printer, set in the <b>Test Mode</b> page.</li>
+                                    <li>The label's default printer, set above.</li>
                                     <li>The user's default label printer (Preferences → Default Label Printer).</li>
                                 </ol>
                             </group>

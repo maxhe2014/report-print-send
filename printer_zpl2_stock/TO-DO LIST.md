@@ -211,3 +211,140 @@ printer.print_document(report=None, content=zpl_content, doc_format="raw")
 | 15 | 验证：`zpl_no_print` 产品批次跳过 ZPL 打印 | — | ✅ 已完成 |
 | 16 | 验证：`zpl_no_print` 产品批次跳过标准流程打印 | — | ✅ 已完成 |
 | 17 | 验证：`*_copies` 约束 1~10 生效 | — | ✅ 已完成 |
+
+
+## ZPL 自动打印规则配置总览
+
+### 一、打印机选择（三级优先级）
+
+适用范围：所有 ZPL 直接打印场景（出库/入库/生产完成/生产生成/包装）
+
+| 优先级 | 配置位置 | 字段 | 说明 |
+|--------|----------|------|------|
+| 1 | 标签模板 → User Printers 页签 | `printing.label.zpl2.user.action.printer_id` | 按「用户+标签」粒度配置专属打印机，`active=False` 时跳过 |
+| 2 | 标签模板 → Test Mode 页签 | `printing.label.zpl2.printer_id` | 该标签模板的默认打印机 |
+| 3 | 用户偏好设置 | `res.users.default_label_printer_id` | 用户的默认标签打印机（最终回退） |
+
+> 打印机不可用（status ≠ available）时抛 UserError，无静默回退。
+
+---
+
+### 二、产品模板级配置（`product.template`）
+
+| 字段 | 类型 | 默认值 | 约束 | 作用域 | 说明 |
+|------|------|--------|------|--------|------|
+| `zpl_no_print` | Boolean | False | — | 所有场景 | 勾选后该产品的所有 ZPL/标准标签均跳过打印 |
+| `zpl_label_template_id` | Many2one | — | model_id ∈ 6 种模型* | 通用 | 产品级通用 ZPL 标签，优先级高于作业类型默认标签 |
+| `zpl_copies_per_label` | Integer | 0 | 0~6 | 通用 | 通用标签份数，0=回退到作业类型设置 |
+| `zpl_created_lot_label_id` | Many2one | — | model_id = stock.lot | 生产生成批号 | 批号生成时使用的标签，未设置则回退通用标签 |
+| `zpl_created_lot_copies` | Integer | 0 | 0~6 | 生产生成批号 | 生成批号标签份数，0=回退 |
+| `zpl_done_lot_label_id` | Many2one | — | model_id = stock.lot | 生产完成批号 | 生产完成时使用的标签，未设置则回退通用标签 |
+| `zpl_done_lot_copies` | Integer | 0 | 0~6 | 生产完成批号 | 完成批号标签份数，0=回退 |
+
+> \* 6 种模型：`product.template`、`product.product`、`stock.move`、`mrp.production`、`stock.lot`、`stock.package`
+
+---
+
+### 三、作业类型级配置（`stock.picking.type`）
+
+#### 3.1 开关字段（来自标准 stock/mrp 模块）
+
+| 字段 | 场景 | 触发时机 |
+|------|------|----------|
+| `auto_print_delivery_slip` | 出库 | 单据验证时打印送货单 |
+| `auto_print_return_slip` | 退货 | 单据验证时打印退货单 |
+| `auto_print_product_labels` | 出/入库产品标签 | 单据验证时打印产品标签 |
+| `auto_print_lot_labels` | 出/入库批号标签 | 单据验证时打印批号标签 |
+| `auto_print_reception_report` | 入库报告 | 单据验证时显示入库报告 |
+| `auto_print_reception_report_labels` | 入库报告标签 | 单据验证时打印入库报告标签 |
+| `auto_print_packages` | 包装内容 | 单据验证时打印包装清单 |
+| `auto_print_package_label` | 包装标签 | 点击「Put in Pack」时打印 |
+| `auto_print_done_production_order` | 生产工单 | MO 完成时打印生产工单 |
+| `auto_print_done_mrp_product_labels` | 生产完成产品标签 | MO 完成时打印产品标签 |
+| `auto_print_done_mrp_lot` | 生产完成批号标签 | MO 完成时打印批号标签 |
+| `auto_print_mrp_reception_report` | 生产分配报告 | MO 完成且有待分配物料时 |
+| `auto_print_mrp_reception_report_labels` | 生产分配报告标签 | MO 完成时打印 |
+| `auto_print_generated_mrp_lot` | 生产生成批号标签 | 点击「创建新批号/序列号」时 |
+
+#### 3.2 输出格式字段（标准模块）
+
+| 字段 | 选项 | 默认 | 关联开关 |
+|------|------|------|----------|
+| `product_label_format` | dymo / 2x7xprice / 4x7xprice / 4x12 / 4x12xprice / zpl / zplxprice | 2x7xprice | `auto_print_product_labels` |
+| `lot_label_format` | 4x12_lots / 4x12_units / zpl_lots / zpl_units | 4x12_lots | `auto_print_lot_labels` |
+| `package_label_to_print` | pdf / zpl | pdf | `auto_print_package_label` |
+| `mrp_product_label_to_print` | pdf / zpl | pdf | `auto_print_done_mrp_product_labels` |
+| `done_mrp_lot_label_to_print` | pdf / zpl | pdf | `auto_print_done_mrp_lot` |
+| `generated_mrp_lot_label_to_print` | pdf / zpl | pdf | `auto_print_generated_mrp_lot` |
+
+#### 3.3 ZPL 自定义标签字段（`printer_zpl2_stock` 模块）
+
+| 字段 | 类型 | 约束 | 关联开关 | 说明 |
+|------|------|------|----------|------|
+| `lot_zpl2_label_id` | Many2one | model_id = stock.lot | `auto_print_lot_labels` | 收/发货批号默认 ZPL 标签 |
+| `lot_zpl2_copies` | Integer | 0~10 | 同上 | 批号标签份数 |
+| `package_zpl2_label_id` | Many2one | model_id = stock.package | `auto_print_package_label` | 包装默认 ZPL 标签 |
+| `package_zpl2_copies` | Integer | 0~10 | 同上 | 包装标签份数 |
+| `done_mrp_lot_zpl2_label_id` | Many2one | model_id = stock.lot | `auto_print_done_mrp_lot` | 生产完成批号默认 ZPL 标签 |
+| `done_mrp_lot_zpl2_copies` | Integer | 0~10 | 同上 | 完成批号标签份数 |
+| `generated_mrp_lot_zpl2_label_id` | Many2one | model_id = stock.lot | `auto_print_generated_mrp_lot` | 生产生成批号默认 ZPL 标签 |
+| `generated_mrp_lot_zpl2_copies` | Integer | 0~10 | 同上 | 生成批号标签份数 |
+| `product_zpl2_label_id` | Many2one | model_id ∈ 6 种模型* | `auto_print_product_labels` / `auto_print_done_mrp_product_labels` | 产品标签最终回退 |
+| `product_zpl2_copies` | Integer | 0~10 | 同上 | 产品标签份数 |
+
+> \* 同上 6 种模型；份数 0 = 回退到下一级
+
+---
+
+### 四、标签与份数解析优先级
+
+#### 4.1 批号标签（按场景）
+
+| 场景 | 标签优先级 | 份数优先级 |
+|------|-----------|-----------|
+| **生产完成批号** (done) | 1. product.`zpl_done_lot_label_id`<br>2. product.`zpl_label_template_id`<br>3. picking_type.`done_mrp_lot_zpl2_label_id`<br>4. picking_type.`product_zpl2_label_id` | 1. product.`zpl_done_lot_copies`<br>2. product.`zpl_copies_per_label`<br>3. picking_type.`done_mrp_lot_zpl2_copies`<br>4. picking_type.`product_zpl2_copies`<br>5. 1 |
+| **生产生成批号** (created) | 1. product.`zpl_created_lot_label_id`<br>2. product.`zpl_label_template_id`<br>3. picking_type.`generated_mrp_lot_zpl2_label_id`<br>4. picking_type.`product_zpl2_label_id` | 1. product.`zpl_created_lot_copies`<br>2. product.`zpl_copies_per_label`<br>3. picking_type.`generated_mrp_lot_zpl2_copies`<br>4. picking_type.`product_zpl2_copies`<br>5. 1 |
+| **收/发货批号** (lot) | 1. product.`zpl_label_template_id`<br>2. picking_type.`lot_zpl2_label_id`<br>3. picking_type.`product_zpl2_label_id` | 1. product.`zpl_copies_per_label`<br>2. picking_type.`lot_zpl2_copies`<br>3. picking_type.`product_zpl2_copies`<br>4. 1 |
+
+#### 4.2 产品标签
+
+| 场景 | 标签优先级 | 份数优先级 |
+|------|-----------|-----------|
+| **生产完成产品** | 1. product.`zpl_label_template_id`<br>2. picking_type.`product_zpl2_label_id` | 1. product.`zpl_copies_per_label`<br>2. picking_type.`product_zpl2_copies`<br>3. 1 |
+| **出/入库产品** | 1. product.`zpl_label_template_id`<br>2. picking_type.`product_zpl2_label_id` | 1. product.`zpl_copies_per_label`<br>2. picking_type.`product_zpl2_copies`<br>3. 1 |
+
+#### 4.3 包装标签
+
+| 场景 | 标签 | 份数 |
+|------|------|------|
+| **包装标签** | picking_type.`package_zpl2_label_id`（无产品级覆盖） | picking_type.`package_zpl2_copies` or 1 |
+
+---
+
+### 五、标签模板模型适配（`printing.label.zpl2.model_id`）
+
+当标签用于 ZPL 直接打印时，传入的记录对象必须与标签 `model_id` 匹配：
+
+| 场景 | 传入记录 | 要求标签 model_id |
+|------|----------|-------------------|
+| 生产完成/生成批号 | `stock.lot` | stock.lot |
+| 收/发货批号 | `stock.lot` | stock.lot |
+| 生产完成产品 | 按标签 model_id 动态返回：mrp.production / product.product / product.template / stock.lot | 与配置一致 |
+| 出/入库产品 | 按标签 model_id 动态返回：stock.move / product.product / product.template / stock.lot | 与配置一致 |
+| 包装标签 | `stock.package` | stock.package |
+
+> 产品标签场景若标签 model_id 为 `stock.lot`，会自动取该产品关联的完成批次逐批打印。
+
+---
+
+### 六、配置改进建议（快速参考）
+
+| 改进点 | 现状 | 建议 |
+|--------|------|------|
+| 产品级份数约束 | 0~6，作业类型 0~10 | 统一上限或文档说明差异 |
+| `product_zpl2_label_id` 语义 | 作为所有场景的最终回退 | 可考虑拆分为更明确的场景字段 |
+| `zpl_no_print` 粒度 | 产品模板级，所有场景一刀切 | 可增加按场景（批号/产品/包装）的跳过开关 |
+| 包装标签 | 仅作业类型级，无产品级覆盖 | 可增加 `product.package_zpl2_label_id` |
+| 打印机可用性 | 不可用时直接报错，无重试 | 可增加重试或备用打印机逻辑 |
+
+如需将以上内容保存为项目内的配置文档，或对某项配置进行调整，请告诉我。
