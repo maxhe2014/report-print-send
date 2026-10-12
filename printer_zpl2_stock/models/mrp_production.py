@@ -159,7 +159,12 @@ class MrpProduction(models.Model):
         return label, copies
 
     def _get_zpl_record_for_label(self, production, label):
-        """Return the record to pass to ZPL label based on label's model_id."""
+        """Return the record(s) to pass to ZPL label based on label's model_id.
+
+        Returns a recordset. For labels whose model is ``stock.lot`` this
+        returns the finished lot(s) of the production; callers should iterate
+        over the result to print one label per lot.
+        """
         model_name = label.model_id.model if label.model_id else False
         if model_name == "mrp.production":
             return production
@@ -167,6 +172,8 @@ class MrpProduction(models.Model):
             return production.product_id
         elif model_name == "product.template":
             return production.product_id.product_tmpl_id
+        elif model_name == "stock.lot":
+            return production.finished_move_line_ids.mapped("lot_id")
         # Default to production record
         return production
 
@@ -198,10 +205,13 @@ class MrpProduction(models.Model):
                 if not label:
                     continue
                 printer = self._get_zpl_printer(label=label)
-                record = self._get_zpl_record_for_label(production, label)
+                records = self._get_zpl_record_for_label(production, label)
+                # For lot-model labels, print one label per finished lot;
+                # for single-record models, records contains one record.
                 zpl_content = b""
-                for _ in range(int(copies)):
-                    zpl_content += label._generate_zpl2_data(record)
+                for record in records:
+                    for _ in range(int(copies)):
+                        zpl_content += label._generate_zpl2_data(record)
                 _logger.info(
                     "ZPL direct print: product label '%s' for MO %s (%d copies)",
                     label.name, production.name, copies,
