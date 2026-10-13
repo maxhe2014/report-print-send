@@ -1,6 +1,6 @@
-# printer_zpl2_stock — 第二阶段改动方案与 TO-DO LIST
+# stock_mrp_auto_print — 第二阶段改动方案与 TO-DO LIST
 
-> 模块：`printer_zpl2_stock`
+> 模块：`stock_mrp_auto_print`
 > 阶段：第二阶段（打印机选择强制化 + 产品免打印标记 + 标准批次过滤）
 
 ---
@@ -205,7 +205,7 @@ printer.print_document(report=None, content=zpl_content, doc_format="raw")
 | 9 | `stock_picking_type.py`：4 个 `*_copies` 加 `@api.constrains`（1~10） | `models/stock_picking_type.py` | ✅ 已完成 |
 | 10 | `product_template_views.xml`：追加 `zpl_no_print` 字段 | `views/product_template_views.xml` | ✅ 已完成 |
 | 11 | 更新 `.pot` / `zh_CN.po` 翻译 | `i18n/` | ✅ 已完成 |
-| 12 | `-u printer_zpl2_stock` 升级模块 | — | ✅ 已完成 |
+| 12 | `-u stock_mrp_auto_print` 升级模块 | — | ✅ 已完成 |
 | 13 | 验证：无默认打印机时阻止验证并提示 | — | ✅ 已完成 |
 | 14 | 验证：默认打印机离线时阻止验证并提示 | — | ✅ 已完成 |
 | 15 | 验证：`zpl_no_print` 产品批次跳过 ZPL 打印 | — | ✅ 已完成 |
@@ -277,7 +277,7 @@ printer.print_document(report=None, content=zpl_content, doc_format="raw")
 | `done_mrp_lot_label_to_print` | pdf / zpl | pdf | `auto_print_done_mrp_lot` |
 | `generated_mrp_lot_label_to_print` | pdf / zpl | pdf | `auto_print_generated_mrp_lot` |
 
-#### 3.3 ZPL 自定义标签字段（`printer_zpl2_stock` 模块）
+#### 3.3 ZPL 自定义标签字段（`stock_mrp_auto_print` 模块）
 
 | 字段 | 类型 | 约束 | 关联开关 | 说明 |
 |------|------|------|----------|------|

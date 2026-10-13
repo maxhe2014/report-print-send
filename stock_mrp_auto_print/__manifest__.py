@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    "name": "Printer ZPL II - Stock Integration",
+    "name": "Stock/MRP Auto Print",
     "version": "19.0.1.0.0",
     "category": "Printer",
     "summary": "Use custom ZPL II labels for lot/SN and package printing in stock",
