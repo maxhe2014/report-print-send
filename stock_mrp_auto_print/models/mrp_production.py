@@ -3,6 +3,7 @@
 
 import logging
 import math
+from collections import defaultdict
 
 from odoo import _, models
 from odoo.exceptions import UserError
@@ -67,6 +68,24 @@ class MrpProduction(models.Model):
                 status=status_label,
             ))
         return printer
+
+    def _zpl_lot_qty_by_lot(self, move_lines):
+        """Return {lot_id: handled quantity} for the given move lines.
+
+        Mirrors Odoo's "One per unit" convention for the lot quantity: lines
+        whose UoM shares the reference of the unit UoM contribute their
+        ``quantity``, other UoMs count as one.
+        """
+        uom_unit = self.env.ref("uom.product_uom_unit")
+        qty_by_lot = defaultdict(float)
+        for move_line in move_lines:
+            if not move_line.lot_id:
+                continue
+            if move_line.product_uom_id._has_common_reference(uom_unit):
+                qty_by_lot[move_line.lot_id.id] += move_line.quantity
+            else:
+                qty_by_lot[move_line.lot_id.id] += 1
+        return qty_by_lot
 
     def _resolve_lot_label(self, lot, picking_type, label_field, copies_field, scenario="lot"):
         """Resolve ZPL label template and copies for a lot.
@@ -319,8 +338,9 @@ class MrpProduction(models.Model):
             # Print custom ZPL II labels directly
             for production in custom_productions:
                 picking_type = production.picking_type_id
-                lots = production.move_finished_ids.move_line_ids.mapped("lot_id")
-                for lot in lots:
+                move_lines = production.move_finished_ids.move_line_ids
+                qty_by_lot = production._zpl_lot_qty_by_lot(move_lines)
+                for lot in move_lines.lot_id:
                     label, copies = self._resolve_lot_label(
                         lot, picking_type,
                         "done_mrp_lot_zpl2_label_id",
@@ -329,10 +349,15 @@ class MrpProduction(models.Model):
                     )
                     if not label:
                         continue
+                    # One label per produced unit: copies x lot quantity,
+                    # rounded up. A zero quantity is not printed.
+                    count = int(copies) * math.ceil(qty_by_lot.get(lot.id, 0))
+                    if count <= 0:
+                        continue
                     printer = production._get_zpl_printer(label=label)
                     try:
                         zpl_content = b""
-                        for _ in range(int(copies)):
+                        for _ in range(count):
                             zpl_content += label._generate_zpl2_data(lot)
                         printer.print_document(
                             report=None, content=zpl_content, doc_format="raw"
@@ -388,10 +413,15 @@ class MrpProduction(models.Model):
             scenario="created",
         )
         if label:
+            # One label per already produced unit. Nothing is printed while
+            # no quantity has been produced yet.
+            count = int(copies) * math.ceil(self.qty_producing)
+            if count <= 0:
+                return None
             printer = self._get_zpl_printer(label=label)
             try:
                 zpl_content = b""
-                for _ in range(int(copies)):
+                for _ in range(count):
                     zpl_content += label._generate_zpl2_data(lot_id)
                 printer.print_document(
                     report=None, content=zpl_content, doc_format="raw"

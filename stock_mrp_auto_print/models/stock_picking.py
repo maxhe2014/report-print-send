@@ -3,6 +3,7 @@
 
 import logging
 import math
+from collections import defaultdict
 
 from odoo import _, models
 from odoo.exceptions import UserError
@@ -67,6 +68,24 @@ class StockPicking(models.Model):
                 status=status_label,
             ))
         return printer
+
+    def _zpl_lot_qty_by_lot(self, move_lines):
+        """Return {lot_id: handled quantity} for the given move lines.
+
+        Mirrors Odoo's "One per unit" convention for the lot quantity: lines
+        whose UoM shares the reference of the unit UoM contribute their
+        ``quantity``, other UoMs count as one.
+        """
+        uom_unit = self.env.ref("uom.product_uom_unit")
+        qty_by_lot = defaultdict(float)
+        for move_line in move_lines:
+            if not move_line.lot_id:
+                continue
+            if move_line.product_uom_id._has_common_reference(uom_unit):
+                qty_by_lot[move_line.lot_id.id] += move_line.quantity
+            else:
+                qty_by_lot[move_line.lot_id.id] += 1
+        return qty_by_lot
 
     def _resolve_lot_label(self, lot, picking_type):
         """Resolve the ZPL label template and copies for a given lot.
@@ -297,16 +316,21 @@ class StockPicking(models.Model):
             # Print custom ZPL II labels directly to the printer
             for picking in custom_pickings:
                 picking_type = picking.picking_type_id
-                lots = picking.move_line_ids.lot_id
-                for lot in lots:
+                qty_by_lot = picking._zpl_lot_qty_by_lot(picking.move_line_ids)
+                for lot in picking.move_line_ids.lot_id:
                     label, copies = self._resolve_lot_label(lot, picking_type)
                     if not label:
+                        continue
+                    # One label per handled unit: copies x lot quantity,
+                    # rounded up. A zero quantity is not printed.
+                    count = int(copies) * math.ceil(qty_by_lot.get(lot.id, 0))
+                    if count <= 0:
                         continue
                     printer = picking._get_zpl_printer(label=label)
                     try:
                         # Batch-generate ZPL content for all copies
                         zpl_content = b""
-                        for _ in range(int(copies)):
+                        for _ in range(count):
                             zpl_content += label._generate_zpl2_data(lot)
                         printer.print_document(
                             report=None,
