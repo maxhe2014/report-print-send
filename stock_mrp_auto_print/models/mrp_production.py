@@ -73,9 +73,8 @@ class MrpProduction(models.Model):
 
         Template priority (created/done scenario):
             1. product.zpl_<scenario>_lot_label_id
-            2. product.zpl_label_template_id
-            3. picking_type[label_field]
-            4. picking_type.product_zpl2_label_id
+            2. picking_type[label_field]
+            3. picking_type.product_zpl2_label_id
         Template priority (lot scenario, stock picking):
             1. product.zpl_label_template_id
             2. picking_type[label_field]
@@ -101,11 +100,14 @@ class MrpProduction(models.Model):
             return False, 0
 
         # Resolve label template
+        # Note: for created/done scenarios there is no fallback to the generic
+        # product template (zpl_label_template_id) — when the product-level
+        # lot template is not set, the operation type's lot template applies.
         if scenario == "created":
-            product_label = product.zpl_created_lot_label_id or product.zpl_label_template_id
+            product_label = product.zpl_created_lot_label_id
             product_copies = product.zpl_created_lot_copies or product.zpl_copies_per_label
         elif scenario == "done":
-            product_label = product.zpl_done_lot_label_id or product.zpl_label_template_id
+            product_label = product.zpl_done_lot_label_id
             product_copies = product.zpl_done_lot_copies or product.zpl_copies_per_label
         else:  # "lot"
             product_label = product.zpl_label_template_id
@@ -290,7 +292,7 @@ class MrpProduction(models.Model):
             custom_productions = all_lot_productions.filtered(
                 lambda p: p.picking_type_id.done_mrp_lot_zpl2_label_id
                 or any(
-                    ml.lot_id.product_id.product_tmpl_id.zpl_label_template_id
+                    ml.lot_id.product_id.product_tmpl_id.zpl_done_lot_label_id
                     for ml in p.move_finished_ids.move_line_ids
                     if ml.lot_id
                 )
@@ -391,7 +393,7 @@ class MrpProduction(models.Model):
         standard_productions = self.filtered(
             lambda p: not p.picking_type_id.generated_mrp_lot_zpl2_label_id
             and not any(
-                lot.product_id.product_tmpl_id.zpl_label_template_id
+                lot.product_id.product_tmpl_id.zpl_created_lot_label_id
                 for lot in p.lot_producing_ids
             )
         )

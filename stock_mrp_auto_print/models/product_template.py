@@ -13,8 +13,8 @@ class ProductTemplate(models.Model):
         string="Product ZPL Label Template",
         domain="[('model_id.model', 'in', ['product.template', 'product.product', 'stock.move', 'mrp.production', 'stock.lot', 'stock.package'])]",
         help=(
-            "General ZPL label template for this product. Used as fallback "
-            "when the scenario-specific (created/done) template is not set. "
+            "General ZPL label template for this product. Used for product "
+            "labels and for lot/SN labels in stock pickings. "
             "Takes priority over the operation type's default ZPL label "
             "during automatic printing."
         ),
@@ -30,7 +30,7 @@ class ProductTemplate(models.Model):
         domain="[('model_id.model', '=', 'stock.lot')]",
         help=(
             "ZPL label template used when a lot/SN is created (generated). "
-            "If not set, falls back to the product ZPL label template."
+            "If not set, the operation type's created lot/SN template applies."
         ),
     )
     zpl_created_lot_copies = fields.Integer(
@@ -44,7 +44,7 @@ class ProductTemplate(models.Model):
         domain="[('model_id.model', '=', 'stock.lot')]",
         help=(
             "ZPL label template used when a manufacturing order is done. "
-            "If not set, falls back to the product ZPL label template."
+            "If not set, the operation type's done lot/SN template applies."
         ),
     )
     zpl_done_lot_copies = fields.Integer(
