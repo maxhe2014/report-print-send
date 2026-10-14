@@ -14,6 +14,7 @@
         "views/product_template_views.xml",
         "views/stock_picking_type_views.xml",
         "views/mrp_stock_picking_type_views.xml",
+        "views/printing_printer_views.xml",
     ],
     "installable": True,
 }

@@ -208,8 +208,16 @@ class StockPicking(models.Model):
                     )
                     clean_action(action, self.env)
                     report_actions.append(action)
+        # Product-level override: a product with both a ZPL template and
+        # copies > 0 is always printed, even when the operation type's
+        # auto-print switch is off (unless marked "no print", which is
+        # handled inside _resolve_product_zpl_label).
         pickings_print_product_label = self.filtered(
             lambda p: p.picking_type_id.auto_print_product_labels
+            or any(
+                t.zpl_label_template_id and t.zpl_copies_per_label > 0
+                for t in p.move_ids.product_id.product_tmpl_id
+            )
         )
         # Separate pickings that use a custom ZPL II product label
         custom_pickings = pickings_print_product_label.filtered(
@@ -262,8 +270,17 @@ class StockPicking(models.Model):
                 clean_action(action, self.env)
                 report_actions.append(action)
         if self.env.user.has_group("stock.group_production_lot"):
+            # Product-level override: lots whose product has both a ZPL
+            # template and copies > 0 are always printed, even when the
+            # operation type's auto-print switch is off.
             pickings_print_lot_label = self.filtered(
-                lambda p: p.picking_type_id.auto_print_lot_labels
+                lambda p: (
+                    p.picking_type_id.auto_print_lot_labels
+                    or any(
+                        t.zpl_label_template_id and t.zpl_copies_per_label > 0
+                        for t in p.move_line_ids.lot_id.product_id.product_tmpl_id
+                    )
+                )
                 and p.move_line_ids.lot_id
             )
             # Separate pickings that use a custom ZPL II label

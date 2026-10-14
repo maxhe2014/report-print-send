@@ -191,8 +191,16 @@ class MrpProduction(models.Model):
             )
             clean_action(action, self.env)
             report_actions.append(action)
+        # Product-level override: a product with both a ZPL template and
+        # copies > 0 is always printed, even when the operation type's
+        # auto-print switch is off (unless the product is marked "no print",
+        # which is handled inside _resolve_product_zpl_label).
         productions_to_print = self.filtered(
             lambda p: p.picking_type_id.auto_print_done_mrp_product_labels
+            or (
+                p.product_tmpl_id.zpl_label_template_id
+                and p.product_tmpl_id.zpl_copies_per_label > 0
+            )
         )
         # Separate productions that use a custom ZPL II product label
         custom_productions = productions_to_print.filtered(
@@ -284,8 +292,17 @@ class MrpProduction(models.Model):
                     clean_action(action, self.env)
                     report_actions.append(action)
         if self.env.user.has_group("stock.group_production_lot"):
+            # Product-level override: a product with both a done-lot ZPL
+            # template and copies > 0 is always printed, even when the
+            # operation type's auto-print switch is off.
             all_lot_productions = self.filtered(
-                lambda p: p.picking_type_id.auto_print_done_mrp_lot
+                lambda p: (
+                    p.picking_type_id.auto_print_done_mrp_lot
+                    or any(
+                        t.zpl_done_lot_label_id and t.zpl_done_lot_copies > 0
+                        for t in p.move_finished_ids.move_line_ids.lot_id.product_id.product_tmpl_id
+                    )
+                )
                 and p.move_finished_ids.move_line_ids.lot_id
             )
             # Separate productions that use a custom ZPL II label
@@ -429,9 +446,14 @@ class MrpProduction(models.Model):
                 clean_action(action, self.env)
                 actions.append(action)
 
-        # Custom ZPL flow - only for productions with auto-print enabled
+        # Custom ZPL flow - for productions with auto-print enabled, or with
+        # a product-level override (created-lot template + copies > 0)
         custom_productions = (self - standard_productions).filtered(
             lambda p: p.picking_type_id.auto_print_generated_mrp_lot
+            or any(
+                t.zpl_created_lot_label_id and t.zpl_created_lot_copies > 0
+                for t in p.lot_producing_ids.product_id.product_tmpl_id
+            )
         )
         for production in custom_productions:
             picking_type = production.picking_type_id
