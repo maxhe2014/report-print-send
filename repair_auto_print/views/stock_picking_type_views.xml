@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_picking_type_form_repair_auto_print" model="ir.ui.view">
+    <field name="name">stock.picking.type.form.repair.auto.print</field>
+    <field name="model">stock.picking.type</field>
+    <field name="inherit_id" ref="stock.view_picking_type_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//page[@name='hardware']" position="after">
+        <page name="repair_hardware" string="Hardware" invisible="code != 'repair_operation'">
+          <group>
+            <group string="Print when repair is completed">
+              <field name="auto_print_done_repair_order" string="Repair Order"/>
+              <label for="auto_print_done_repair_product_labels" string="Product Labels"/>
+              <div class="o_row">
+                <field name="auto_print_done_repair_product_labels" string="Product Labels"/>
+                <label for="repair_product_label_to_print" string="Print labels as:" invisible="not auto_print_done_repair_product_labels" class="fw-bold"/>
+                <field name="repair_product_label_to_print" invisible="not auto_print_done_repair_product_labels"/>
+              </div>
+              <field name="repair_product_zpl2_label_id" invisible="not auto_print_done_repair_product_labels" options="{'no_create': True, 'no_create_edit': True}"/>
+              <field name="repair_product_zpl2_copies" invisible="not auto_print_done_repair_product_labels or not repair_product_zpl2_label_id"/>
+              <label for="auto_print_done_repair_lot" string="Lot/SN Labels" groups="stock.group_production_lot"/>
+              <div class="o_row" groups="stock.group_production_lot">
+                <field name="auto_print_done_repair_lot" string="Lot/SN Labels"/>
+                <label for="done_repair_lot_label_to_print" string="Print labels as:" invisible="not auto_print_done_repair_lot" class="fw-bold"/>
+                <field name="done_repair_lot_label_to_print" invisible="not auto_print_done_repair_lot"/>
+              </div>
+              <field name="done_repair_lot_zpl2_label_id" invisible="not auto_print_done_repair_lot" groups="stock.group_production_lot" options="{'no_create': True, 'no_create_edit': True}"/>
+              <field name="done_repair_lot_zpl2_copies" invisible="not auto_print_done_repair_lot or not done_repair_lot_zpl2_label_id" groups="stock.group_production_lot"/>
+            </group>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

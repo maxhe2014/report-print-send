@@ -1,0 +1,228 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* repair_auto_print
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-04 00:00+0000\n"
+"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__auto_print_done_repair_lot
+msgid "Auto Print Repaired Lot Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__auto_print_done_repair_order
+msgid "Auto Print Completed Repair Order"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__auto_print_done_repair_product_labels
+msgid "Auto Print Repaired Product Labels"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__auto_print_done_repair_lot
+msgid "Automatically print the lot/serial number label when the repair is completed."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__auto_print_done_repair_order
+msgid "Automatically print the repair order when the repair is completed."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__auto_print_done_repair_product_labels
+msgid "Automatically print repaired product labels when the repair is completed."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+msgid "Hardware"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_label_to_print
+msgid "Repair Lot/SN Label Format"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+msgid "Lot/SN Labels"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_label_to_print
+msgid "Repair Product Label Format"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+msgid "Product Labels"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+msgid "Print labels as:"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+msgid "Print when repair is completed"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+msgid "Repair Order"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_zpl2_label_id
+msgid "Default Repair Product ZPL II Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_product_zpl2_label_id
+msgid ""
+"Used when the repaired product has no repair-specific product label. "
+"A custom ZPL II label takes priority over the native label format."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_zpl2_copies
+msgid "Default Repair Product Label Copies"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_product_zpl2_copies
+msgid "Default number of custom ZPL II product labels per repair order."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
+msgid "Default Repair Lot/SN ZPL II Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
+msgid ""
+"Used when the repaired product has no repair-specific lot/SN label. "
+"A custom ZPL II label takes priority over the native label format."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_copies
+msgid "Default Repair Lot/SN Label Copies"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_copies
+msgid ""
+"Default number of custom ZPL II lot/SN labels per repaired unit, "
+"rounded up."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl2_label_id
+msgid "Repair Product ZPL II Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl2_label_id
+msgid ""
+"Repair-specific product label shared by all variants. Leave empty "
+"to use the repair operation type's default template."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl2_copies
+msgid "Repair Product Label Copies"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl2_copies
+msgid ""
+"Overrides the operation type's copies when greater than 0. "
+"Set to 0 to inherit the operation type setting."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__done_repair_lot_zpl2_label_id
+msgid "Repair Lot/SN ZPL II Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__done_repair_lot_zpl2_label_id
+msgid ""
+"Repair-specific lot/SN label shared by all variants. Leave empty "
+"to use the repair operation type's default template."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__done_repair_lot_zpl2_copies
+msgid "Repair Lot/SN Label Copies"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__done_repair_lot_zpl2_copies
+msgid ""
+"Overrides the operation type's copies when greater than 0. "
+"Set to 0 to inherit the operation type setting."
+msgstr ""
+
+#. module: repair_auto_print
+#: code:addons/repair_auto_print/models/stock_picking_type.py:79
+msgid "%(field)s must be between 1 and 10."
+msgstr ""
+
+#. module: repair_auto_print
+#: code:addons/repair_auto_print/models/product_template.py:61
+msgid ""
+"%(field)s must be between 0 and 10 "
+"(0 = inherit operation type setting)."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+msgid "ZPL Labels"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+msgid ""
+"Leave a template empty to use the repair operation type default. "
+"Set copies to 0 to inherit its quantity."
+msgstr ""
+
+#. module: repair_auto_print
+#: code:addons/repair_auto_print/models/repair_order.py:59
+msgid ""
+"ZPL II label '%(label)s' for repair '%(repair)s' has an "
+"unsupported model: %(model)s."
+msgstr ""
+
+#. module: repair_auto_print
+#: code:addons/repair_auto_print/models/repair_order.py:59
+msgid ""
+"No printer is configured for ZPL II label '%(label)s' on "
+"repair '%(repair)s'. Configure a user-label printer, the "
+"label's default printer, or your default label printer."
+msgstr ""
+
+#. module: repair_auto_print
+#: code:addons/repair_auto_print/models/repair_order.py:59
+msgid ""
+"Printer '%(printer)s' for ZPL II label '%(label)s' on "
+"repair '%(repair)s' is not available (status: %(status)s)."
+msgstr ""
