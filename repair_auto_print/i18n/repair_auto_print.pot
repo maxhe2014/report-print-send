@@ -46,7 +46,7 @@ msgid "Automatically print repaired product labels when the repair is completed.
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Hardware"
 msgstr ""
 
@@ -56,8 +56,8 @@ msgid "Repair Lot/SN Label Format"
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "Lot/SN Labels"
 msgstr ""
 
@@ -67,23 +67,23 @@ msgid "Repair Product Label Format"
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "Product Labels"
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Print labels as:"
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Print when repair is completed"
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Repair Order"
 msgstr ""
 
@@ -194,12 +194,12 @@ msgid ""
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "ZPL Labels"
 msgstr ""
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid ""
 "Leave a template empty to use the repair operation type default. "
 "Set copies to 0 to inherit its quantity."

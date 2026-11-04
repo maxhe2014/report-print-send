@@ -47,7 +47,7 @@ msgid "Automatically print repaired product labels when the repair is completed.
 msgstr "维修完成时自动打印维修产品标签。"
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Hardware"
 msgstr "硬件"
 
@@ -57,8 +57,8 @@ msgid "Repair Lot/SN Label Format"
 msgstr "批次／序列号标签格式"
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "Lot/SN Labels"
 msgstr "批次／序列号标签"
 
@@ -68,23 +68,23 @@ msgid "Repair Product Label Format"
 msgstr "产品标签格式"
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "Product Labels"
 msgstr "产品标签"
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Print labels as:"
 msgstr "标签打印格式："
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Print when repair is completed"
 msgstr "维修完成时打印"
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 msgid "Repair Order"
 msgstr "维修单"
 
@@ -195,12 +195,12 @@ msgid ""
 msgstr "%(field)s 必须在 0 到 10 之间（0 表示继承作业类型设置）。"
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "ZPL Labels"
 msgstr "ZPL 标签"
 
 #. module: repair_auto_print
-#: model:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid ""
 "Leave a template empty to use the repair operation type default. "
 "Set copies to 0 to inherit its quantity."

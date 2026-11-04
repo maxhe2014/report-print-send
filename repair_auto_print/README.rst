@@ -20,8 +20,9 @@ accept values from 1 to 10.
 Product template
 ----------------
 
-On a stockable product's **General Information** page, configure repair-specific
-product and lot/SN ZPL II templates. These settings are shared by all variants.
+On a stockable product's **ZPL Labels** tab, configure repair-specific product
+and lot/SN ZPL II templates in separate standard form groups. These settings
+are shared by all variants.
 A product template takes priority over the operation type default. Copy counts
 from 1 to 10 override the operation type; 0 inherits its setting.
 
