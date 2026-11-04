@@ -352,5 +352,15 @@ msgstr "制造订单完成时使用的 ZPL 标签模板。未设置时回退到�
 
 #. module: stock_mrp_auto_print
 #: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
-msgid "ZPL Label Configuration"
-msgstr "ZPL 标签配置"
+msgid "Lot/SN Labels"
+msgstr "批次／序列号标签"
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Product Labels"
+msgstr "产品标签"
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Stock/MRP Labels"
+msgstr "库存/生产标签"

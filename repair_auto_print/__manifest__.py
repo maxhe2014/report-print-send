@@ -4,7 +4,7 @@
 {
     "name": "Repair Auto Print",
     "summary": "Automatically print repair documents and labels on completion",
-    "version": "19.0.1.1.1",
+    "version": "19.0.1.1.2",
     "category": "Manufacturing",
     "author": "宁波企智信息科技有限公司, Odoo Community Association (OCA)",
     "website": "https://www.qz-technology.cn",

@@ -196,8 +196,8 @@ msgstr "%(field)s 必须在 0 到 10 之间（0 表示继承作业类型设置�
 
 #. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
-msgid "ZPL Labels"
-msgstr "ZPL 标签"
+msgid "Repair Labels"
+msgstr "维修标签"
 
 #. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print

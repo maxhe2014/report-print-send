@@ -195,7 +195,7 @@ msgstr ""
 
 #. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
-msgid "ZPL Labels"
+msgid "Repair Labels"
 msgstr ""
 
 #. module: repair_auto_print

@@ -3,7 +3,7 @@
 
 {
     "name": "Stock/MRP Auto Print",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.2",
     "category": "Printer",
     "summary": "Use custom ZPL II labels for lot/SN and package printing in stock",
     "author": "Odoo Community Association (OCA)",

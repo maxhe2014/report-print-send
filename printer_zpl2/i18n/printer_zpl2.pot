@@ -1079,3 +1079,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_wizard_import_zpl2_form
 msgid "ZPL2"
 msgstr ""
+
+#. module: printer_zpl2
+#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_product_template_form_zpl2_labels
+msgid "ZPL Labels"
+msgstr ""

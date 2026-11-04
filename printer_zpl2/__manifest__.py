@@ -3,17 +3,18 @@
 
 {
     "name": "Printer ZPL II",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "Printer",
     "summary": "Add a ZPL II label printing feature",
     "author": "SUBTENO-IT, FLorent de Labarre, "
     "Apertoso NV, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/report-print-send",
     "license": "AGPL-3",
-    "depends": ["base_report_to_printer_cups"],
+    "depends": ["base_report_to_printer_cups", "product"],
     "data": [
         "security/ir.model.access.csv",
         "views/printing_label_zpl2.xml",
+        "views/product_template_views.xml",
         "wizard/print_record_label.xml",
         "wizard/wizard_import_zpl2.xml",
     ],

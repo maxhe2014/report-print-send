@@ -345,5 +345,15 @@ msgstr ""
 
 #. module: stock_mrp_auto_print
 #: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
-msgid "ZPL Label Configuration"
+msgid "Lot/SN Labels"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Product Labels"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Stock/MRP Labels"
 msgstr ""
