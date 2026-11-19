@@ -23,7 +23,9 @@ class StockMoveLine(models.Model):
         Raises UserError if no printer is configured or the resolved printer
         is not available.
         """
-        self.ensure_one()
+        # No ensure_one(): _post_put_in_pack_hook is called with the whole
+        # recordset of move lines packed together; this method only needs
+        # the environment/user, not a single line.
         user = self.env.user
         printer = False
 
