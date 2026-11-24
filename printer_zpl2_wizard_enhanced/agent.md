@@ -53,7 +53,8 @@ venv/bin/python src/odoo/odoo-bin -c config/odoo.conf -d ot_17.0_111366 \
 | `__manifest__.py` | 声明依赖与继承视图；不注册任何业务单据按钮 |
 | `plan.md` | 开发目标、假设、数量策略设计、验证方案 |
 | `agent.md` | 本文档 |
-| `models/wizard_print_record_label.py` | 核心：`_inherit` 通用向导，字段 + `default_get` / 打印计划 / `print_label` |
+| `models/printing_label_zpl2.py` | `_inherit` ZPL 模板，覆写 `create_action` / `unlink_action` 为「按模板逐个」绑定/解绑 |
+| `models/wizard_print_record_label.py` | 核心：`_inherit` 通用向导，字段 + `label_id` 域 + `default_get` / 打印计划 / `print_label` |
 | `views/wizard_print_record_label_views.xml` | 继承通用向导表单，插入数量策略与范围分组 |
 | `i18n/zh_CN.po` | 新增字段与提示的中文翻译 |
 
@@ -125,7 +126,30 @@ else:
 
 `print_label()` 遍历 plan 调用 `label.print_label(printer, record)`，并弹出成功通知（总张数）。无对象时抛 `UserError`。
 
-### 4.7 视图继承
+### 4.7 模板可见性与动作菜单开关（17.0.6.0.0 新增）
+
+**目标行为**：ZPL 模板只有点了「Add in the 'Action' menu」才在向导弹窗里出现；点「Remove from the 'Action' menu」就从下拉里消失，且**逐个模板互不影响**。
+
+**为什么必须覆写**：`printer_zpl2` 原版两个方法是模型级的——
+- `create_action()` 会把**同模型所有未绑定模板**一次性关联（实测：对 A 点添加，A、B 一起被绑定）；
+- `unlink_action()` 直接 `action_window_id.unlink()` 删除共享动作，导致同模型**所有**模板一起失效（实测：对 A 点移除，B 与现有模板全部掉绑）。
+
+**本模块覆写**（`models/printing_label_zpl2.py`）：
+- `create_action()`：遍历 `self`，只把当前模板绑定到模型现存的打印动作（没有则用 `new_action` 建），已绑定的跳过；不再批量。
+- `unlink_action()`：只 `write({'action_window_id': False})` 解绑当前模板，**保留动作记录**，其他模板不受影响；解绑后「添加」按钮重新出现。
+
+**向导侧配套**（`wizard_print_record_label.py` + 视图）：
+- **下拉筛选必须放在视图级 domain**（`views/wizard_print_record_label_views.xml`）：
+  ```
+  domain="[('action_window_id', '!=', False), ('model_id.model', '=', model)]"
+  ```
+  **这是关键**：many2one 下拉的域由 web client 通过 `fields_get` 计算，而那次调用的 context 只有 `{'uid': ...}`，**不含 `active_model`**。因此任何写在 Python 字段上的 `domain=lambda`（依赖 context）都拿不到模型 → 域退化为只过滤 `action_window_id` → **所有模型的模板全部列出**（实测复现：生产订单向导里出现调拨/库存移动行模板）。视图级 domain 在浏览器端用向导记录上持久化的 `model` 字段求值，不受 `fields_get` context 影响。
+- `default_get()` 补填 `active_model_id`：模型解析链 `_context_model()` = `active_model` → `default_active_model_id`（ir.model ID 反查）→ `action_id`（动作 `binding_model_id` 反查）。四种入口（仅 active_model / 仅 default_active_model_id / 仅 action_id / 组合）均验证能补填出正确模型，向导记录的 `model`（related 字段）随之有值，视图 domain 即可正确求值。
+- `default_get()` 的标签自动预选复用同一域，且仅在唯一命中时填入，避免预填不可见模板。
+
+> 依赖模型仍只有 `printer_zpl2` + `stock`；本改动不新增按钮、不新增依赖。
+
+### 4.8 视图继承
 
 继承 `printer_zpl2.view_wizard_print_product_label_form`，在 `<footer>` 前插入：
 
@@ -182,6 +206,9 @@ print(W.with_context(active_model='stock.picking', active_ids=[1]).default_get([
 | 「打印标签」弹窗没有新字段 | 视图未升级，执行 `-u printer_zpl2_wizard_enhanced` |
 | 份数框不显示 | 当前是 `exact` 模式，切到按数量/按记录 |
 | 打印张数和预期不符 | 先看 `total_labels` 预览：按数量=数量×份数；精确模式=填写的总张数 |
+| 新建的模板在向导里看不到 | 该模板未点「Add in the 'Action' menu」；域只显示已绑定动作的模板 |
+| 点「移除」后同模型其它模板一起消失 | 用的是原版 `printer_zpl2` 行为；升级到 17.0.6.0.0，本模块已改为逐个解绑且不删动作 |
+| 从菜单进向导「标签」下拉为空 | 确认 `default_active_model_id` 在动作 context 中；本模块已从它反查模型兜底 |
 | 范围分组不显示 | 当前模板绑定的不是 `stock.lot`，改用 `stock.lot` 模板 |
 | 打印机不是个人资料的值 | 个人资料「ZPL Label Printing」分组未设 `zpl_printer_id` |
 | 总张数为 0 | 未选中记录/序列号，或上下文缺 `active_ids` |

@@ -12,6 +12,68 @@ class PrintRecordLabel(models.TransientModel):
 
     _inherit = 'wizard.print.record.label'
 
+    # Base printer_zpl2 filters label templates solely by context['active_model'].
+    # Two things break in real deployments:
+    #   1. actions opened from a menu may only carry default_active_model_id
+    #      (an ir.model id), so the base domain resolves to model = False;
+    #   2. every template of the model shows up, even ones the user never
+    #      enabled via "Add in the 'Action' menu".
+    # We resolve the model from every available source and restrict the list to
+    # templates that are actually bound to an action menu entry.
+    label_id = fields.Many2one(
+        comodel_name='printing.label.zpl2',
+        domain=lambda self: self._label_domain(),
+    )
+
+    @api.model
+    def _context_model(self):
+        """Resolve the target model from context (safe during default_get)."""
+        ctx = self.env.context
+        model = ctx.get('active_model')
+        if model and model in self.env:
+            return model
+        model_id = ctx.get('default_active_model_id')
+        if model_id:
+            ir_model = self.env['ir.model'].browse(model_id).exists()
+            if ir_model.model in self.env:
+                return ir_model.model
+        # The web client injects action_id when it opens an act_window. The
+        # action's binding_model_id is the most reliable model hint here: it is
+        # stored on the action itself and does not depend on the action's own
+        # context surviving the trip into the wizard.
+        action_id = ctx.get('action_id')
+        if not action_id and isinstance(ctx.get('action'), dict):
+            action_id = ctx['action'].get('id')
+        if action_id:
+            action = self.env['ir.actions.act_window'].browse(action_id).exists()
+            if action.binding_model_id and action.binding_model_id.model in self.env:
+                return action.binding_model_id.model
+        _logger.warning(
+            'ZPL label domain: no model resolved. ctx keys=%s '
+            'active_model=%s default_active_model_id=%s action_id=%s',
+            sorted(k for k in ctx.keys() if not k.startswith('_')),
+            ctx.get('active_model'), ctx.get('default_active_model_id'), action_id,
+        )
+        return False
+
+    def _effective_model(self):
+        """Context first, then the wizard's own active_model_id field."""
+        model = self._context_model()
+        if model:
+            return model
+        for record in self:
+            if record.active_model_id and record.active_model_id.model in self.env:
+                return record.active_model_id.model
+        return False
+
+    @api.model
+    def _label_domain(self):
+        model = self._context_model()
+        domain = [('action_window_id', '!=', False)]
+        if model:
+            domain.append(('model_id.model', '=', model))
+        return domain
+
     quantity_source = fields.Selection(
         selection=[
             ('per_quantity', 'By Product Quantity'),
@@ -259,6 +321,26 @@ class PrintRecordLabel(models.TransientModel):
     @api.model
     def default_get(self, fields_list):
         result = super().default_get(fields_list)
+
+        # Persist the target model on the wizard record. The view-level
+        # domain on label_id reads the `model` (related) field of this record;
+        # it cannot use the open context, which the web client drops when it
+        # computes a many2one dropdown's domain via fields_get.
+        effective_model = self._effective_model()
+        if effective_model and 'active_model_id' in fields_list and not result.get('active_model_id'):
+            ir_model = self.env['ir.model'].search([('model', '=', effective_model)], limit=1)
+            if ir_model:
+                result['active_model_id'] = ir_model.id
+
+        # Keep the label auto-selection consistent with the (possibly
+        # restricted) domain: only templates bound to an action menu are
+        # eligible, so never pre-fill a template the user cannot see.
+        if 'label_id' in fields_list:
+            labels = self.env['printing.label.zpl2'].search(self._label_domain())
+            if len(labels) == 1:
+                result['label_id'] = labels.id
+            else:
+                result.pop('label_id', None)
 
         active_model = self.env.context.get('active_model')
         active_ids = self.env.context.get('active_ids') or []
