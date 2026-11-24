@@ -283,9 +283,11 @@ class PrintRecordLabel(models.TransientModel):
         """Records to render. Determined by the label template's model."""
         self.ensure_one()
         if self.label_id.model_id.model == 'stock.lot':
-            objects = self.lot_ids.filtered(lambda lot: lot.exists())
+            # exists() on the whole recordset costs one query. Calling it per
+            # record inside filtered() costs one query per lot.
+            objects = self.lot_ids.exists()
             if not objects:
-                objects = self.available_lot_ids.filtered(lambda lot: lot.exists())
+                objects = self.available_lot_ids.exists()
             return objects
 
         active_model = self.env.context.get('active_model')
@@ -341,17 +343,24 @@ class PrintRecordLabel(models.TransientModel):
                 result['label_id'] = labels.id
             else:
                 result.pop('label_id', None)
+        else:
+            labels = self.env['printing.label.zpl2'].browse(result.get('label_id') or [])
 
-        active_model = self.env.context.get('active_model')
-        active_ids = self.env.context.get('active_ids') or []
-        # Collect serials from any model that references them, not just
-        # Direct lot fields and related stock move lines on any model.
-        lots = self._collect_lots(active_model, active_ids)
-        if lots:
-            if 'available_lot_ids' in fields_list:
-                result['available_lot_ids'] = [(6, 0, lots.ids)]
-            if 'lot_ids' in fields_list:
-                result['lot_ids'] = [(6, 0, lots.ids)]
+        # 只有 stock.lot 类型的标签模板才需要批次/序列号。否则（例如产品标签）
+        # 这一步的深递归会被白白执行，每打开一次向导都要遍历库存流水。
+        target_labels = self.env['printing.label.zpl2'].browse(
+            result.get('label_id') or labels.ids)
+        if target_labels and 'stock.lot' in target_labels.model_id.mapped('model'):
+            active_model = self.env.context.get('active_model')
+            active_ids = self.env.context.get('active_ids') or []
+            # Collect serials from any model that references them, not just
+            # direct lot fields and related stock move lines on any model.
+            lots = self._collect_lots(active_model, active_ids)
+            if lots:
+                if 'available_lot_ids' in fields_list:
+                    result['available_lot_ids'] = [(6, 0, lots.ids)]
+                if 'lot_ids' in fields_list:
+                    result['lot_ids'] = [(6, 0, lots.ids)]
 
         # The ZPL printer in the user profile takes precedence over the
         # generic wizard's "only one printer" auto-selection. The field comes
