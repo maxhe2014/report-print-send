@@ -14,7 +14,7 @@
         - User default printing configuration
         - Print button on repair order form view
     """,
-    'depends': ['repair', 'printer_zpl2', 'mrp_zpl_label_print'],
+    'depends': ['repair', 'printer_zpl2', 'mrp_zpl_label_print', 'stock_picking_zpl_label_print'],
     'data': [
         'security/ir.model.access.csv',
         'views/repair_order_views.xml',

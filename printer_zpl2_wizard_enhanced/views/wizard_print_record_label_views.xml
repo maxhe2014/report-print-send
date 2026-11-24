@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wizard_print_product_label_form_inherit_advanced" model="ir.ui.view">
+        <field name="name">wizard.print.record.label.form.inherit.advanced</field>
+        <field name="model">wizard.print.record.label</field>
+        <field name="inherit_id" ref="printer_zpl2.view_wizard_print_product_label_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//footer" position="before">
+                <group string="Print Options">
+                    <field name="quantity_source"/>
+                    <field name="copies_per_label" invisible="quantity_source == 'exact'"/>
+                    <field name="exact_copies" invisible="quantity_source != 'exact'"/>
+                    <field name="total_labels" readonly="1"/>
+                    <field name="use_lot_range" invisible="1"/>
+                </group>
+                <group string="Print Range (Lots / Serial Numbers)" invisible="not use_lot_range">
+                    <field name="available_lot_ids" invisible="1"/>
+                    <field name="lot_ids" widget="many2many_tags" nolabel="1" options="{'no_create': True}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

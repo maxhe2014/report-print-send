@@ -18,10 +18,7 @@ class PrintRepairZplLabelWizard(models.TransientModel):
     printer_id = fields.Many2one(
         comodel_name='printing.printer',
         string='Printer',
-        compute='_compute_default_printer',
-        readonly=True,
-        store=False,
-        help='Default printer from user preferences'
+        help='Printer to use. Defaults to the ZPL Label Printer set in your user preferences.'
     )
     
     label_template_id = fields.Many2one(
@@ -46,27 +43,16 @@ class PrintRepairZplLabelWizard(models.TransientModel):
         help='Print exactly the number of copies specified, without multiplying by qty_done'
     )
     
-    @api.depends('label_template_id')
-    def _compute_default_printer(self):
-        """Compute default printer from user preferences or label-user configuration"""
-        user = self.env.user
-        for wizard in self:
-            # 首先尝试获取用户为当前标签模板设置的打印机
-            if wizard.label_template_id:
-                label_config = self.env['printing.label.zpl2.configuration'].search(
-                    [('user_id', '=', user.id), ('label_id', '=', wizard.label_template_id.id)],
-                    limit=1
-                )
-                if label_config and label_config.printer_id:
-                    wizard.printer_id = label_config.printer_id
-                    continue
-            # 如果没有特定配置，使用用户默认ZPL打印机
-            wizard.printer_id = user.zpl_printer_id
-    
     @api.model
     def default_get(self, fields_list):
         result = super(PrintRepairZplLabelWizard, self).default_get(fields_list)
-        
+
+        # The default printer always follows the user's ZPL Label Printer
+        # preference. It must not be overridden by a stored per-template
+        # configuration, otherwise changing the preference has no effect.
+        if 'printer_id' in fields_list and not result.get('printer_id'):
+            result['printer_id'] = self.env.user.zpl_printer_id.id or False
+
         # Set default repair order
         if self.env.context.get('default_repair_id'):
             repair_id = self.env.context.get('default_repair_id')
@@ -132,7 +118,8 @@ class PrintRepairZplLabelWizard(models.TransientModel):
                         copies=1
                     )
                 
-                # Save user's selected label template for future use
+                # Remember the selected template for next time. This record no
+                # longer controls the wizard's default printer (see default_get).
                 user = self.env.user
                 # Check if configuration exists
                 label_config = self.env['printing.label.zpl2.configuration'].search([
