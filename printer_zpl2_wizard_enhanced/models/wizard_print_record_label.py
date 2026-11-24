@@ -272,8 +272,15 @@ class PrintRecordLabel(models.TransientModel):
                 result['lot_ids'] = [(6, 0, lots.ids)]
 
         # The ZPL printer in the user profile takes precedence over the
-        # generic wizard's "only one printer" auto-selection.
-        if 'printer_id' in fields_list and self.env.user.zpl_printer_id:
+        # generic wizard's "only one printer" auto-selection. The field comes
+        # from mrp_zpl_label_print, which is no longer a dependency, so only
+        # use it when that module is installed; otherwise fall back to the
+        # base wizard's default printer selection.
+        if (
+            'printer_id' in fields_list
+            and 'zpl_printer_id' in self.env.user._fields
+            and self.env.user.zpl_printer_id
+        ):
             result['printer_id'] = self.env.user.zpl_printer_id.id
 
         return result

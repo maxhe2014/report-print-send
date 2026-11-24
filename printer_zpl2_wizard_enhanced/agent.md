@@ -10,7 +10,7 @@
 - **三种数量计算方式**：按产品数量 / 按记录或序列号 / 精确指定总张数
 - 份数选择（每单位/记录 1–6）与**总张数实时预览**
 - **打印范围选择**（按批次/序列号，任意关联 `stock.lot` 的模型）
-- 打印机默认取个人资料的 `zpl_printer_id`
+- 打印机默认取个人资料的 `zpl_printer_id`（若安装了提供该字段的模块，否则回退通用向导的默认选择）
 
 用户无需更换入口，也不会看到两个功能重叠的按钮。
 
@@ -21,14 +21,13 @@
 ## 2. 依赖与安装
 
 ```python
-'depends': ['printer_zpl2', 'mrp_zpl_label_print', 'stock']
+'depends': ['printer_zpl2', 'stock']
 ```
 
 - `printer_zpl2` — 被增强的向导与视图来源
-- `mrp_zpl_label_print` — 提供 `res.users.zpl_printer_id`
 - `stock` — 提供 `stock.lot`（序列号范围的基础模型）
 
-> 原先的 `repair` 依赖已移除：本模块对序列号的收集与打印逻辑均为通用实现，不依赖维修单模型。
+> 依赖已最小化：本模块只依赖被增强的 `printer_zpl2` 与序列号基础模型 `stock`。原先的 `repair`、`mrp_zpl_label_print` 依赖均已移除——本模块对序列号的收集与打印逻辑是通用的；`res.users.zpl_printer_id` 只是"有则优先用"的增强项，`default_get` 里用字段存在性检查做了容错，没装提供该字段的模块时自动回退到通用向导的默认打印机选择。装/卸本模块不会再连带安装或卸载 MRP 打印模块。
 
 全新安装（模块技术名从 `repair_order_zpl_label_print_advanced` 变更后需先卸载旧模块）：
 
