@@ -2,7 +2,8 @@
 import logging
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools import groupby
 
 _logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class PrintRecordLabel(models.TransientModel):
             action = self.env['ir.actions.act_window'].browse(action_id).exists()
             if action.binding_model_id and action.binding_model_id.model in self.env:
                 return action.binding_model_id.model
-        _logger.warning(
+        _logger.debug(
             'ZPL label domain: no model resolved. ctx keys=%s '
             'active_model=%s default_active_model_id=%s action_id=%s',
             sorted(k for k in ctx.keys() if not k.startswith('_')),
@@ -100,7 +101,6 @@ class PrintRecordLabel(models.TransientModel):
         help='Total number of labels to print when Quantity Mode is Exact Total Labels.',
     )
     total_labels = fields.Integer(
-        string='Total Labels',
         compute='_compute_total_labels',
         help='Number of labels that will be sent to the printer.',
     )
@@ -128,31 +128,37 @@ class PrintRecordLabel(models.TransientModel):
     def _check_copies_per_label(self):
         for wizard in self:
             if wizard.copies_per_label < 1 or wizard.copies_per_label > 6:
-                raise UserError(_('Copies per label must be between 1 and 6.'))
+                raise ValidationError(_('Copies per label must be between 1 and 6.'))
 
     @api.constrains('exact_copies')
     def _check_exact_copies(self):
         for wizard in self:
             if wizard.exact_copies < 1 or wizard.exact_copies > 999:
-                raise UserError(_('Exact total labels must be between 1 and 999.'))
+                raise ValidationError(_('Exact total labels must be between 1 and 999.'))
 
-    @api.depends('label_id')
+    @api.depends('label_id.model_id.model')
     def _compute_use_lot_range(self):
         for wizard in self:
             wizard.use_lot_range = wizard.label_id.model_id.model == 'stock.lot'
 
     @api.depends('quantity_source', 'copies_per_label', 'exact_copies',
                  'lot_ids', 'label_id')
+    @api.depends_context('active_model', 'active_ids')
     def _compute_total_labels(self):
         for wizard in self:
             wizard.total_labels = sum(count for _record, count in wizard._print_plan())
 
-    # Fields that are infrastructure rather than business relations: drilling
-    # into them cannot yield a meaningful lot and only costs queries.
+    # Fields that are infrastructure or the whole transactional history rather
+    # than business relations: drilling into them cannot yield a new lot and
+    # only costs queries. ``stock_quant_ids`` still exposes the current lots of
+    # a product, so skipping ``stock_move_ids`` is safe.
     _SKIP_RELATION_FIELDS = frozenset({
         'message_ids', 'message_follower_ids', 'activity_ids',
-        'website_message_ids', 'rating_ids',
+        'website_message_ids', 'rating_ids', 'stock_move_ids',
     })
+    # Stock quants are only candidates, never a default selection: preselecting
+    # them would print every lot of the product when the user does not choose.
+    _PREFILL_SKIP_FIELDS = frozenset({'stock_quant_ids'})
     _SKIP_MODEL_PREFIXES = ('mail.', 'ir.', 'res.', 'base.', 'web.')
     _MAX_RELATION_DEPTH = 4
 
@@ -164,9 +170,12 @@ class PrintRecordLabel(models.TransientModel):
         'mrp.production': ('qty_producing', 'product_qty'),
     }
     # Common quantity field names across sale / purchase / stock / mrp / etc.
+    # Actual/done quantities come first: a validated move must print what was
+    # really produced, not its initial demand. ``product_uom_qty`` is only used
+    # when nothing was done yet (draft orders/pickings).
     _QUANTITY_FIELDS = (
-        'product_qty', 'product_uom_qty', 'quantity', 'qty_done',
-        'qty', 'qty_ordered', 'product_qty_done',
+        'quantity', 'qty_done', 'product_qty_done',
+        'product_qty', 'product_uom_qty', 'qty_ordered', 'qty',
     )
     _LINE_FIELDS = (
         'move_line_ids', 'move_ids', 'order_line', 'move_lines', 'line_ids',
@@ -201,46 +210,99 @@ class PrintRecordLabel(models.TransientModel):
         return names
 
     @api.model
-    def _lots_from_records(self, records, depth=0, visited=None):
-        """Recursively collect lots reachable from ``records``."""
+    def _lots_from_records(self, records):
+        """Collect every lot reachable from ``records``, level by level.
+
+        Records of the same model reached through different paths are merged at
+        each level. This keeps the traversal bounded (one query per model and
+        relation per level) while never skipping a relation, which a per-path
+        ``visited`` set used to do (e.g. mrp.production.move_ids vs move_raw_ids).
+        """
         lots = self.env['stock.lot']
-        if not records or depth > self._MAX_RELATION_DEPTH:
+        if not records:
             return lots
-        if records._name == 'stock.lot':
-            return records
-
-        visited = visited if visited is not None else set()
-        for field_name in self._direct_lot_fields(records._name):
-            lots |= records.mapped(field_name)
-
-        if depth >= self._MAX_RELATION_DEPTH:
-            return lots
-        for field_name in self._relation_fields(records._name):
-            key = (records._name, field_name)
-            if key in visited:
-                continue
-            visited.add(key)
-            related = records.mapped(field_name)
-            if related:
-                lots |= self._lots_from_records(related, depth + 1, visited)
+        level = {records._name: records}
+        for depth in range(self._MAX_RELATION_DEPTH + 1):
+            next_level = {}
+            for model_name, model_records in level.items():
+                if model_name == 'stock.lot':
+                    lots |= model_records
+                    continue
+                for field_name in self._direct_lot_fields(model_name):
+                    lots |= model_records.mapped(field_name)
+                if depth >= self._MAX_RELATION_DEPTH:
+                    continue
+                for field_name in self._relation_fields(model_name):
+                    related = model_records.mapped(field_name)
+                    if related:
+                        next_level[related._name] = (
+                            next_level[related._name] | related
+                            if related._name in next_level else related
+                        )
+            level = next_level
+            if not level:
+                break
         return lots
 
     @api.model
     def _collect_lots(self, active_model, active_ids):
-        """Collect lots from any model that carries serial/lot references.
+        """Return ``(available_lots, preselected_lots)`` for the action records.
 
-        Two levels are supported:
-        1. direct m2o/m2m fields to ``stock.lot`` (``lot_id``, ``lot_ids``,
-           custom fields on sales/purchase lines, ...);
-        2. related records reachable through o2m/m2m fields, e.g.
-           ``stock.picking.move_line_ids.lot_id`` or
-           ``repair.order.move_ids.move_line_ids.lot_id``.
+        Lots are collected from any model that carries serial/lot references:
+        direct m2o/m2m fields to ``stock.lot`` (``lot_id``, ``lot_ids``, custom
+        fields on sale/purchase lines, ...) and related records reachable
+        through o2m/m2m fields, e.g. ``stock.picking.move_line_ids.lot_id``.
+
+        ``preselected_lots`` only contains the lots attached to the records
+        themselves, so opening the wizard on a product does not default to
+        printing every lot of that product.
         """
-        lots = self.env['stock.lot']
+        empty = self.env['stock.lot']
         if not active_model or not active_ids or active_model not in self.env:
-            return lots
+            return empty, empty
         records = self.env[active_model].browse(active_ids).exists()
-        return self._lots_from_records(records)
+        return self._lots_from_records(records), self._related_lots(records)
+
+    @api.model
+    def _related_lots(self, records):
+        """Lots directly attached to ``records`` or to their immediate lines."""
+        lots = self.env['stock.lot']
+        if not records:
+            return lots
+        if records._name == 'stock.lot':
+            return records
+        for field_name in self._direct_lot_fields(records._name):
+            lots |= records.mapped(field_name)
+        for field_name in self._relation_fields(records._name):
+            if field_name in self._PREFILL_SKIP_FIELDS:
+                continue
+            # Only follow relations whose target carries a direct lot field
+            # (e.g. move_line_ids -> lot_id). This skips attribute lines,
+            # packaging, backorders... and avoids selecting lots of other
+            # documents than the ones currently opened.
+            comodel = records._fields[field_name].comodel_name
+            if not comodel or not self._direct_lot_fields(comodel):
+                continue
+            related = records.mapped(field_name)
+            if not related:
+                continue
+            for lot_field in self._direct_lot_fields(related._name):
+                lots |= related.mapped(lot_field)
+        return lots
+
+    @api.model
+    def _quantity_from_fields(self, record):
+        """Model-specific quantity field first, then the generic candidates."""
+        priority = self._MODEL_QUANTITY_FIELDS.get(record._name, ())
+        candidates = [
+            name for name in self._QUANTITY_FIELDS if name not in priority
+        ]
+        for field_name in (*priority, *candidates):
+            if field_name in record._fields:
+                value = record[field_name]
+                if isinstance(value, (int, float)) and value > 0:
+                    return value
+        return 0
 
     @api.model
     def _record_quantity(self, record, _depth=0):
@@ -254,24 +316,13 @@ class PrintRecordLabel(models.TransientModel):
             return 0
         if record._name == 'stock.lot':
             return 1
-        # Model-specific priority first (e.g. MRP: qty_producing, not total).
-        seen = set()
-        for field_name in self._MODEL_QUANTITY_FIELDS.get(record._name, ()):
-            seen.add(field_name)
-            if field_name in record._fields:
-                value = record[field_name]
-                if isinstance(value, (int, float)) and value > 0:
-                    return value
-        for field_name in self._QUANTITY_FIELDS:
-            if field_name in seen:
-                continue
-            if field_name in record._fields:
-                value = record[field_name]
-                if isinstance(value, (int, float)) and value > 0:
-                    return value
+        value = self._quantity_from_fields(record)
+        if value:
+            return value
         total = 0.0
         for field_name in self._LINE_FIELDS:
-            if field_name not in record._fields:
+            field = record._fields.get(field_name)
+            if not field or field.type not in ('one2many', 'many2many'):
                 continue
             for line in record[field_name]:
                 total += self._record_quantity(line, _depth + 1)
@@ -284,17 +335,22 @@ class PrintRecordLabel(models.TransientModel):
         self.ensure_one()
         if self.label_id.model_id.model == 'stock.lot':
             # exists() on the whole recordset costs one query. Calling it per
-            # record inside filtered() costs one query per lot.
-            objects = self.lot_ids.exists()
-            if not objects:
-                objects = self.available_lot_ids.exists()
-            return objects
+            # record inside filtered() costs one query per lot. An empty
+            # selection is honoured: it must not fall back to every candidate.
+            return self.lot_ids.exists()
 
-        active_model = self.env.context.get('active_model')
+        active_model = (self.env.context.get('active_model')
+                        or self.active_model_id.model)
         active_ids = self.env.context.get('active_ids') or []
-        if active_model and active_model in self.env and active_ids:
-            return self.env[active_model].browse(active_ids).exists()
-        return self.env[active_model].browse() if active_model in self.env else self.env['stock.lot'].browse()
+        if active_model and active_model in self.env:
+            objects = self.env[active_model].browse(active_ids).exists()
+            # A template can only render records of its own model. Returning
+            # them anyway would make the preview promise labels that the base
+            # module then refuses to print.
+            if objects and objects._name != self.label_id.model_id.model:
+                return objects.browse()
+            return objects
+        return self.env['stock.lot'].browse()
 
     def _print_plan(self):
         """Return a list of ``(record, label_count)`` tuples."""
@@ -355,12 +411,14 @@ class PrintRecordLabel(models.TransientModel):
             active_ids = self.env.context.get('active_ids') or []
             # Collect serials from any model that references them, not just
             # direct lot fields and related stock move lines on any model.
-            lots = self._collect_lots(active_model, active_ids)
+            # Everything reachable is a candidate; only lots attached to the
+            # current records are preselected.
+            lots, preselected_lots = self._collect_lots(active_model, active_ids)
             if lots:
                 if 'available_lot_ids' in fields_list:
                     result['available_lot_ids'] = [(6, 0, lots.ids)]
                 if 'lot_ids' in fields_list:
-                    result['lot_ids'] = [(6, 0, lots.ids)]
+                    result['lot_ids'] = [(6, 0, preselected_lots.ids)]
 
         # The ZPL printer in the user profile takes precedence over the
         # generic wizard's "only one printer" auto-selection. The field comes
@@ -385,20 +443,28 @@ class PrintRecordLabel(models.TransientModel):
 
         printed = 0
         try:
-            for record, count in plan:
-                for _index in range(count):
-                    self.label_id.print_label(self.printer_id, record)
-                    printed += 1
+            # Merge every label of the same record into a single print job
+            # instead of generating and sending one ZPL document per label.
+            for _key, entries in groupby(plan, key=lambda item: tuple(item[0].ids)):
+                count = sum(item[1] for item in entries)
+                self.label_id.print_label(
+                    self.printer_id, entries[0][0], page_count=count)
+                printed += count
+        except UserError:
+            raise
         except Exception as e:
-            _logger.error('Enhanced ZPL label printing failed: %s', e)
-            raise UserError(_('Label printing failed: %s') % e)
+            _logger.exception(
+                'Enhanced ZPL label printing failed after %s label(s)', printed)
+            raise UserError(
+                _('Label printing failed after %(printed)s label(s) were sent: %(error)s',
+                  printed=printed, error=e)) from e
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': _('Printing Complete'),
-                'message': _('Successfully printed %d label(s).') % printed,
+                'message': _('Successfully printed %d label(s).', printed),
                 'type': 'success',
                 'sticky': False,
             },

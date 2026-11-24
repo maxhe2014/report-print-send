@@ -53,12 +53,16 @@ venv/bin/python src/odoo/odoo-bin -c config/odoo.conf -d ot_17.0_111366 \
 | `__manifest__.py` | 声明依赖与继承视图；不注册任何业务单据按钮 |
 | `plan.md` | 开发目标、假设、数量策略设计、验证方案 |
 | `agent.md` | 本文档 |
-| `models/printing_label_zpl2.py` | `_inherit` ZPL 模板，覆写 `create_action` / `unlink_action` 为「按模板逐个」绑定/解绑 |
-| `models/wizard_print_record_label.py` | 核心：`_inherit` 通用向导，字段 + `label_id` 域 + `default_get` / 打印计划 / `print_label` |
+| `README.rst` | 模块说明（OCA 结构要求） |
+| `models/__init__.py` | 仅加载 `printing_label_zpl2` |
+| `models/printing_label_zpl2.py` | `_inherit` ZPL 模板，覆写 `create_action` / `unlink_action`：按模板逐个绑定/解绑，解绑后无引用的动作会被删除 |
+| `wizard/__init__.py` | 加载向导模型（OCA 结构：TransientModel 放 `wizard/`） |
+| `wizard/wizard_print_record_label.py` | 核心：`_inherit` 通用向导，字段 + `label_id` 域 + `default_get` / 打印计划 / `print_label` |
 | `views/wizard_print_record_label_views.xml` | 继承通用向导表单，插入数量策略与范围分组 |
 | `i18n/zh_CN.po` | 新增字段与提示的中文翻译 |
+| `tests/test_wizard_print_record_label.py` | 自动化测试：批次预选、数量策略、模型校验、打印合并、动作绑定 |
 
-**已删除**（旧错误方案遗留）：`models/repair_order.py`、`views/repair_order_views.xml`、`wizards/`、`security/ir.model.access.csv`。
+**已删除**（旧错误方案遗留）：`models/repair_order.py`、`views/repair_order_views.xml`、`security/ir.model.access.csv`。
 
 ## 4. 核心工作流
 
@@ -73,9 +77,9 @@ venv/bin/python src/odoo/odoo-bin -c config/odoo.conf -d ot_17.0_111366 \
 | `quantity_source` | Selection | `per_quantity`（默认）/ `per_record` / `exact` |
 | `copies_per_label` | Integer | 1–6，`@api.constrains` 校验；每单位/记录/序列号张数 |
 | `exact_copies` | Integer | 1–999；`exact` 模式下的总张数 |
-| `total_labels` | Integer | compute，实时显示本次将打印的总张数 |
-| `available_lot_ids` | Many2many `stock.lot` | 候选序列号，`default_get` 填充 |
-| `lot_ids` | Many2many `stock.lot` | 用户勾选的打印范围 |
+| `total_labels` | Integer | compute（依赖 `active_model`/`active_ids` 上下文），实时显示本次将打印的总张数 |
+| `available_lot_ids` | Many2many `stock.lot` | 候选序列号（全部可达批次），`default_get` 填充 |
+| `lot_ids` | Many2many `stock.lot` | 用户勾选的打印范围；`default_get` 只预选当前记录直接关联的批次 |
 | `use_lot_range` | Boolean | compute，模板绑定 `stock.lot` 时显示范围分组 |
 
 沿用原向导的 `printer_id`、`label_id`、`active_model_id`。
@@ -98,7 +102,7 @@ venv/bin/python src/odoo/odoo-bin -c config/odoo.conf -d ot_17.0_111366 \
 
 1. `stock.lot` 恒返回 1（一个序列号代表一件）；
 2. **模型专属字段优先**（`_MODEL_QUANTITY_FIELDS`）：`mrp.production` 取 `qty_producing`（生产单界面 `1.00 / 2.00` 中前面的"本单数量"），为 0/空时才回退 `product_qty`。这对应 Odoo 原生视图 `mrp_production_views.xml:252-258` 的显示顺序；
-3. 再依次查通用数量字段：`product_qty`、`product_uom_qty`、`quantity`、`qty_done`、`qty`、`qty_ordered`、`product_qty_done`；取第一个正数；
+3. 再依次查通用数量字段：`quantity`、`qty_done`、`product_qty_done`、`product_qty`、`product_uom_qty`、`qty_ordered`、`qty`；取第一个正数。**实际/完成数量优先**：已完成的移动按实际数量打，`product_uom_qty`（需求数量）只在尚未完成时兜底；
 4. 都没有则汇总明细行：`move_line_ids` / `move_ids` / `order_line` / `move_lines` / `line_ids`（递归，深度上限 3）；
 5. 仍为 0 则回退 1。
 
@@ -107,15 +111,18 @@ venv/bin/python src/odoo/odoo-bin -c config/odoo.conf -d ot_17.0_111366 \
 ### 4.5 `default_get`（override）
 
 1. `super()` 保留原版逻辑（只有一个打印机/标签时自动选）；
-2. 用 `_collect_lots(active_model, active_ids)` 收集候选序列号，**对任意模型生效**：
-   - **直接 lot 字段**：任意指向 `stock.lot` 的 m2o/m2m（含自定义字段）；
-   - **关联下钻**：沿 o2m/m2m 递归（最多 4 层，带 `visited` 防环），如 `repair.order.move_ids → move_line_ids → lot_id`、`stock.picking.move_line_ids → lot_id`。跳过 `mail.*`/`ir.*`/`res.*`/`base.*`/`web.*` 及消息/活动字段。
+2. **仅当可选标签模板绑定 `stock.lot` 时**才调用 `_collect_lots(active_model, active_ids)`，返回 `(available_lots, preselected_lots)` 二元组：
+   - `available_lots` → `available_lot_ids`：全部可达批次。**直接 lot 字段**（任意指向 `stock.lot` 的 m2o/m2m，含自定义字段）+ **关联下钻**（沿 o2m/m2m，按层 BFS，最多 4 层），如 `repair.order.move_ids → move_line_ids → lot_id`、`stock.picking.move_line_ids → lot_id`。跳过 `mail.*`/`ir.*`/`res.*`/`base.*`/`web.*`、消息/活动字段，以及 `stock_move_ids`（产品全部移动历史；当前批次已由 `stock_quant_ids` 覆盖）。
+   - `preselected_lots` → `lot_ids`：只含**当前记录及其直接明细行**上挂的批次（`_related_lots()`，跳过 `stock_quant_ids`）。因此从产品打开向导不会默认勾选该产品的全部批次。
+   - 非 `stock.lot` 模板（如产品标签）完全跳过上述遍历——它们不需要序列号，也避免每次打开向导都扫描库存流水。
 3. 若用户设置了 `zpl_printer_id`，用它覆盖默认打印机。
 
 ### 4.6 打印计划 `_print_plan()`
 
 ```
-objects = _print_objects()   # 模板绑定 stock.lot → 选中 lot_ids；否则 → context 选中记录
+# 模板绑定 stock.lot → lot_ids.exists()（整批一条 SQL；空选择就是空，不回退到 available_lot_ids）
+# 否则 → context 中 active_model/active_ids 对应记录
+objects = _print_objects()
 if quantity_source == 'exact':
     plan = [(objects[i % len(objects)], 1) for i in range(exact_copies)]
 else:
@@ -124,7 +131,7 @@ else:
         plan.append((obj, count))
 ```
 
-`print_label()` 遍历 plan 调用 `label.print_label(printer, record)`，并弹出成功通知（总张数）。无对象时抛 `UserError`。
+`print_label()` 按 plan 打印：用 `odoo.tools.groupby` 把同一记录的多张标签合并成一次 `label.print_label(printer, record, page_count=count)`，不再逐张生成/发送；异常用 `_logger.exception` 记录堆栈后转 `UserError`。无对象（未勾选记录/序列号）时抛 `UserError`。
 
 ### 4.7 模板可见性与动作菜单开关（17.0.6.0.0 新增）
 
@@ -136,7 +143,7 @@ else:
 
 **本模块覆写**（`models/printing_label_zpl2.py`）：
 - `create_action()`：遍历 `self`，只把当前模板绑定到模型现存的打印动作（没有则用 `new_action` 建），已绑定的跳过；不再批量。
-- `unlink_action()`：只 `write({'action_window_id': False})` 解绑当前模板，**保留动作记录**，其他模板不受影响；解绑后「添加」按钮重新出现。
+- `unlink_action()`：只 `write({'action_window_id': False})` 解绑当前模板，其他模板不受影响；解绑后若该动作已无任何模板引用，则 `unlink()` 删除动作——否则模型「动作」菜单会残留一个点开却没有模板可选的「打印标签」。
 
 **向导侧配套**（`wizard_print_record_label.py` + 视图）：
 - **下拉筛选必须放在视图级 domain**（`views/wizard_print_record_label_views.xml`）：
@@ -158,6 +165,17 @@ else:
 
 原版「打印机 / 标签」字段的位置与样式不变。
 
+### 4.9 内部 API（17.0.6.1.0 变更）
+
+| 方法 | 签名 / 返回 | 说明 |
+|---|---|---|
+| `_collect_lots(active_model, active_ids)` | `-> (available_lots, preselected_lots)` | 原返回单个 recordset；现在同时给出候选与预选。仅在可选模板绑定 `stock.lot` 时由 `default_get` 调用 |
+| `_related_lots(records)` | `-> stock.lot recordset` | 新增：只取记录自身及其直接明细行上的批次（跳过 `stock_quant_ids`），并只跟随后件模型确有直连 lot 字段的关系（不会预选欠单/退货单批次），作为 `lot_ids` 默认值 |
+| `_quantity_from_fields(record)` | `-> float` | 新增：按「模型专属字段 → 通用数量字段」顺序取第一个正数，`_record_quantity` 的字段部分拆出以降低复杂度 |
+| `_lots_from_records(records)` | `-> stock.lot recordset` | 改为按层 BFS，去掉 `depth`/`visited` 参数；同层同模型记录合并，跳过 `_SKIP_RELATION_FIELDS`（含 `stock_move_ids`） |
+| `_print_objects()` | `-> recordset` | 序列号模板返回 `lot_ids.exists()`（一条 SQL），空选择不回退到 `available_lot_ids`；其他模型用 `context.active_model`，缺失时回退到持久化的 `active_model_id.model`；记录模型与模板模型不一致时返回空（预览不再虚报张数） |
+| `print_label()` | `-> client action` | 用 `odoo.tools.groupby` 把同一记录的多张合并为一次 `page_count=N` 打印；`UserError` 原样抛出，其他异常提示已发送张数；无对象抛 `UserError` |
+
 ## 5. 关键设计决策
 
 1. **改向导，不加按钮**：用户已经在 ZPL 模板上用了「添加到动作菜单」，增强必须作用在它打开的向导上。
@@ -167,22 +185,34 @@ else:
 5. **预览与执行同源**：`total_labels` 复用 `_print_plan()`，所见即所打。
 6. **收集通用，范围仍由模板决定**：序列号从任何关联 `stock.lot` 的模型收集；只有绑定 `stock.lot` 的模板才显示并使用 `lot_ids`（ZPL 组件按被打印对象渲染）。
 7. **不绑定业务模型**：模块名与依赖都不含 `repair`，任何通过 `printer_zpl2` 添加「打印标签」的模型都受益。
+8. **按层收集，有界且不漏**：批次遍历按层合并同模型记录，每个「模型 + 关系」每层只查一次；不再使用全局 `visited`，避免同一关系经不同路径到达时整棵子树被跳过（如 `mrp.production.move_ids` 与 `move_raw_ids`）。
+9. **候选与预选分离**：`available_lot_ids` 是全部可达批次，`lot_ids` 只预选直接关联批次，避免"打开即全选 → 误打几百张"。
 
 ## 6. 已知假设与风险
 
 - **最大假设**：「不同序列号」= `stock.lot`。现场若用自定义字段（非指向 `stock.lot`），扩展 `_direct_lot_fields()` 即可。
 - 产品数量靠字段名约定提取；现场自定义数量字段需补 `_QUANTITY_FIELDS`。
 - 本地库无 `stock.lot` 数据，`lot_ids` 用临时数据验证；真实链路需现场确认。
-- 本模块增强的是**通用向导**，对 `printer_zpl2` 添加的任何模型的「打印标签」动作都会显示新字段；未关联序列号时 `lot_ids` 为空、行为与原版一致。
+- 本模块增强的是**通用向导**，对 `printer_zpl2` 添加的任何模型的「打印标签」动作都会显示新字段；序列号模板下 `lot_ids` 默认只预选当前记录直接关联的批次，未勾选时点「打印」会提示“未选择记录/序列号”，不再回退打印全部候选。
+- `stock_move_ids` 不参与批次收集（产品全部移动历史，量级大且与 `stock_quant_ids` 重复）。若现场需要从历史移动追溯已消耗批次，需从 `_SKIP_RELATION_FIELDS` 中移除该项并评估性能。
 - `exact` 模式多选记录时按序轮流作为打印对象；若需逐条指定张数，需另做行式明细向导。
 - 卸载本模块后，通用向导恢复原版（仅打印机 + 标签）。
 
 ## 7. 验证与排错
 
 ```bash
-cd /run/media/max/DATA1/projects/odoo-dev/17.0
+cd /home/max/project/odoo-dev/17.0
 venv/bin/python -m py_compile addons/report-print-send/printer_zpl2_wizard_enhanced/{__manifest__,__init__}.py \
-  addons/report-print-send/printer_zpl2_wizard_enhanced/models/*.py
+  addons/report-print-send/printer_zpl2_wizard_enhanced/models/*.py \
+  addons/report-print-send/printer_zpl2_wizard_enhanced/wizard/*.py \
+  addons/report-print-send/printer_zpl2_wizard_enhanced/tests/*.py
+```
+
+自动化测试（需要已安装 `stock` / `printer_zpl2` 的数据库）：
+
+```bash
+venv/bin/python src/odoo/odoo-bin -d <db> -i printer_zpl2_wizard_enhanced \
+  --test-tags /printer_zpl2_wizard_enhanced --stop-after-init
 ```
 
 Odoo shell 验证要点：
@@ -195,7 +225,11 @@ w = W.with_context(**ctx).create({
     'quantity_source': 'per_quantity', 'copies_per_label': 1,
 })
 print('总数预览:', w.total_labels)   # 数量 2 → 2
-# 非维修模型也能收集序列号
+# 非维修模型也能收集序列号；返回 (available_lots, preselected_lots)
+avail, presel = W.with_context(active_model='stock.picking', active_ids=[1])._collect_lots(
+    'stock.picking', [1])
+print('候选:', avail.ids)
+print('预选:', presel.ids)   # 只含该单据明细行上的批次；产品上通常为空
 print(W.with_context(active_model='stock.picking', active_ids=[1]).default_get(['lot_ids']))
 ```
 
@@ -207,7 +241,8 @@ print(W.with_context(active_model='stock.picking', active_ids=[1]).default_get([
 | 份数框不显示 | 当前是 `exact` 模式，切到按数量/按记录 |
 | 打印张数和预期不符 | 先看 `total_labels` 预览：按数量=数量×份数；精确模式=填写的总张数 |
 | 新建的模板在向导里看不到 | 该模板未点「Add in the 'Action' menu」；域只显示已绑定动作的模板 |
-| 点「移除」后同模型其它模板一起消失 | 用的是原版 `printer_zpl2` 行为；升级到 17.0.6.0.0，本模块已改为逐个解绑且不删动作 |
+| 点「移除」后同模型其它模板一起消失 | 用的是原版 `printer_zpl2` 行为；升级到 17.0.6.0.0，本模块已改为逐个解绑，且无引用时自动删除动作 |
+| 点「打印」提示“未选择记录/序列号” | 序列号模板下 `lot_ids` 未勾选；候选见 `available_lot_ids`（产品上默认不预选，需手动选择） |
 | 从菜单进向导「标签」下拉为空 | 确认 `default_active_model_id` 在动作 context 中；本模块已从它反查模型兜底 |
 | 范围分组不显示 | 当前模板绑定的不是 `stock.lot`，改用 `stock.lot` 模板 |
 | 打印机不是个人资料的值 | 个人资料「ZPL Label Printing」分组未设 `zpl_printer_id` |

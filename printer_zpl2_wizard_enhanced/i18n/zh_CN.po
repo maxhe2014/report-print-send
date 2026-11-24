@@ -112,8 +112,13 @@ msgstr "未选择要打印的记录或序列号。"
 #. module: printer_zpl2_wizard_enhanced
 #: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
 #, python-format
-msgid "Label printing failed: %s"
-msgstr "标签打印失败：%s"
+msgid "Label printing failed after %(printed)s label(s) were sent: %(error)s"
+msgstr "已发送 %(printed)s 张标签后打印失败：%(error)s"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model,name:printer_zpl2_wizard_enhanced.model_wizard_print_record_label
+msgid "Print Record Label"
+msgstr "打印记录标签"
 
 #. module: printer_zpl2_wizard_enhanced
 #: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
@@ -125,3 +130,8 @@ msgstr "打印完成"
 #, python-format
 msgid "Successfully printed %d label(s)."
 msgstr "成功打印 %d 张标签。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__use_lot_range
+msgid "Use Lot Range"
+msgstr "使用批次范围"

@@ -62,7 +62,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
 #, python-format
-msgid "Label printing failed: %s"
+msgid "Label printing failed after %(printed)s label(s) were sent: %(error)s"
 msgstr ""
 
 #. module: printer_zpl2_wizard_enhanced

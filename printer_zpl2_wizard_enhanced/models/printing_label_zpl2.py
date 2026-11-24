@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, models
+from odoo import models
 
 
 class PrintingLabelZpl2(models.Model):
@@ -20,11 +20,11 @@ class PrintingLabelZpl2(models.Model):
 
     def create_action(self):
         """Bind only the labels explicitly requested to the model's action."""
-        Action = self.env['ir.actions.act_window']
+        action_model = self.env['ir.actions.act_window']
         for label in self:
             if label.action_window_id:
                 continue
-            action = Action.search([
+            action = action_model.search([
                 ('binding_model_id', '=', label.model_id.id),
                 ('res_model', '=', 'wizard.print.record.label'),
                 ('view_mode', '=', 'form'),
@@ -36,10 +36,13 @@ class PrintingLabelZpl2(models.Model):
         return True
 
     def unlink_action(self):
-        """Detach only these labels; never delete the shared action itself."""
-        # Keep the action alive so other labels of the same model stay bound.
-        # An action with no labels left is harmless: the binding is what makes
-        # the "Print Label" menu entry appear, and the wizard domain below
-        # hides all labels once they are detached.
+        """Detach these labels and delete the action once it is unused."""
+        # The action is shared by every label of the model. Once no template is
+        # bound to it anymore, it has to be removed too: otherwise the model's
+        # Action menu keeps showing "Print Label" with no selectable template.
+        actions = self.mapped('action_window_id')
         self.write({'action_window_id': False})
+        for action in actions:
+            if not self.search_count([('action_window_id', '=', action.id)]):
+                action.unlink()
         return True
