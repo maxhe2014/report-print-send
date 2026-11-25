@@ -328,6 +328,27 @@
                                 />
                             </group>
                         </page>
+                        <page string="User Printers">
+                            <group string="Default Printer for This Label">
+                                <field
+                                    name="default_printer_id"
+                                    options="{'no_create': True}"
+                                />
+                            </group>
+                            <group string="Per-User Printer Overrides">
+                                <field
+                                    name="user_action_ids"
+                                    nolabel="1"
+                                    colspan="2"
+                                />
+                            </group>
+                            <div class="text-muted">
+                                <p>When a user prints this label, the printer is resolved in the following order:</p>
+                                <p>1. The user-specific printer configured above (only when Active is on).</p>
+                                <p>2. The label's default printer, set above.</p>
+                                <p>3. The user's default label printer (Preferences → Default Label Printer).</p>
+                            </div>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
@@ -380,4 +401,14 @@
         sequence="20"
         action="act_open_printing_label_zpl2_view"
     />
+    <record id="view_printing_label_zpl2_user_action_tree" model="ir.ui.view">
+        <field name="model">printing.label.zpl2.user.action</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" string="User Printers">
+                <field name="user_id" required="1" />
+                <field name="printer_id" />
+                <field name="active" widget="boolean_toggle" />
+            </tree>
+        </field>
+    </record>
 </odoo>
