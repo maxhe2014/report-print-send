@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 17.0+e-20260523\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 01:21+0000\n"
-"PO-Revision-Date: 2026-11-25 01:21+0000\n"
+"POT-Creation-Date: 2026-11-25 06:41+0000\n"
+"PO-Revision-Date: 2026-11-25 06:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,17 +16,8 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: stock_mrp_auto_print
-#. odoo-python
-#: code:addons/stock_mrp_auto_print/models/stock_picking_type.py:0
-#, python-format
-msgid "%(field)s must be between 0 and 10 (0 = use default)."
-msgstr ""
-
-#. module: stock_mrp_auto_print
-#. odoo-python
-#: code:addons/stock_mrp_auto_print/models/product_template.py:0
-#, python-format
-msgid "%(field)s must be between 0 and 6 (0 = use operation type setting)."
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Copies"
 msgstr ""
 
 #. module: stock_mrp_auto_print
@@ -58,6 +49,14 @@ msgid "Created Lot/SN ZPL Label Template"
 msgstr ""
 
 #. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_mrp_production__current_company
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__current_company
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking__current_company
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__current_company
+msgid "Current Company"
+msgstr ""
+
+#. module: stock_mrp_auto_print
 #: model:ir.model.fields,help:stock_mrp_auto_print.field_stock_picking_type__done_mrp_lot_zpl2_label_id
 msgid ""
 "Custom ZPL II label for lot/SN printing when a manufacturing order is done. "
@@ -72,6 +71,24 @@ msgid ""
 "Custom ZPL II label for lot/SN printing when a new lot/SN is generated. When"
 " a custom ZPL label is selected, the official IoT printing method is "
 "replaced by direct ZPL II printing to the configured printer."
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__production_order_zpl2_label_id
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_template__production_order_zpl2_label_id
+msgid ""
+"Custom ZPL II label for the production order document when a manufacturing "
+"order is done. If not set, the operation type's production order ZPL "
+"template applies. Takes priority over the native PDF production order "
+"report."
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_label_id
+msgid ""
+"Custom ZPL II label for the production order document. Used when "
+"production_order_label_to_print is set to ZPL. If not set, the operation "
+"type does not auto-print ZPL for production orders; use PDF instead."
 msgstr ""
 
 #. module: stock_mrp_auto_print
@@ -100,23 +117,10 @@ msgid ""
 msgstr ""
 
 #. module: stock_mrp_auto_print
-#. odoo-python
-#: code:addons/stock_mrp_auto_print/models/mrp_production.py:0
-#: code:addons/stock_mrp_auto_print/models/stock_picking.py:0
-#, python-format
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_copies
 msgid ""
-"Default label printer '%(printer)s' is not available (status: %(status)s).\n"
-"Please check the printer connection or change the default printer."
-msgstr ""
-
-#. module: stock_mrp_auto_print
-#. odoo-python
-#: code:addons/stock_mrp_auto_print/models/mrp_production.py:0
-#: code:addons/stock_mrp_auto_print/models/stock_picking.py:0
-#, python-format
-msgid ""
-"Default label printer is not configured.\n"
-"Please set it in Preferences → Default Label Printer before continuing."
+"Default number of copies for custom ZPL production order labels. 0 = use "
+"default 1."
 msgstr ""
 
 #. module: stock_mrp_auto_print
@@ -173,6 +177,14 @@ msgid "Done Lot/SN ZPL Label Template"
 msgstr ""
 
 #. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_stock_picking_type__production_order_label_to_print
+msgid ""
+"Format used when auto-printing the production order document after a MO is "
+"done. PDF uses the native Odoo report; ZPL uses the custom ZPL II label "
+"configured below."
+msgstr ""
+
+#. module: stock_mrp_auto_print
 #: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__zpl_label_template_id
 #: model:ir.model.fields,help:stock_mrp_auto_print.field_product_template__zpl_label_template_id
 msgid ""
@@ -202,6 +214,12 @@ msgid "Lot/SN Custom ZPL Label"
 msgstr ""
 
 #. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_picking_type_form_inherit_mrp_zpl2
+msgid "Lot/SN Label"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_picking_type_form_inherit_mrp_zpl2
 #: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
 msgid "Lot/SN Labels"
 msgstr ""
@@ -237,6 +255,19 @@ msgid ""
 msgstr ""
 
 #. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__production_order_zpl2_copies
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_template__production_order_zpl2_copies
+msgid ""
+"Number of copies for the production order ZPL label. 0 = use the operation "
+"type setting."
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields.selection,name:stock_mrp_auto_print.selection__stock_picking_type__production_order_label_to_print__pdf
+msgid "PDF"
+msgstr ""
+
+#. module: stock_mrp_auto_print
 #: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__package_zpl2_label_id
 msgid "Package Custom ZPL Label"
 msgstr ""
@@ -249,6 +280,11 @@ msgstr ""
 #. module: stock_mrp_auto_print
 #: model:ir.model,name:stock_mrp_auto_print.model_stock_picking_type
 msgid "Picking Type"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_picking_type_form_inherit_mrp_zpl2
+msgid "Print labels as:"
 msgstr ""
 
 #. module: stock_mrp_auto_print
@@ -272,6 +308,7 @@ msgid "Product Label Copies"
 msgstr ""
 
 #. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_picking_type_form_inherit_mrp_zpl2
 #: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
 msgid "Product Labels"
 msgstr ""
@@ -295,7 +332,33 @@ msgstr ""
 
 #. module: stock_mrp_auto_print
 #: model:ir.model,name:stock_mrp_auto_print.model_mrp_production
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_picking_type_form_inherit_mrp_zpl2
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
 msgid "Production Order"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_label_id
+msgid "Production Order Custom ZPL Label"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__production_order_label_to_print
+msgid "Production Order Print Format"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_product__production_order_zpl2_copies
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__production_order_zpl2_copies
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_copies
+msgid "Production Order ZPL Copies"
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_product__production_order_zpl2_label_id
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__production_order_zpl2_label_id
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Production Order ZPL Label"
 msgstr ""
 
 #. module: stock_mrp_auto_print
@@ -305,7 +368,7 @@ msgstr ""
 
 #. module: stock_mrp_auto_print
 #: model:ir.model,name:stock_mrp_auto_print.model_stock_picking
-msgid "Transfer"
+msgid "Total Demand And Done Quantity Count"
 msgstr ""
 
 #. module: stock_mrp_auto_print
@@ -314,6 +377,11 @@ msgstr ""
 msgid ""
 "When checked, lot/SN labels for this product are skipped during automatic "
 "printing (both ZPL and standard flows)."
+msgstr ""
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields.selection,name:stock_mrp_auto_print.selection__stock_picking_type__production_order_label_to_print__zpl
+msgid "ZPL"
 msgstr ""
 
 #. module: stock_mrp_auto_print

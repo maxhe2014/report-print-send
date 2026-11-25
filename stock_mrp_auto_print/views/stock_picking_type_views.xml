@@ -9,7 +9,8 @@
         <field name="model">stock.picking.type</field>
         <field name="inherit_id" ref="stock.view_picking_type_form" />
         <field name="arch" type="xml">
-            <!-- Product Labels -->
+            <data>
+                <!-- Product Labels -->
             <xpath expr="//field[@name='product_label_format']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
@@ -107,6 +108,7 @@
                     invisible="not auto_print_package_label"
                 />
             </xpath>
+            </data>
         </field>
     </record>
 </odoo>

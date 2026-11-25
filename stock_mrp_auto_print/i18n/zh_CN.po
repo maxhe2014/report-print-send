@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 17.0+e-20260523\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 00:00+0000\n"
-"PO-Revision-Date: 2026-11-25 00:00+0000\n"
+"POT-Creation-Date: 2026-11-25 06:41+0000\n"
+"PO-Revision-Date: 2026-11-25 06:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -316,11 +316,6 @@ msgid "Stock/MRP Labels"
 msgstr "库存／生产标签"
 
 #. module: stock_mrp_auto_print
-#: model:ir.model,name:stock_mrp_auto_print.model_stock_picking
-msgid "Transfer"
-msgstr "调拨"
-
-#. module: stock_mrp_auto_print
 #: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__zpl_no_print
 #: model:ir.model.fields,help:stock_mrp_auto_print.field_product_template__zpl_no_print
 msgid ""
@@ -349,3 +344,106 @@ msgid ""
 "ZPL label template used when a manufacturing order is done. If not set, the "
 "operation type's done lot/SN template applies."
 msgstr "生产单完成时使用的 ZPL 标签模板。未设置时使用作业类型的“已完成批次／序列号”模板。"
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Copies"
+msgstr "份数"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_mrp_production__current_company
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__current_company
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking__current_company
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__current_company
+msgid "Current Company"
+msgstr "当前公司"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__production_order_zpl2_label_id
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_template__production_order_zpl2_label_id
+msgid ""
+"Custom ZPL II label for the production order document when a manufacturing "
+"order is done. If not set, the operation type's production order ZPL "
+"template applies. Takes priority over the native PDF production order "
+"report."
+msgstr "生产订单完成时用于生产订单单据的自定义 ZPL II 标签。未设置时使用作业类型的生产订单 ZPL 模板。优先于原生 PDF 生产订单报表。"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_label_id
+msgid ""
+"Custom ZPL II label for the production order document. Used when "
+"production_order_label_to_print is set to ZPL. If not set, the operation "
+"type does not auto-print ZPL for production orders; use PDF instead."
+msgstr "用于生产订单单据的自定义 ZPL II 标签。当“生产订单打印格式”设置为 ZPL 时使用。未设置时，作业类型不会自动打印生产订单 ZPL 标签，请改用 PDF。"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_copies
+msgid ""
+"Default number of copies for custom ZPL production order labels. 0 = use "
+"default 1."
+msgstr "自定义 ZPL 生产订单标签的默认份数。0 表示使用默认值 1。"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_stock_picking_type__production_order_label_to_print
+msgid ""
+"Format used when auto-printing the production order document after a MO is "
+"done. PDF uses the native Odoo report; ZPL uses the custom ZPL II label "
+"configured below."
+msgstr "生产订单完成后自动打印生产订单单据时使用的格式。PDF 使用 Odoo 原生报表；ZPL 使用下方配置的自定义 ZPL II 标签。"
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_picking_type_form_inherit_mrp_zpl2
+msgid "Lot/SN Label"
+msgstr "批次／序列号标签"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__production_order_zpl2_copies
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_template__production_order_zpl2_copies
+msgid ""
+"Number of copies for the production order ZPL label. 0 = use the operation "
+"type setting."
+msgstr "生产订单 ZPL 标签的份数。0 表示使用作业类型设置。"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields.selection,name:stock_mrp_auto_print.selection__stock_picking_type__production_order_label_to_print__pdf
+msgid "PDF"
+msgstr "PDF"
+
+#. module: stock_mrp_auto_print
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_picking_type_form_inherit_mrp_zpl2
+msgid "Print labels as:"
+msgstr "打印标签格式："
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_label_id
+msgid "Production Order Custom ZPL Label"
+msgstr "生产订单自定义 ZPL 标签"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__production_order_label_to_print
+msgid "Production Order Print Format"
+msgstr "生产订单打印格式"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_product__production_order_zpl2_copies
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__production_order_zpl2_copies
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_stock_picking_type__production_order_zpl2_copies
+msgid "Production Order ZPL Copies"
+msgstr "生产订单 ZPL 标签份数"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_product__production_order_zpl2_label_id
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__production_order_zpl2_label_id
+#: model_terms:ir.ui.view,arch_db:stock_mrp_auto_print.view_product_template_form_zpl2
+msgid "Production Order ZPL Label"
+msgstr "生产订单 ZPL 标签"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model,name:stock_mrp_auto_print.model_stock_picking
+msgid "Total Demand And Done Quantity Count"
+msgstr "需求总量与已完成数量"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields.selection,name:stock_mrp_auto_print.selection__stock_picking_type__production_order_label_to_print__zpl
+msgid "ZPL"
+msgstr "ZPL"

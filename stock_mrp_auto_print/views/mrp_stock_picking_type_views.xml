@@ -29,8 +29,9 @@
         <field name="model">stock.picking.type</field>
         <field name="inherit_id" ref="mrp.view_picking_type_form_inherit_mrp" />
         <field name="arch" type="xml">
-            <!-- =========================================================
-                 1. 生产订单：原生是单独一行 checkbox，改为 placeholder + o_row
+            <data>
+                <!-- =========================================================
+                     1. 生产订单：原生是单独一行 checkbox，改为 placeholder + o_row
                  o_row 内含 checkbox + 格式下拉；ZPL 字段 o_row 下方
                  ========================================================= -->
             <xpath expr="//field[@name='auto_print_done_production_order']" position="attributes">
@@ -45,14 +46,15 @@
                     <field name="production_order_label_to_print"
                            invisible="not auto_print_done_production_order"/>
                 </div>
-                <div invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'">
-                    <div class="o_row">
-                        <label for="production_order_zpl2_label_id" string="ZPL Label Template:" class="fw-bold"/>
-                        <field name="production_order_zpl2_label_id" nolabel="1"
-                               options="{'no_create': True, 'no_create_edit': True}"/>
-                        <label for="production_order_zpl2_copies" string="Copies:" class="fw-bold"/>
-                        <field name="production_order_zpl2_copies" nolabel="1"/>
-                    </div>
+                <div class="o_wrap_label"
+                     invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'">&#160;</div>
+                <div class="o_row"
+                     invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'">
+                    <label for="production_order_zpl2_label_id" string="ZPL Label Template:" class="fw-bold"/>
+                    <field name="production_order_zpl2_label_id" nolabel="1"
+                           options="{'no_create': True, 'no_create_edit': True}"/>
+                    <label for="production_order_zpl2_copies" string="Copies:" class="fw-bold"/>
+                    <field name="production_order_zpl2_copies" nolabel="1"/>
                 </div>
             </xpath>
 
@@ -80,7 +82,7 @@
                  ========================================================= -->
             <xpath expr="//div[field[@name='auto_print_done_mrp_lot']]" position="replace"
                    groups="stock.group_production_lot">
-                <div class="o_row">
+                <div class="o_row" groups="stock.group_production_lot">
                     <field name="auto_print_done_mrp_lot" string="Lot/SN Labels"
                            groups="stock.group_production_lot"/>
                     <label for="done_mrp_lot_zpl2_label_id" string="ZPL Label Template:"
@@ -100,7 +102,7 @@
                  ========================================================= -->
             <xpath expr="//div[field[@name='auto_print_generated_mrp_lot']]" position="replace"
                    groups="stock.group_production_lot">
-                <div class="o_row">
+                <div class="o_row" groups="stock.group_production_lot">
                     <field name="auto_print_generated_mrp_lot" string="Lot/SN Label"
                            groups="stock.group_production_lot"/>
                     <label for="generated_mrp_lot_zpl2_label_id" string="ZPL Label Template:"
@@ -114,6 +116,7 @@
                            invisible="not auto_print_generated_mrp_lot"/>
                 </div>
             </xpath>
+            </data>
         </field>
     </record>
 </odoo>
