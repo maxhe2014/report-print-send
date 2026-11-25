@@ -10,7 +10,7 @@
 - **三种数量计算方式**：按产品数量 / 按记录或序列号 / 精确指定总张数
 - 份数选择（每单位/记录 1–6）与**总张数实时预览**
 - **打印范围选择**（按批次/序列号，任意关联 `stock.lot` 的模型）
-- 打印机默认取个人资料的 `zpl_printer_id`（若安装了提供该字段的模块，否则回退通用向导的默认选择）
+- 打印机按 `printer_zpl2` 的解析优先级预填：用户+标签配置（`printing.label.zpl2.user.action`）→ 标签默认打印机（`default_printer_id`）→ 用户默认标签打印机（`default_label_printer_id`）；都未配置时回退通用向导的默认选择
 
 用户无需更换入口，也不会看到两个功能重叠的按钮。
 
@@ -115,7 +115,7 @@ venv/bin/python src/odoo/odoo-bin -c config/odoo.conf -d ot_17.0_111366 \
    - `available_lots` → `available_lot_ids`：全部可达批次。**直接 lot 字段**（任意指向 `stock.lot` 的 m2o/m2m，含自定义字段）+ **关联下钻**（沿 o2m/m2m，按层 BFS，最多 4 层），如 `repair.order.move_ids → move_line_ids → lot_id`、`stock.picking.move_line_ids → lot_id`。跳过 `mail.*`/`ir.*`/`res.*`/`base.*`/`web.*`、消息/活动字段，以及 `stock_move_ids`（产品全部移动历史；当前批次已由 `stock_quant_ids` 覆盖）。
    - `preselected_lots` → `lot_ids`：只含**当前记录及其直接明细行**上挂的批次（`_related_lots()`，跳过 `stock_quant_ids`）。因此从产品打开向导不会默认勾选该产品的全部批次。
    - 非 `stock.lot` 模板（如产品标签）完全跳过上述遍历——它们不需要序列号，也避免每次打开向导都扫描库存流水。
-3. 若用户设置了 `zpl_printer_id`，用它覆盖默认打印机。
+3. 按 `printer_zpl2` 的优先级解析打印机并预填：用户+标签配置 → 标签默认打印机 → 用户默认标签打印机。
 
 ### 4.6 打印计划 `_print_plan()`
 
@@ -245,5 +245,5 @@ print(W.with_context(active_model='stock.picking', active_ids=[1]).default_get([
 | 点「打印」提示“未选择记录/序列号” | 序列号模板下 `lot_ids` 未勾选；候选见 `available_lot_ids`（产品上默认不预选，需手动选择） |
 | 从菜单进向导「标签」下拉为空 | 确认 `default_active_model_id` 在动作 context 中；本模块已从它反查模型兜底 |
 | 范围分组不显示 | 当前模板绑定的不是 `stock.lot`，改用 `stock.lot` 模板 |
-| 打印机不是个人资料的值 | 个人资料「ZPL Label Printing」分组未设 `zpl_printer_id` |
+| 打印机不是预期的值 | 检查 `printing.label.zpl2.user.action`（用户+标签）、标签的 `default_printer_id`、用户资料的 `default_label_printer_id` 三级配置 |
 | 总张数为 0 | 未选中记录/序列号，或上下文缺 `active_ids` |

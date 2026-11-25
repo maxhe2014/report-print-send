@@ -420,17 +420,24 @@ class PrintRecordLabel(models.TransientModel):
                 if 'lot_ids' in fields_list:
                     result['lot_ids'] = [(6, 0, preselected_lots.ids)]
 
-        # The ZPL printer in the user profile takes precedence over the
-        # generic wizard's "only one printer" auto-selection. The field comes
-        # from mrp_zpl_label_print, which is no longer a dependency, so only
-        # use it when that module is installed; otherwise fall back to the
-        # base wizard's default printer selection.
-        if (
-            'printer_id' in fields_list
-            and 'zpl_printer_id' in self.env.user._fields
-            and self.env.user.zpl_printer_id
-        ):
-            result['printer_id'] = self.env.user.zpl_printer_id.id
+        # Resolve the printer with the same priority as the ZPL auto-print
+        # modules: user-label assignment, label default, then the user's
+        # default label printer. Only pre-fill when a printer is resolved;
+        # otherwise keep the base wizard's default selection.
+        if 'printer_id' in fields_list:
+            user = self.env.user
+            label = target_labels[:1]
+            printer = self.env['printing.printer']
+            if label:
+                user_action = self.env[
+                    'printing.label.zpl2.user.action'].search(
+                    [('label_id', '=', label.id), ('user_id', '=', user.id),
+                     ('active', '=', True)], limit=1)
+                printer = user_action.printer_id or label.default_printer_id
+            if not printer and 'default_label_printer_id' in user._fields:
+                printer = user.default_label_printer_id
+            if printer:
+                result['printer_id'] = printer.id
 
         return result
 
