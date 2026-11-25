@@ -1,5 +1,5 @@
-# Copyright (C) 2026
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+# Copyright (C) 2026 metaodoo.com
+# License OPL-1 (https://www.odoo.com/documentation/17.0/legal/licenses.html).
 
 import logging
 import math

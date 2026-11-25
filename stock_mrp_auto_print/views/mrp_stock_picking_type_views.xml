@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  Copyright (C) 2026
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+  Copyright (C) 2026 metaodoo.com
+  License OPL-1 (https://www.odoo.com/documentation/17.0/legal/licenses.html).
 
   Layout strategy — matches native mrp "Print when done" section rhythm
   (placeholder <label> 占位 + <div class="o_row"> 内含同组控件):

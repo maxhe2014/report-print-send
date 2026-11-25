@@ -1,5 +1,5 @@
-# Copyright 2026 宁波企智信息科技有限公司
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.html)
+# Copyright 2026 metaodoo.com
+# License OPL-1 (https://www.odoo.com/documentation/17.0/legal/licenses.html).
 
 from . import product_template
 from . import repair_order

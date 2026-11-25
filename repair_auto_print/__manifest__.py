@@ -1,14 +1,14 @@
-# Copyright 2026 宁波企智信息科技有限公司
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.html)
+# Copyright 2026 metaodoo.com
+# License OPL-1 (https://www.odoo.com/documentation/17.0/legal/licenses.html).
 
 {
     "name": "Repair Auto Print",
     "summary": "Automatically print repair documents and labels on completion",
     "version": "17.0.1.1.2",
     "category": "Manufacturing",
-    "author": "宁波企智信息科技有限公司, Odoo Community Association (OCA)",
-    "website": "https://www.qz-technology.cn",
-    "license": "LGPL-3",
+    "author": "metaodoo.com",
+    "website": "https://metaodoo.com",
+    "license": "OPL-1",
     "depends": ["repair", "printer_zpl2", "base_report_to_label_printer"],
     "data": [
         "views/product_template_views.xml",

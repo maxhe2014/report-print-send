@@ -57,10 +57,9 @@ Credits
 Authors
 -------
 
-* 宁波企智信息科技有限公司
+* metaodoo.com
 
 Maintainers
 -----------
 
-This module is maintained by 宁波企智信息科技有限公司 and the Odoo Community
-Association (OCA).
+This module is maintained by metaodoo.com.

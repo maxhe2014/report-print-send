@@ -53,13 +53,11 @@ Credits
 Authors
 -------
 
-* Odoo Community Association (OCA)
+* metaodoo.com
 
 Maintainers
 -----------
 
-This module is maintained by the OCA.
-
-This module is part of the OCA project. As such, it is maintained by the OCA
-community and is available under the `AGPL-3.0 or later
-<https://www.gnu.org/licenses/agpl-3.0.html>`_ license.
+This module is maintained by metaodoo.com and is available under the
+`OPL-1 (Odoo Proprietary License v1.0)
+<https://www.odoo.com/documentation/17.0/legal/licenses.html>`_ license.
