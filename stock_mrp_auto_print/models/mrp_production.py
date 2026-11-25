@@ -222,16 +222,24 @@ class MrpProduction(models.Model):
 
     def _get_autoprint_done_report_actions(self):
         report_actions = []
+        # Product-level override: a product with both a production order ZPL
+        # template and copies > 0 always prints, even when the operation
+        # type's auto-print switch is off or its format is PDF.
         productions_to_print = self.filtered(
             lambda p: p.picking_type_id.auto_print_done_production_order
+            or (
+                p.product_tmpl_id.production_order_zpl2_label_id
+                and p.product_tmpl_id.production_order_zpl2_copies > 0
+            )
         )
-        # Split: custom ZPL production order vs native PDF production order
+        # A product ZPL template takes priority over the operation type's
+        # native PDF and ZPL template settings.
         custom_zpl_productions = productions_to_print.filtered(
             lambda p: (
-                p.picking_type_id.production_order_label_to_print == "zpl"
-                and (
-                    p.product_tmpl_id.production_order_zpl2_label_id
-                    or p.picking_type_id.production_order_zpl2_label_id
+                p.product_tmpl_id.production_order_zpl2_label_id
+                or (
+                    p.picking_type_id.production_order_label_to_print == "zpl"
+                    and p.picking_type_id.production_order_zpl2_label_id
                 )
             )
         )
