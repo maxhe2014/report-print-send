@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Copyright (C) 2026
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+    <record id="view_picking_type_form_inherit_mrp_zpl2" model="ir.ui.view">
+        <field name="name">stock.picking.type.form.inherit.mrp.zpl2</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="mrp.view_picking_type_form_inherit_mrp" />
+        <field name="arch" type="xml">
+            <!-- Done Product Labels -->
+            <xpath expr="//field[@name='mrp_product_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//label[@for='mrp_product_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mrp_product_label_to_print']" position="after">
+                <label
+                    for="product_zpl2_label_id"
+                    string="ZPL Label Template:"
+                    invisible="not auto_print_done_mrp_product_labels"
+                    class="fw-bold"
+                />
+                <field
+                    name="product_zpl2_label_id"
+                    nolabel="1"
+                    invisible="not auto_print_done_mrp_product_labels"
+                    options="{'no_create': True, 'no_create_edit': True}"
+                />
+                <label
+                    for="product_zpl2_copies"
+                    string="Copies:"
+                    invisible="not auto_print_done_mrp_product_labels"
+                    class="fw-bold"
+                />
+                <field
+                    name="product_zpl2_copies"
+                    nolabel="1"
+                    invisible="not auto_print_done_mrp_product_labels"
+                />
+            </xpath>
+
+            <!-- Done Lot/SN Labels -->
+            <xpath expr="//field[@name='done_mrp_lot_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//label[@for='done_mrp_lot_label_to_print']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='done_mrp_lot_label_to_print']" position="after">
+                <label
+                    for="done_mrp_lot_zpl2_label_id"
+                    string="ZPL Label Template:"
+                    invisible="not auto_print_done_mrp_lot"
+                    class="fw-bold"
+                />
+                <field
+                    name="done_mrp_lot_zpl2_label_id"
+                    nolabel="1"
+                    invisible="not auto_print_done_mrp_lot"
+                    options="{'no_create': True, 'no_create_edit': True}"
+                />
+                <label
+                    for="done_mrp_lot_zpl2_copies"
+                    string="Copies:"
+                    invisible="not auto_print_done_mrp_lot"
+                    class="fw-bold"
+                />
+                <field
+                    name="done_mrp_lot_zpl2_copies"
+                    nolabel="1"
+                    invisible="not auto_print_done_mrp_lot"
+                />
+            </xpath>
+
+            <!-- Generated Lot/SN Labels -->
+            <xpath
+                expr="//field[@name='generated_mrp_lot_label_to_print']"
+                position="attributes"
+            >
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath
+                expr="//label[@for='generated_mrp_lot_label_to_print']"
+                position="attributes"
+            >
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='generated_mrp_lot_label_to_print']"
+                position="after"
+            >
+                <label
+                    for="generated_mrp_lot_zpl2_label_id"
+                    string="ZPL Label Template:"
+                    invisible="not auto_print_generated_mrp_lot"
+                    class="fw-bold"
+                />
+                <field
+                    name="generated_mrp_lot_zpl2_label_id"
+                    nolabel="1"
+                    invisible="not auto_print_generated_mrp_lot"
+                    options="{'no_create': True, 'no_create_edit': True}"
+                />
+                <label
+                    for="generated_mrp_lot_zpl2_copies"
+                    string="Copies:"
+                    invisible="not auto_print_generated_mrp_lot"
+                    class="fw-bold"
+                />
+                <field
+                    name="generated_mrp_lot_zpl2_copies"
+                    nolabel="1"
+                    invisible="not auto_print_generated_mrp_lot"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>
