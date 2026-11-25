@@ -1,71 +1,20 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	printer_zpl2_wizard_enhanced
+# 	* printer_zpl2_wizard_enhanced
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-24 11:52+0800\n"
-"PO-Revision-Date: 2026-11-24 11:52+0800\n"
+"POT-Creation-Date: 2026-11-25 00:00+0000\n"
+"PO-Revision-Date: 2026-11-25 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__quantity_source
-msgid "Quantity Mode"
-msgstr "数量计算方式"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__quantity_source
-msgid "By Product Quantity: one label per unit of the product, multiplied by copies. Per Record / Serial: a fixed number of labels for each record or serial. Exact Total Labels: print exactly the total number you specify."
-msgstr "按产品数量：每件产品一张，再乘以份数。按记录/序列号：每条记录或每个序列号打印固定张数。精确指定总张数：按你填写的总张数打印。"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields.selection,selection_wizard_print_record_label__quantity_source
-msgid "By Product Quantity"
-msgstr "按产品数量"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields.selection,selection_wizard_print_record_label__quantity_source
-msgid "Per Record / Serial"
-msgstr "按记录/序列号"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields.selection,selection_wizard_print_record_label__quantity_source
-#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__exact_copies
-msgid "Exact Total Labels"
-msgstr "精确指定总张数"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__copies_per_label
-msgid "Copies per Record / Serial"
-msgstr "每单位/记录/序列号份数"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__copies_per_label
-msgid "Labels printed for each unit / record / serial, between 1 and 6."
-msgstr "每个单位/记录/序列号打印的张数，范围 1 至 6。"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__exact_copies
-msgid "Total number of labels to print when Quantity Mode is Exact Total Labels."
-msgstr "数量计算方式为“精确指定总张数”时，实际打印的总张数。"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__total_labels
-msgid "Total Labels"
-msgstr "总标签张数"
-
-#. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__total_labels
-msgid "Number of labels that will be sent to the printer."
-msgstr "本次将发送到打印机的标签张数。"
 
 #. module: printer_zpl2_wizard_enhanced
 #: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__available_lot_ids
@@ -73,14 +22,86 @@ msgid "Available Lots/Serials"
 msgstr "可选批次/序列号"
 
 #. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields.selection,name:printer_zpl2_wizard_enhanced.selection__wizard_print_record_label__quantity_source__per_quantity
+msgid "By Product Quantity"
+msgstr "按产品数量"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__quantity_source
+msgid ""
+"By Product Quantity: one label per unit of the product, multiplied by "
+"copies. Per Record / Serial: a fixed number of labels for each record or "
+"serial. Exact Total Labels: print exactly the total number you specify."
+msgstr "按产品数量：每件产品一张，再乘以份数。按记录/序列号：每条记录或每个序列号打印固定张数。精确指定总张数：按你填写的总张数打印。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__copies_per_label
+msgid "Copies per Record / Serial"
+msgstr "每单位/记录/序列号份数"
+
+#. module: printer_zpl2_wizard_enhanced
+#. odoo-python
+#: code:addons/printer_zpl2_wizard_enhanced/wizard/wizard_print_record_label.py:0
+#, python-format
+msgid "Copies per label must be between 1 and 6."
+msgstr "每张标签份数必须在 1 至 6 之间。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__exact_copies
+#: model:ir.model.fields.selection,name:printer_zpl2_wizard_enhanced.selection__wizard_print_record_label__quantity_source__exact
+msgid "Exact Total Labels"
+msgstr "精确指定总张数"
+
+#. module: printer_zpl2_wizard_enhanced
+#. odoo-python
+#: code:addons/printer_zpl2_wizard_enhanced/wizard/wizard_print_record_label.py:0
+#, python-format
+msgid "Exact total labels must be between 1 and 999."
+msgstr "精确总张数必须在 1 至 999 之间。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__label_id
+msgid "Label"
+msgstr "标签"
+
+#. module: printer_zpl2_wizard_enhanced
+#. odoo-python
+#: code:addons/printer_zpl2_wizard_enhanced/wizard/wizard_print_record_label.py:0
+#, python-format
+msgid "Label printing failed after %(printed)s label(s) were sent: %(error)s"
+msgstr "已发送 %(printed)s 张标签后打印失败：%(error)s"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__label_id
+msgid "Label to print."
+msgstr "要打印的标签。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__copies_per_label
+msgid "Labels printed for each unit / record / serial, between 1 and 6."
+msgstr "每个单位/记录/序列号打印的张数，范围 1 至 6。"
+
+#. module: printer_zpl2_wizard_enhanced
 #: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__lot_ids
 msgid "Lots/Serial Numbers"
 msgstr "批次/序列号"
 
 #. module: printer_zpl2_wizard_enhanced
-#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__lot_ids
-msgid "Select the serial numbers to print. Only used when the label template is bound to stock.lot."
-msgstr "选择要打印的序列号。仅当标签模板绑定 stock.lot 时生效。"
+#. odoo-python
+#: code:addons/printer_zpl2_wizard_enhanced/wizard/wizard_print_record_label.py:0
+#, python-format
+msgid "No record or serial number is selected for printing."
+msgstr "未选择要打印的记录或序列号。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__total_labels
+msgid "Number of labels that will be sent to the printer."
+msgstr "本次将发送到打印机的标签张数。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields.selection,name:printer_zpl2_wizard_enhanced.selection__wizard_print_record_label__quantity_source__per_record
+msgid "Per Record / Serial"
+msgstr "按记录/序列号"
 
 #. module: printer_zpl2_wizard_enhanced
 #: model_terms:ir.ui.view,arch_db:printer_zpl2_wizard_enhanced.view_wizard_print_product_label_form_inherit_advanced
@@ -93,45 +114,53 @@ msgid "Print Range (Lots / Serial Numbers)"
 msgstr "打印范围（批次/序列号）"
 
 #. module: printer_zpl2_wizard_enhanced
-#: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
-#, python-format
-msgid "Copies per label must be between 1 and 6."
-msgstr "每张标签份数必须在 1 至 6 之间。"
-
-#. module: printer_zpl2_wizard_enhanced
-#: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
-#, python-format
-msgid "Exact total labels must be between 1 and 999."
-msgstr "精确总张数必须在 1 至 999 之间。"
-
-#. module: printer_zpl2_wizard_enhanced
-#: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
-msgid "No record or serial number is selected for printing."
-msgstr "未选择要打印的记录或序列号。"
-
-#. module: printer_zpl2_wizard_enhanced
-#: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
-#, python-format
-msgid "Label printing failed after %(printed)s label(s) were sent: %(error)s"
-msgstr "已发送 %(printed)s 张标签后打印失败：%(error)s"
-
-#. module: printer_zpl2_wizard_enhanced
 #: model:ir.model,name:printer_zpl2_wizard_enhanced.model_wizard_print_record_label
 msgid "Print Record Label"
 msgstr "打印记录标签"
 
 #. module: printer_zpl2_wizard_enhanced
-#: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
+#. odoo-python
+#: code:addons/printer_zpl2_wizard_enhanced/wizard/wizard_print_record_label.py:0
+#, python-format
 msgid "Printing Complete"
 msgstr "打印完成"
 
 #. module: printer_zpl2_wizard_enhanced
-#: code:addons/printer_zpl2_wizard_enhanced/models/wizard_print_record_label.py:0
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__quantity_source
+msgid "Quantity Mode"
+msgstr "数量计算方式"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__lot_ids
+msgid ""
+"Select the serial numbers to print. Only used when the label template is "
+"bound to stock.lot."
+msgstr "选择要打印的序列号。仅当标签模板绑定 stock.lot 时生效。"
+
+#. module: printer_zpl2_wizard_enhanced
+#. odoo-python
+#: code:addons/printer_zpl2_wizard_enhanced/wizard/wizard_print_record_label.py:0
 #, python-format
 msgid "Successfully printed %d label(s)."
 msgstr "成功打印 %d 张标签。"
 
 #. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__total_labels
+msgid "Total Labels"
+msgstr "总标签张数"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__exact_copies
+msgid ""
+"Total number of labels to print when Quantity Mode is Exact Total Labels."
+msgstr "数量计算方式为“精确指定总张数”时，实际打印的总张数。"
+
+#. module: printer_zpl2_wizard_enhanced
 #: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_wizard_print_record_label__use_lot_range
 msgid "Use Lot Range"
 msgstr "使用批次范围"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model,name:printer_zpl2_wizard_enhanced.model_printing_label_zpl2
+msgid "ZPL II Label"
+msgstr "ZPL II 标签"

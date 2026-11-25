@@ -14,12 +14,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__auto_print_done_repair_lot
-msgid "Auto Print Repaired Lot Label"
-msgstr "自动打印维修批次标签"
+#. odoo-python
+#: code:addons/repair_auto_print/models/product_template.py:0
+#, python-format
+msgid ""
+"%(field)s must be between 0 and 10 (0 = inherit operation type setting)."
+msgstr "%(field)s 必须在 0 到 10 之间（0 表示继承作业类型设置）。"
+
+#. module: repair_auto_print
+#. odoo-python
+#: code:addons/repair_auto_print/models/stock_picking_type.py:0
+#, python-format
+msgid "%(field)s must be between 1 and 10."
+msgstr "%(field)s 必须在 1 到 10 之间。"
 
 #. module: repair_auto_print
 #: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__auto_print_done_repair_order
@@ -27,13 +37,26 @@ msgid "Auto Print Completed Repair Order"
 msgstr "自动打印已完成维修单"
 
 #. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__auto_print_done_repair_lot
+msgid "Auto Print Repaired Lot Label"
+msgstr "自动打印维修批次标签"
+
+#. module: repair_auto_print
 #: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__auto_print_done_repair_product_labels
 msgid "Auto Print Repaired Product Labels"
 msgstr "自动打印维修产品标签"
 
 #. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__auto_print_done_repair_product_labels
+msgid ""
+"Automatically print repaired product labels when the repair is completed."
+msgstr "维修完成时自动打印维修产品标签。"
+
+#. module: repair_auto_print
 #: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__auto_print_done_repair_lot
-msgid "Automatically print the lot/serial number label when the repair is completed."
+msgid ""
+"Automatically print the lot/serial number label when the repair is "
+"completed."
 msgstr "维修完成时自动打印批次／序列号标签。"
 
 #. module: repair_auto_print
@@ -42,9 +65,35 @@ msgid "Automatically print the repair order when the repair is completed."
 msgstr "维修完成时自动打印维修单。"
 
 #. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__auto_print_done_repair_product_labels
-msgid "Automatically print repaired product labels when the repair is completed."
-msgstr "维修完成时自动打印维修产品标签。"
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_copies
+msgid "Default Repair Lot/SN Label Copies"
+msgstr "默认维修批次／序列号标签份数"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
+msgid "Default Repair Lot/SN ZPL II Label"
+msgstr "默认维修批次／序列号 ZPL II 标签"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_zpl2_copies
+msgid "Default Repair Product Label Copies"
+msgstr "默认维修产品标签份数"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_zpl2_label_id
+msgid "Default Repair Product ZPL II Label"
+msgstr "默认维修产品 ZPL II 标签"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_copies
+msgid ""
+"Default number of custom ZPL II lot/SN labels per repaired unit, rounded up."
+msgstr "每个维修产品单位默认打印的自定义 ZPL II 批次／序列号标签份数，维修数量向上取整。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_product_zpl2_copies
+msgid "Default number of custom ZPL II product labels per repair order."
+msgstr "每张维修单默认打印的自定义 ZPL II 产品标签份数。"
 
 #. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
@@ -52,9 +101,11 @@ msgid "Hardware"
 msgstr "硬件"
 
 #. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_label_to_print
-msgid "Repair Lot/SN Label Format"
-msgstr "批次／序列号标签格式"
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+msgid ""
+"Leave a template empty to use the repair operation type default. Set copies "
+"to 0 to inherit its quantity."
+msgstr "模板留空时使用维修作业类型默认模板。份数设为 0 时继承作业类型设置。"
 
 #. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
@@ -63,15 +114,36 @@ msgid "Lot/SN Labels"
 msgstr "批次／序列号标签"
 
 #. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_label_to_print
-msgid "Repair Product Label Format"
-msgstr "产品标签格式"
+#. odoo-python
+#: code:addons/repair_auto_print/models/repair_order.py:0
+#, python-format
+msgid ""
+"No printer is configured for ZPL II label '%(label)s' on repair "
+"'%(repair)s'. Configure a user-label printer, the label's default printer, "
+"or your default label printer."
+msgstr ""
+"维修“%(repair)s”的 ZPL II 标签“%(label)s”未配置打印机。请配置用户标签打印机、标签默认打印机或当前用户的默认标签打印机。"
 
 #. module: repair_auto_print
-#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
-#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
-msgid "Product Labels"
-msgstr "产品标签"
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__done_repair_lot_zpl2_copies
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_product_zpl2_copies
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__done_repair_lot_zpl2_copies
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl2_copies
+msgid ""
+"Overrides the operation type's copies when greater than 0. Set to 0 to "
+"inherit the operation type setting."
+msgstr "大于 0 时覆盖作业类型份数，设为 0 时继承作业类型设置。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__done_repair_lot_label_to_print__pdf
+#: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__repair_product_label_to_print__pdf
+msgid "PDF"
+msgstr "PDF"
+
+#. module: repair_auto_print
+#: model:ir.model,name:repair_auto_print.model_stock_picking_type
+msgid "Picking Type"
+msgstr "作业类型"
 
 #. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
@@ -84,115 +156,25 @@ msgid "Print when repair is completed"
 msgstr "维修完成时打印"
 
 #. module: repair_auto_print
+#. odoo-python
+#: code:addons/repair_auto_print/models/repair_order.py:0
+#, python-format
+msgid ""
+"Printer '%(printer)s' for ZPL II label '%(label)s' on repair '%(repair)s' is"
+" not available (status: %(status)s)."
+msgstr ""
+"维修“%(repair)s”的 ZPL II 标签“%(label)s”所选打印机“%(printer)s”不可用（状态：%(status)s）。"
+
+#. module: repair_auto_print
+#: model:ir.model,name:repair_auto_print.model_product_template
+msgid "Product"
+msgstr "产品"
+
+#. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
-msgid "Repair Order"
-msgstr "维修单"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_zpl2_label_id
-msgid "Default Repair Product ZPL II Label"
-msgstr "默认维修产品 ZPL II 标签"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_product_zpl2_label_id
-msgid ""
-"Used when the repaired product has no repair-specific product label. "
-"A custom ZPL II label takes priority over the native label format."
-msgstr "维修产品未设置维修专用产品标签时使用。自定义 ZPL II 标签优先于原生标签格式。"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_zpl2_copies
-msgid "Default Repair Product Label Copies"
-msgstr "默认维修产品标签份数"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_product_zpl2_copies
-msgid "Default number of custom ZPL II product labels per repair order."
-msgstr "每张维修单默认打印的自定义 ZPL II 产品标签份数。"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
-msgid "Default Repair Lot/SN ZPL II Label"
-msgstr "默认维修批次／序列号 ZPL II 标签"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
-msgid ""
-"Used when the repaired product has no repair-specific lot/SN label. "
-"A custom ZPL II label takes priority over the native label format."
-msgstr "维修产品未设置维修专用批次／序列号标签时使用。自定义 ZPL II 标签优先于原生标签格式。"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_copies
-msgid "Default Repair Lot/SN Label Copies"
-msgstr "默认维修批次／序列号标签份数"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_copies
-msgid ""
-"Default number of custom ZPL II lot/SN labels per repaired unit, "
-"rounded up."
-msgstr "每个维修产品单位默认打印的自定义 ZPL II 批次／序列号标签份数，维修数量向上取整。"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl2_label_id
-msgid "Repair Product ZPL II Label"
-msgstr "维修产品 ZPL II 标签"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl2_label_id
-msgid ""
-"Repair-specific product label shared by all variants. Leave empty "
-"to use the repair operation type's default template."
-msgstr "所有变体共用的维修专用产品标签。留空时使用维修作业类型的默认模板。"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl2_copies
-msgid "Repair Product Label Copies"
-msgstr "维修产品标签份数"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl2_copies
-msgid ""
-"Overrides the operation type's copies when greater than 0. "
-"Set to 0 to inherit the operation type setting."
-msgstr "大于 0 时覆盖作业类型份数，设为 0 时继承作业类型设置。"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__done_repair_lot_zpl2_label_id
-msgid "Repair Lot/SN ZPL II Label"
-msgstr "维修批次／序列号 ZPL II 标签"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_product_template__done_repair_lot_zpl2_label_id
-msgid ""
-"Repair-specific lot/SN label shared by all variants. Leave empty "
-"to use the repair operation type's default template."
-msgstr "所有变体共用的维修专用批次／序列号标签。留空时使用维修作业类型的默认模板。"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__done_repair_lot_zpl2_copies
-msgid "Repair Lot/SN Label Copies"
-msgstr "维修批次／序列号标签份数"
-
-#. module: repair_auto_print
-#: model:ir.model.fields,help:repair_auto_print.field_product_template__done_repair_lot_zpl2_copies
-msgid ""
-"Overrides the operation type's copies when greater than 0. "
-"Set to 0 to inherit the operation type setting."
-msgstr "大于 0 时覆盖作业类型份数，设为 0 时继承作业类型设置。"
-
-#. module: repair_auto_print
-#: code:addons/repair_auto_print/models/stock_picking_type.py:82
-msgid "%(field)s must be between 1 and 10."
-msgstr "%(field)s 必须在 1 到 10 之间。"
-
-#. module: repair_auto_print
-#: code:addons/repair_auto_print/models/product_template.py:63
-msgid ""
-"%(field)s must be between 0 and 10 "
-"(0 = inherit operation type setting)."
-msgstr "%(field)s 必须在 0 到 10 之间（0 表示继承作业类型设置）。"
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
+msgid "Product Labels"
+msgstr "产品标签"
 
 #. module: repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
@@ -200,30 +182,86 @@ msgid "Repair Labels"
 msgstr "维修标签"
 
 #. module: repair_auto_print
-#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
-msgid ""
-"Leave a template empty to use the repair operation type default. "
-"Set copies to 0 to inherit its quantity."
-msgstr "模板留空时使用维修作业类型默认模板。份数设为 0 时继承作业类型设置。"
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__done_repair_lot_zpl2_copies
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__done_repair_lot_zpl2_copies
+msgid "Repair Lot/SN Label Copies"
+msgstr "维修批次／序列号标签份数"
 
 #. module: repair_auto_print
-#: code:addons/repair_auto_print/models/repair_order.py:58
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_label_to_print
+msgid "Repair Lot/SN Label Format"
+msgstr "批次／序列号标签格式"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__done_repair_lot_zpl2_label_id
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__done_repair_lot_zpl2_label_id
+msgid "Repair Lot/SN ZPL II Label"
+msgstr "维修批次／序列号 ZPL II 标签"
+
+#. module: repair_auto_print
+#: model:ir.model,name:repair_auto_print.model_repair_order
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+msgid "Repair Order"
+msgstr "维修单"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_product_zpl2_copies
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl2_copies
+msgid "Repair Product Label Copies"
+msgstr "维修产品标签份数"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_product_label_to_print
+msgid "Repair Product Label Format"
+msgstr "产品标签格式"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_product_zpl2_label_id
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl2_label_id
+msgid "Repair Product ZPL II Label"
+msgstr "维修产品 ZPL II 标签"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__done_repair_lot_zpl2_label_id
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__done_repair_lot_zpl2_label_id
 msgid ""
-"ZPL II label '%(label)s' for repair '%(repair)s' has an "
-"unsupported model: %(model)s."
+"Repair-specific lot/SN label shared by all variants. Leave empty to use the "
+"repair operation type's default template."
+msgstr "所有变体共用的维修专用批次／序列号标签。留空时使用维修作业类型的默认模板。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_product_zpl2_label_id
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl2_label_id
+msgid ""
+"Repair-specific product label shared by all variants. Leave empty to use the"
+" repair operation type's default template."
+msgstr "所有变体共用的维修专用产品标签。留空时使用维修作业类型的默认模板。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
+msgid ""
+"Used when the repaired product has no repair-specific lot/SN label. A custom"
+" ZPL II label takes priority over the native label format."
+msgstr "维修产品未设置维修专用批次／序列号标签时使用。自定义 ZPL II 标签优先于原生标签格式。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_product_zpl2_label_id
+msgid ""
+"Used when the repaired product has no repair-specific product label. A "
+"custom ZPL II label takes priority over the native label format."
+msgstr "维修产品未设置维修专用产品标签时使用。自定义 ZPL II 标签优先于原生标签格式。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__done_repair_lot_label_to_print__zpl
+#: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__repair_product_label_to_print__zpl
+msgid "ZPL"
+msgstr "ZPL"
+
+#. module: repair_auto_print
+#. odoo-python
+#: code:addons/repair_auto_print/models/repair_order.py:0
+#, python-format
+msgid ""
+"ZPL II label '%(label)s' for repair '%(repair)s' has an unsupported model: "
+"%(model)s."
 msgstr "维修“%(repair)s”的 ZPL II 标签“%(label)s”使用了不支持的模型：%(model)s。"
-
-#. module: repair_auto_print
-#: code:addons/repair_auto_print/models/repair_order.py:87
-msgid ""
-"No printer is configured for ZPL II label '%(label)s' on "
-"repair '%(repair)s'. Configure a user-label printer, the "
-"label's default printer, or your default label printer."
-msgstr "维修“%(repair)s”的 ZPL II 标签“%(label)s”未配置打印机。请配置用户标签打印机、标签默认打印机或当前用户的默认标签打印机。"
-
-#. module: repair_auto_print
-#: code:addons/repair_auto_print/models/repair_order.py:100
-msgid ""
-"Printer '%(printer)s' for ZPL II label '%(label)s' on "
-"repair '%(repair)s' is not available (status: %(status)s)."
-msgstr "维修“%(repair)s”的 ZPL II 标签“%(label)s”所选打印机“%(printer)s”不可用（状态：%(status)s）。"
