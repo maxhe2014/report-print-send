@@ -9,7 +9,12 @@
     "author": "metaodoo.com",
     "website": "https://metaodoo.com",
     "license": "OPL-1",
-    "depends": ["repair", "printer_zpl2", "base_report_to_label_printer"],
+    "depends": [
+        "repair",
+        "printer_zpl2",
+        "printer_zpl2_wizard_enhanced",
+        "base_report_to_label_printer",
+    ],
     "data": [
         "views/product_template_views.xml",
         "views/stock_picking_type_views.xml",

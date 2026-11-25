@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Copyright (C) 2026 metaodoo.com
+  License OPL-1 (https://www.odoo.com/documentation/17.0/legal/licenses.html).
+-->
+<odoo>
+    <record id="view_printing_label_zpl2_form_enhanced" model="ir.ui.view">
+        <field name="name">printing.label.zpl2.form.enhanced</field>
+        <field name="model">printing.label.zpl2</field>
+        <field name="inherit_id" ref="printer_zpl2.view_printing_label_zpl2_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group/field[@name='width']" position="after">
+                <field name="darkness" />
+            </xpath>
+            <!-- Component level options: the selectors are restricted to the
+                 embedded component form, otherwise the outer "Components" page
+                 would match first and reference a field it does not own. -->
+            <xpath
+                expr="//field[@name='component_ids']/form//field[@name='font']"
+                position="after"
+            >
+                <field
+                    name="custom_font_name"
+                    invisible="component_type != 'text' or font != '@'"
+                />
+            </xpath>
+            <xpath
+                expr="//field[@name='component_ids']/form//field[@name='data_autofill']"
+                position="attributes"
+            >
+                <attribute
+                    name="invisible"
+                >component_type not in ('qr_code', 'qr_code_custom')</attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='component_ids']/form//page[.//field[@name='font']]"
+                position="attributes"
+            >
+                <attribute
+                    name="invisible"
+                >component_type in ('sublabel', 'qr_code', 'qr_code_custom', 'zpl2_raw')</attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='component_ids']/form//page[.//field[@name='check_digits']]"
+                position="attributes"
+            >
+                <attribute
+                    name="invisible"
+                >component_type in ('text', 'rectangle', 'diagonal', 'circle', 'sublabel', 'graphic', 'qr_code', 'qr_code_custom', 'zpl2_raw')</attribute>
+            </xpath>
+            <xpath
+                expr="//field[@name='component_ids']/form//page[.//field[@name='magnification_factor']]"
+                position="attributes"
+            >
+                <attribute
+                    name="invisible"
+                >component_type not in ('qr_code', 'qr_code_custom')</attribute>
+            </xpath>
+            <!-- Per-user printer overrides -->
+            <xpath
+                expr="//page[.//field[@name='test_print_mode']]"
+                position="after"
+            >
+                <page string="User Printers">
+                    <group string="Default Printer for This Label">
+                        <field
+                            name="default_printer_id"
+                            options="{'no_create': True}"
+                        />
+                    </group>
+                    <group string="Per-User Printer Overrides">
+                        <field name="user_action_ids" nolabel="1" colspan="2" />
+                    </group>
+                    <div class="text-muted">
+                        <p
+                        >When a user prints this label, the printer is resolved in the following order:</p>
+                        <p
+                        >1. The user-specific printer configured above (only when Active is on).</p>
+                        <p>2. The label's default printer, set above.</p>
+                        <p
+                        >3. The user's default label printer (Preferences → Default Label Printer).</p>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_printing_label_zpl2_user_action_tree" model="ir.ui.view">
+        <field name="name">printing.label.zpl2.user.action.tree</field>
+        <field name="model">printing.label.zpl2.user.action</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" string="User Printers">
+                <field name="user_id" required="1" />
+                <field name="printer_id" />
+                <field name="active" widget="boolean_toggle" />
+            </tree>
+        </field>
+    </record>
+</odoo>

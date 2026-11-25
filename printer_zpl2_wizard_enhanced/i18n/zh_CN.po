@@ -164,3 +164,125 @@ msgstr "使用批次范围"
 #: model:ir.model,name:printer_zpl2_wizard_enhanced.model_printing_label_zpl2
 msgid "ZPL II Label"
 msgstr "ZPL II 标签"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2__darkness
+msgid "Print Darkness"
+msgstr "打印浓度"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_printing_label_zpl2__darkness
+msgid ""
+"Control the print darkness from -30 (lightest) to 30 (darkest). 0 is the "
+"default value."
+msgstr "控制打印浓度，范围 -30（最浅）到 30（最深）。0 为默认值。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2__default_printer_id
+msgid "Default Printer"
+msgstr "默认打印机"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_printing_label_zpl2__default_printer_id
+msgid ""
+"Default printer used for automatic printing of this label. Takes priority "
+"over the user's default label printer, but is overridden by a per-user "
+"printer configured in the User Printers list below."
+msgstr "该标签自动打印时使用的默认打印机。优先于用户的默认标签打印机，但会被下方“用户打印机”中配置的个人打印机覆盖。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2__user_action_ids
+msgid "User Printers"
+msgstr "用户打印机"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_printing_label_zpl2__user_action_ids
+msgid ""
+"Per-user printer overrides for this label. If a user has a record here "
+"with an active printer, that printer takes priority over the label's "
+"default printer and the user's default label printer."
+msgstr "该标签按用户覆盖的打印机。若用户在此有启用的打印机记录，则优先于标签默认打印机和用户的默认标签打印机。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_wizard_enhanced.view_printing_label_zpl2_form_enhanced
+msgid "Default Printer for This Label"
+msgstr "该标签的默认打印机"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_wizard_enhanced.view_printing_label_zpl2_form_enhanced
+msgid "Per-User Printer Overrides"
+msgstr "按用户覆盖打印机"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__custom_font_name
+msgid "Custom Font Name"
+msgstr "自定义字体名称"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,help:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__custom_font_name
+msgid ""
+"Name of the custom font file (e.g., 11519722.TTF). This font must be "
+"already uploaded to the printer."
+msgstr "自定义字体文件名（例如 11519722.TTF）。该字体需已上传到打印机。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields.selection,name:printer_zpl2_wizard_enhanced.selection__printing_label_zpl2_component__font__custom
+msgid "Custom Font"
+msgstr "自定义字体"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields.selection,name:printer_zpl2_wizard_enhanced.selection__printing_label_zpl2_component__component_type__qr_code_custom
+msgid "QR Code (Custom)"
+msgstr "二维码（自定义）"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields.selection,name:printer_zpl2_wizard_enhanced.selection__printing_label_zpl2_component__component_type__datamatrix
+msgid "Data Matrix"
+msgstr "Data Matrix"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__quality
+msgid "Quality"
+msgstr "质量"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__columns
+msgid "Columns"
+msgstr "列数"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__rows
+msgid "Rows"
+msgstr "行数"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__format_type
+msgid "Format Type"
+msgstr "格式类型"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__escape_sequence
+msgid "Escape Sequence"
+msgstr "转义序列"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model.fields,field_description:printer_zpl2_wizard_enhanced.field_printing_label_zpl2_component__additional_info
+msgid "Additional Info"
+msgstr "附加信息"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model:ir.model,name:printer_zpl2_wizard_enhanced.model_printing_label_zpl2_user_action
+msgid "ZPL Label User Printer Action"
+msgstr "ZPL 标签用户打印机设置"
+
+#. module: printer_zpl2_wizard_enhanced
+#: code:addons/printer_zpl2_wizard_enhanced/models/printing_label_zpl2_user_action.py:0
+#, python-format
+msgid "A printer configuration already exists for this label and user."
+msgstr "该标签与该用户的打印机配置已存在。"
+
+#. module: printer_zpl2_wizard_enhanced
+#: model_terms:ir.ui.view,arch_db:printer_zpl2_wizard_enhanced.view_product_template_form_zpl2_labels
+msgid "ZPL Labels"
+msgstr "ZPL 标签"
+

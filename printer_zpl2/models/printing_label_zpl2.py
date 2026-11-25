@@ -49,11 +49,6 @@ class PrintingLabelZpl2(models.Model):
         default=480,
         help="Width of the label, will be set on the printer before printing.",
     )
-    darkness = fields.Integer(
-        string="Print Darkness",
-        default=0,
-        help="Control the print darkness from -30 (lightest) to 30 (darkest). 0 is the default value.",
-    )
     component_ids = fields.One2many(
         comodel_name="printing.label.zpl2.component",
         inverse_name="label_id",
@@ -76,25 +71,6 @@ class PrintingLabelZpl2(models.Model):
     record_id = fields.Integer(string="Record ID", default=1)
     extra = fields.Text(default="{}")
     printer_id = fields.Many2one(comodel_name="printing.printer", string="Printer")
-    default_printer_id = fields.Many2one(
-        comodel_name="printing.printer",
-        string="Default Printer",
-        help=(
-            "Default printer used for automatic printing of this label. "
-            "Takes priority over the user's default label printer, but is "
-            "overridden by a per-user printer configured in the User "
-            "Printers list below."
-        ),
-    )
-    user_action_ids = fields.One2many(
-        comodel_name="printing.label.zpl2.user.action",
-        inverse_name="label_id",
-        string="User Printers",
-        help="Per-user printer overrides for this label. "
-        "If a user has a record here with an active printer, that printer "
-        "takes priority over the label's default printer and the user's "
-        "default label printer.",
-    )
     labelary_image = fields.Binary(
         string="Image from Labelary", compute="_compute_labelary_image"
     )
@@ -165,7 +141,6 @@ class PrintingLabelZpl2(models.Model):
             eval_args.update(
                 {
                     "object": record,
-                    "env": record.env,
                     "page_number": str(page_number + 1),
                     "page_count": str(page_count),
                     "time": wrap_module(
@@ -251,10 +226,6 @@ class PrintingLabelZpl2(models.Model):
                         zpl2.ARG_BLOCK_LEFT_MARGIN,
                     ]
                 }
-                # 添加自定义字体名称
-                if component.font == str(zpl2.FONT_CUSTOM) and component.custom_font_name:
-                    barcode_arguments['font_name'] = component.custom_font_name
-                
                 label_data.font_data(
                     component_offset_x, component_offset_y, barcode_arguments, data
                 )
@@ -334,20 +305,9 @@ class PrintingLabelZpl2(models.Model):
                     label_offset_y=component_offset_y,
                 )
             else:
-                if component.component_type in (zpl2.BARCODE_QR_CODE, zpl2.BARCODE_QR_CODE_CUSTOM):
+                if component.component_type == zpl2.BARCODE_QR_CODE:
                     # Adding Control Arguments to QRCode data Label
                     data = f"{component.error_correction}A,{data}"
-                
-                # Data Matrix specific parameters - based on user example format
-                if component.component_type == zpl2.BARCODE_DATA_MATRIX:
-                    barcode_arguments.update({
-                        'quality': component.quality or 200,  # 用户示例使用200质量等级
-                        'columns': component.columns or 36,   # 用户示例使用36列
-                        'rows': component.rows or 36,         # 用户示例使用36行
-                        'format': component.format_type or 1,  # 用户示例使用1格式类型
-                        'escape': '_',  # 用户示例使用_转义字符
-                        'additional': 1,  # 用户示例使用1附加信息
-                    })
 
                 barcode_arguments = {
                     field_name: component[field_name]
@@ -387,9 +347,6 @@ class PrintingLabelZpl2(models.Model):
             label_data.label_start()
             if not labelary_emul:
                 label_data.print_width(self.width)
-                # Set print darkness if not zero
-                if self.darkness != 0:
-                    label_data._write_command(f"^MD{self.darkness}")
             label_data.label_encoding()
 
             label_data.label_home(self.origin_x, self.origin_y)

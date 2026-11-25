@@ -64,8 +64,6 @@ class PrintingLabelZpl2Component(models.Model):
             (str(zpl2.BARCODE_CODE_128), "Code 128"),
             (str(zpl2.BARCODE_EAN_13), "EAN-13"),
             (str(zpl2.BARCODE_QR_CODE), "QR Code"),
-            (str(zpl2.BARCODE_QR_CODE_CUSTOM), "QR Code (Custom)"),
-            (str(zpl2.BARCODE_DATA_MATRIX), "Data Matrix"),
             ("sublabel", "Sublabel"),
             ("zpl2_raw", "ZPL2"),
         ],
@@ -84,15 +82,10 @@ class PrintingLabelZpl2Component(models.Model):
             (str(zpl2.FONT_26X13), "26x13"),
             (str(zpl2.FONT_60X40), "60x40"),
             (str(zpl2.FONT_21X13), "21x13"),
-            (str(zpl2.FONT_CUSTOM), "Custom Font"),
         ],
         required=True,
         default=str(zpl2.FONT_DEFAULT),
         help="Font to use, for text only.",
-    )
-    custom_font_name = fields.Char(
-        string="Custom Font Name",
-        help="Name of the custom font file (e.g., 11519722.TTF). This font must be already uploaded to the printer.",
     )
     thickness = fields.Integer(help="Thickness of the line to draw.")
     color = fields.Selection(
@@ -174,44 +167,6 @@ class PrintingLabelZpl2Component(models.Model):
         help="Error correction for some barcode types like QR Code.",
     )
     mask_value = fields.Integer(default=7, help="Mask Value, from 0 to 7.")
-    
-    # Data Matrix specific fields - based on user example
-    quality = fields.Integer(
-        string="Quality", 
-        default=200,  # 用户示例使用200质量等级
-        help="Data Matrix quality level (0-400). Higher values improve readability but increase size."
-    )
-    columns = fields.Integer(
-        string="Columns", 
-        default=36,   # 用户示例使用36列
-        help="Force number of columns (0=automatic). User example uses 36 columns."
-    )
-    rows = fields.Integer(
-        string="Rows", 
-        default=36,   # 用户示例使用36行
-        help="Force number of rows (0=automatic). User example uses 36 rows."
-    )
-    format_type = fields.Selection(
-        selection=[
-            ('1', 'Format 1'),  # 用户示例使用格式1
-            (str(zpl2.DM_FORMAT_NONE), "None"),
-            (str(zpl2.DM_FORMAT_FIELD), "Field"),
-            (str(zpl2.DM_FORMAT_STRUCTURED), "Structured"),
-        ],
-        string="Format Type",
-        default='1',  # 用户示例使用格式1
-        help="Data Matrix format type. User example uses Format 1."
-    )
-    escape_sequence = fields.Boolean(
-        string="Escape Sequence",
-        default=True,  # 用户示例使用转义字符
-        help="Enable escape sequences in Data Matrix data. User example uses escape sequences."
-    )
-    additional_info = fields.Boolean(
-        string="Additional Info", 
-        default=True,  # 用户示例使用附加信息
-        help="Add additional information to Data Matrix. User example uses additional info."
-    )
     model_id = fields.Many2one(
         comodel_name="ir.model", compute="_compute_model_id", string="Record's model"
     )
@@ -309,8 +264,6 @@ class PrintingLabelZpl2Component(models.Model):
         for component in self:
             if component.component_type == "qr_code":
                 component.data_autofill = True
-            elif component.component_type == zpl2.BARCODE_QR_CODE_CUSTOM:
-                component.data_autofill = False
             else:
                 component.data_autofill = False
 

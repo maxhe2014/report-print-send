@@ -6,8 +6,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 01:22+0000\n"
-"PO-Revision-Date: 2026-11-25 01:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,12 +16,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__label_no
 msgid "# labels"
-msgstr ""
-
-#. module: printer_zpl2
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
-msgid ""
-"1. The user-specific printer configured above (only when Active is on)."
 msgstr ""
 
 #. module: printer_zpl2
@@ -39,11 +31,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__d
 msgid "18x10"
-msgstr ""
-
-#. module: printer_zpl2
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
-msgid "2. The label's default printer, set above."
 msgstr ""
 
 #. module: printer_zpl2
@@ -72,12 +59,6 @@ msgid "2D Barcode Arguments"
 msgstr ""
 
 #. module: printer_zpl2
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
-msgid ""
-"3. The user's default label printer (Preferences → Default Label Printer)."
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__g
 msgid "60x40"
 msgstr ""
@@ -98,36 +79,18 @@ msgid "9x5"
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.constraint,message:printer_zpl2.constraint_printing_label_zpl2_user_action_label_user_uniq
-msgid "A printer configuration already exists for this label and user."
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__action_window_id
 msgid "Action"
 msgstr ""
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__active
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__active
 msgid "Active"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__additional_info
-msgid ""
-"Add additional information to Data Matrix. User example uses additional "
-"info."
 msgstr ""
 
 #. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Add in the 'Action' menu"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__additional_info
-msgid "Additional Info"
 msgstr ""
 
 #. module: printer_zpl2
@@ -271,11 +234,6 @@ msgid "Color of the line to draw."
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__columns
-msgid "Columns"
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__columns_count
 msgid "Columns Count"
 msgstr ""
@@ -291,16 +249,8 @@ msgid "Components which will be printed on the label."
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__darkness
-msgid ""
-"Control the print darkness from -30 (lightest) to 30 (darkest). 0 is the "
-"default value."
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__create_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__create_uid
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__create_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__create_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__create_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__create_uid
@@ -310,7 +260,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__create_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__create_date
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__create_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__create_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__create_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__create_date
@@ -318,37 +267,10 @@ msgid "Created on"
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__@
-msgid "Custom Font"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__custom_font_name
-msgid "Custom Font Name"
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__data
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__data
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Data"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__datamatrix
-msgid "Data Matrix"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__format_type
-msgid "Data Matrix format type. User example uses Format 1."
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__quality
-msgid ""
-"Data Matrix quality level (0-400). Higher values improve readability but "
-"increase size."
 msgstr ""
 
 #. module: printer_zpl2
@@ -361,24 +283,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__font__0
 msgid "Default"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__default_printer_id
-msgid "Default Printer"
-msgstr ""
-
-#. module: printer_zpl2
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
-msgid "Default Printer for This Label"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__default_printer_id
-msgid ""
-"Default printer used for automatic printing of this label. Takes priority "
-"over the user's default label printer, but is overridden by a per-user "
-"printer configured in the User Printers list below."
 msgstr ""
 
 #. module: printer_zpl2
@@ -404,7 +308,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__display_name
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__display_name
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__display_name
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__display_name
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__display_name
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__display_name
@@ -432,13 +335,6 @@ msgid "Emulation"
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__escape_sequence
-msgid ""
-"Enable escape sequences in Data Matrix data. User example uses escape "
-"sequences."
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__model__2
 msgid "Enhanced"
 msgstr ""
@@ -462,19 +358,9 @@ msgid "Error with Labelary API. %s"
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__escape_sequence
-msgid "Escape Sequence"
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__extra
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Extra"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__format_type__1
-msgid "Field"
 msgstr ""
 
 #. module: printer_zpl2
@@ -488,23 +374,8 @@ msgid "Font to use, for text only."
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__columns
-msgid "Force number of columns (0=automatic). User example uses 36 columns."
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__rows
-msgid "Force number of rows (0=automatic). User example uses 36 rows."
-msgstr ""
-
-#. module: printer_zpl2
 #: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
 msgid "Format"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__format_type
-msgid "Format Type"
 msgstr ""
 
 #. module: printer_zpl2
@@ -542,7 +413,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__id
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__id
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__id
@@ -626,7 +496,6 @@ msgstr ""
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__label_id
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__label_id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__label_id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__label_id
 msgid "Label"
@@ -665,7 +534,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__write_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__write_uid
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__write_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__write_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__write_uid
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__write_uid
@@ -675,7 +543,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__write_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__write_date
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__write_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_import_zpl2__write_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__write_date
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label_line__write_date
@@ -791,18 +658,6 @@ msgid "Name of the component."
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2_component__custom_font_name
-msgid ""
-"Name of the custom font file (e.g., 11519722.TTF). This font must be already"
-" uploaded to the printer."
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__format_type__0
-msgid "None"
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__orientation__n
 msgid "Normal"
 msgstr ""
@@ -902,24 +757,6 @@ msgid "PDF417"
 msgstr ""
 
 #. module: printer_zpl2
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
-msgid "Per-User Printer Overrides"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,help:printer_zpl2.field_printing_label_zpl2__user_action_ids
-msgid ""
-"Per-user printer overrides for this label. If a user has a record here with "
-"an active printer, that printer takes priority over the label's default "
-"printer and the user's default label printer."
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__darkness
-msgid "Print Darkness"
-msgstr ""
-
-#. module: printer_zpl2
 #. odoo-python
 #: code:addons/printer_zpl2/models/printing_label_zpl2.py:0
 #: model:ir.actions.act_window,name:printer_zpl2.action_wizard_print_record_label_view
@@ -956,7 +793,6 @@ msgstr ""
 
 #. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__printer_id
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__printer_id
 #: model:ir.model.fields,field_description:printer_zpl2.field_wizard_print_record_label__printer_id
 msgid "Printer"
 msgstr ""
@@ -970,16 +806,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__qr_code
 msgid "QR Code"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__component_type__qr_code_custom
-msgid "QR Code (Custom)"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__quality
-msgid "Quality"
 msgstr ""
 
 #. module: printer_zpl2
@@ -1088,11 +914,6 @@ msgid "Rounding of the printed rectangle corners."
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__rows
-msgid "Rows"
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_component__rows_count
 msgid "Rows Count"
 msgstr ""
@@ -1115,11 +936,6 @@ msgstr ""
 #. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__error_correction__m
 msgid "Standard Level"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__format_type__2
-msgid "Structured"
 msgstr ""
 
 #. module: printer_zpl2
@@ -1193,25 +1009,6 @@ msgid "Ultra-high Reliability Level"
 msgstr ""
 
 #. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2_user_action__user_id
-msgid "User"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model.fields,field_description:printer_zpl2.field_printing_label_zpl2__user_action_ids
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_user_action_tree
-msgid "User Printers"
-msgstr ""
-
-#. module: printer_zpl2
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_printing_label_zpl2_form
-msgid ""
-"When a user prints this label, the printer is resolved in the following "
-"order:"
-msgstr ""
-
-#. module: printer_zpl2
 #: model:ir.model.fields.selection,name:printer_zpl2.selection__printing_label_zpl2_component__color__w
 msgid "White"
 msgstr ""
@@ -1279,16 +1076,6 @@ msgstr ""
 #: model:ir.actions.act_window,name:printer_zpl2.act_open_printing_label_zpl2_view
 #: model:ir.ui.menu,name:printer_zpl2.menu_printing_label_zpl2
 msgid "ZPL II Labels"
-msgstr ""
-
-#. module: printer_zpl2
-#: model:ir.model,name:printer_zpl2.model_printing_label_zpl2_user_action
-msgid "ZPL Label User Printer Action"
-msgstr ""
-
-#. module: printer_zpl2
-#: model_terms:ir.ui.view,arch_db:printer_zpl2.view_product_template_form_zpl2_labels
-msgid "ZPL Labels"
 msgstr ""
 
 #. module: printer_zpl2

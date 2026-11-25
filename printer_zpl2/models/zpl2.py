@@ -59,15 +59,6 @@ ERROR_CORRECTION_HIGH = "Q"
 ERROR_CORRECTION_STANDARD = "M"
 ERROR_CORRECTION_HIGH_DENSITY = "L"
 
-# Data Matrix Error Correction
-ERROR_CORRECTION_DM_STANDARD = "0"
-ERROR_CORRECTION_DM_ENHANCED = "1"
-
-# Data Matrix Format Types
-DM_FORMAT_NONE = "0"
-DM_FORMAT_FIELD = "1"
-DM_FORMAT_STRUCTURED = "2"
-
 # Boolean values
 BOOL_YES = "Y"
 BOOL_NO = "N"
@@ -97,7 +88,6 @@ FONT_28X15 = "E"
 FONT_26X13 = "F"
 FONT_60X40 = "G"
 FONT_21X13 = "H"
-FONT_CUSTOM = "@"  # 自定义字体标识符
 
 # Color values
 COLOR_BLACK = "B"
@@ -114,8 +104,6 @@ BARCODE_UPC_E = "upc-e"
 BARCODE_CODE_128 = "code_128"
 BARCODE_EAN_13 = "ean-13"
 BARCODE_QR_CODE = "qr_code"
-BARCODE_QR_CODE_CUSTOM = "qr_code_custom"
-BARCODE_DATA_MATRIX = "datamatrix"
 
 
 class Zpl2:
@@ -194,23 +182,6 @@ class Zpl2:
     def _font_format(self, font_format):
         """Send the commands which define the font to use for the current data"""
         arguments = [ARG_FONT, ARG_HEIGHT, ARG_WIDTH]
-        
-        # 处理自定义字体
-        if font_format.get(ARG_FONT) == FONT_CUSTOM:
-            # 自定义字体格式: ^A@N,height,width,font_name
-            font_name = font_format.get('font_name', '')
-            orientation = font_format.get(ARG_ORIENTATION, ORIENTATION_NORMAL)
-            height = font_format.get(ARG_HEIGHT, 10)
-            width = font_format.get(ARG_WIDTH, 10)
-            
-            # 检查高度和宽度值是否在允许范围内
-            height = self._enforce(height, minimum=10)
-            width = self._enforce(width, minimum=10)
-            
-            # 生成自定义字体ZPL命令
-            return f"^A@{orientation},{height},{width},{font_name}"
-        
-        # 标准字体处理
         # Add orientation in the font name (only place where there is
         # no comma between values)
         font_format[ARG_FONT] += font_format.get(ARG_ORIENTATION, ORIENTATION_NORMAL)
@@ -233,59 +204,6 @@ class Zpl2:
             ARG_BLOCK_LEFT_MARGIN,
         ]
         return "^FB" + self._generate_arguments(arguments, block_format)
-
-    def _truncate_block_text(self, data, field_format):
-        """Truncate text to fit within the specified block dimensions"""
-        if not data:
-            return data
-            
-        block_width = field_format.get(ARG_BLOCK_WIDTH, 0)
-        block_lines = field_format.get(ARG_BLOCK_LINES, 1)
-        block_spaces = field_format.get(ARG_BLOCK_SPACES, 0)
-        font_height = field_format.get(ARG_HEIGHT, 12)  # 默认字体高度
-        
-        if block_width <= 0 or block_lines <= 0:
-            return data
-            
-        # 改进的字符宽度估算算法
-        # 分析文本中的中文字符和英文字符
-        chinese_chars = sum(1 for c in data if ord(c) > 127)
-        english_chars = len(data) - chinese_chars
-        
-        # 根据字体大小调整基础宽度
-        # 基准字体大小为12点，按比例调整
-        base_width_factor = font_height / 12.0
-        
-        # 中文字符宽度约为英文字符的1.8-2.0倍
-        chinese_char_width = 16 * base_width_factor  # 中文字符基础宽度16点
-        english_char_width = 8 * base_width_factor   # 英文字符基础宽度8点
-        
-        # 计算平均字符宽度
-        if len(data) > 0:
-            total_width = (chinese_chars * chinese_char_width + 
-                          english_chars * english_char_width)
-            avg_char_width = total_width / len(data)
-        else:
-            avg_char_width = 10 * base_width_factor  # 默认值
-        
-        # 考虑行间距的影响
-        # 行间距会减少可用的垂直空间，需要更保守的估算
-        space_factor = 1.0 - (block_spaces * 0.05)  # 每点行间距减少5%的有效空间
-        effective_block_width = block_width * max(0.7, space_factor)
-        
-        # 计算每行字符数，增加10%的安全边距
-        chars_per_line = max(1, int(effective_block_width / avg_char_width * 0.9))
-        max_chars = chars_per_line * block_lines
-        
-        # 如果文本长度在限制范围内，返回原始文本
-        if len(data) <= max_chars:
-            return data
-            
-        # 截断文本并在末尾添加省略号
-        # 确保至少保留一个字符
-        keep_chars = max(1, max_chars - 1)
-        truncated = data[:keep_chars] + "..."
-        return truncated
 
     def _barcode_format(self, barcodeType, barcode_format):
         """Generate the commands to print a barcode
@@ -404,21 +322,6 @@ class Zpl2:
             ]
             return "Q" + self._generate_arguments(arguments, kwargs)
 
-        def _datamatrix(**kwargs):
-            """Data Matrix barcode generation function based on user example"""
-            # 基于用户成功示例的参数设置
-            orientation = kwargs.get(ARG_ORIENTATION, 'N')
-            height = kwargs.get(ARG_HEIGHT, 5)  # 用户示例使用5点模块
-            quality = kwargs.get('quality', 200)  # 用户示例使用200质量等级
-            columns = kwargs.get('columns', 36)  # 用户示例使用36列
-            rows = kwargs.get('rows', 36)  # 用户示例使用36行
-            format_type = kwargs.get('format', 1)  # 用户示例使用1
-            escape_char = kwargs.get('escape', '_')  # 用户示例使用_
-            additional = kwargs.get('additional', 1)  # 用户示例使用1
-            
-            # 使用用户示例格式: ^BX方向,高度,质量,列,行,格式,转义,附加
-            return f"X{orientation},{height},{quality},{columns},{rows},{format_type},{escape_char},{additional}"
-
         barcodeTypes = {
             BARCODE_CODE_11: _code11,
             BARCODE_INTERLEAVED_2_OF_5: _interleaved2of5,
@@ -430,8 +333,6 @@ class Zpl2:
             BARCODE_CODE_128: _code128,
             BARCODE_EAN_13: _ean13,
             BARCODE_QR_CODE: _qrcode,
-            BARCODE_QR_CODE_CUSTOM: _qrcode,
-            BARCODE_DATA_MATRIX: _datamatrix,
         }
         return "^B" + barcodeTypes[barcodeType](**barcode_format)
 
@@ -466,17 +367,14 @@ class Zpl2:
         if field_format.get(ARG_REVERSE_PRINT, False):
             reverse = self._field_reverse_print()
         block = ""
-        processed_data = data
         if field_format.get(ARG_IN_BLOCK, False):
             block = self._field_block(field_format)
-            # 预处理文本数据，根据块行数限制文本长度
-            processed_data = self._truncate_block_text(data, field_format)
         command = "{origin}{font_format}{reverse}{block}{data}".format(
             origin=self._field_origin(right, down),
             font_format=self._font_format(field_format),
             reverse=reverse,
             block=block,
-            data=self._field_data(processed_data),
+            data=self._field_data(data),
         )
         self._write_command(command)
 
