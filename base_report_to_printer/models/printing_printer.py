@@ -12,7 +12,8 @@ import logging
 import os
 from tempfile import mkstemp
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -36,7 +37,6 @@ class PrintingPrinter(models.Model):
     server_id = fields.Many2one(
         comodel_name="printing.server",
         string="Server",
-        required=True,
         help="Server used to access this printer.",
     )
     job_ids = fields.One2many(
@@ -46,6 +46,11 @@ class PrintingPrinter(models.Model):
         help="Jobs printed on this printer.",
     )
     system_name = fields.Char(required=True, index=True)
+    backend = fields.Selection(
+        selection=[("cups", "Cups")],
+        required=True,
+        default="cups",
+    )
     default = fields.Boolean(readonly=True)
     status = fields.Selection(
         selection=[
@@ -64,12 +69,27 @@ class PrintingPrinter(models.Model):
     model = fields.Char(readonly=True)
     location = fields.Char(readonly=True)
     uri = fields.Char(string="URI", readonly=True)
-    tray_ids = fields.One2many(
-        comodel_name="printing.tray", inverse_name="printer_id", string="Paper Sources"
+    input_tray_ids = fields.One2many(
+        comodel_name="printing.tray.input",
+        inverse_name="printer_id",
+        string="Paper Sources",
+    )
+    output_tray_ids = fields.One2many(
+        comodel_name="printing.tray.output",
+        inverse_name="printer_id",
+        string="Output trays",
     )
     multi_thread = fields.Boolean(
         compute="_compute_multi_thread", readonly=False, store=True
     )
+
+    @api.constrains("server_id", "backend")
+    def _check_server_id(self):
+        for printer in self:
+            if printer.backend == "cups" and not printer.server_id:
+                raise ValidationError(
+                    _("Server is required for printers using the Cups backend.")
+                )
 
     @api.depends("server_id.multi_thread")
     def _compute_multi_thread(self):
@@ -102,7 +122,8 @@ class PrintingPrinter(models.Model):
             return vals
 
         ppd = cups.PPD(ppd_path)
-        option = ppd.findOption("InputSlot")
+        input_options = ppd.findOption("InputSlot")
+        output_options = ppd.findOption("OutputBin")
         try:
             os.unlink(ppd_path)
         except OSError as err:
@@ -110,34 +131,35 @@ class PrintingPrinter(models.Model):
             # The file has already been deleted, we can continue the update
             if err.errno != errno.ENOENT:
                 raise
-        if not option:
-            return vals
-
-        tray_commands = []
-        cups_trays = {
-            tray_option["choice"]: tray_option["text"] for tray_option in option.choices
-        }
-
-        # Add new trays
-        tray_commands.extend(
-            [
-                (0, 0, {"name": text, "system_name": choice})
-                for choice, text in cups_trays.items()
-                if choice not in self.tray_ids.mapped("system_name")
+        if input_options:
+            vals["input_tray_ids"] = [
+                (0, 0, {"name": opt["text"], "system_name": opt["choice"]})
+                for opt in input_options.choices
+                if opt["choice"] not in self.input_tray_ids.mapped("system_name")
             ]
-        )
+            trays = [opt["choice"] for opt in input_options.choices]
+            vals["input_tray_ids"].extend(
+                [
+                    (2, tray.id)
+                    for tray in self.input_tray_ids
+                    if tray.system_name not in trays
+                ]
+            )
 
-        # Remove deleted trays
-        tray_commands.extend(
-            [
-                (2, tray.id)
-                for tray in self.tray_ids.filtered(
-                    lambda record: record.system_name not in cups_trays.keys()
-                )
+        if output_options:
+            vals["output_tray_ids"] = [
+                (0, 0, {"name": opt["text"], "system_name": opt["choice"]})
+                for opt in output_options.choices
+                if opt["choice"] not in self.output_tray_ids.mapped("system_name")
             ]
-        )
-        if tray_commands:
-            vals["tray_ids"] = tray_commands
+            trays = [opt["choice"] for opt in output_options.choices]
+            vals["output_tray_ids"].extend(
+                [
+                    (2, tray.id)
+                    for tray in self.output_tray_ids
+                    if tray.system_name not in trays
+                ]
+            )
         return vals
 
     def print_document(self, report, content, **print_opts):
@@ -162,10 +184,13 @@ class PrintingPrinter(models.Model):
     # Backwards compatibility of builtin used as kwarg
     _set_option_format = _set_option_doc_format
 
-    def _set_option_tray(self, report, value):
+    def _set_option_input_tray(self, report, value):
         """Note we use self here as some older PPD use tray
         rather than InputSlot so we may need to query printer in override"""
         return {"InputSlot": str(value)} if value else {}
+
+    def _set_option_output_tray(self, report, value):
+        return {"OutputBin": str(value)} if value else {}
 
     @staticmethod
     def _set_option_noop(report, value):

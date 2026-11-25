@@ -4,7 +4,7 @@ import {markup} from "@odoo/owl";
 import {registry} from "@web/core/registry";
 
 async function cupsReportActionHandler(action, options, env) {
-    if (action.report_type === "qweb-pdf") {
+    if (action.report_type === "qweb-pdf" || action.report_type === "qweb-text") {
         const orm = env.services.orm;
 
         const print_action = await orm.call(
@@ -25,6 +25,15 @@ async function cupsReportActionHandler(action, options, env) {
                 env.services.notification.add(_t("Successfully sent to printer!"), {
                     type: "success",
                 });
+                const {onClose} = options;
+                if (action.close_on_report_download) {
+                    env.services.action.doAction(
+                        {type: "ir.actions.act_window_close"},
+                        {onClose}
+                    );
+                } else if (onClose) {
+                    onClose();
+                }
                 return true;
                 // In case of exception during the job, we won't get any response. So we
                 // should flag the exception and notify the user
