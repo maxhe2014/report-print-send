@@ -2,6 +2,26 @@
 <!--
   Copyright (C) 2026
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
+  Layout strategy — matches native mrp "Print when done" section rhythm
+  (placeholder <label> 占位 + <div class="o_row"> 内含同组控件):
+
+  [hidden native checkbox]   ← we hide the original single-line checkbox
+  <label for=生产订单/>      ← placeholder (same column as Product Labels placeholder below)
+  <div class="o_row">
+    [✓] 生产订单
+    打印标签格式: [PDF/ZPL]
+    └─ ZPL 专属字段 (仅 ZPL 才显示):
+         ZPL 标签模板: [...]   份数: [x]
+
+  <label for=产品标签/>      ← native placeholder
+  <div class="o_row">        ← we REPLACE native o_row which had checkbox + PDF/ZPL selector
+    [✓] 产品标签
+    ZPL 标签模板: [...]
+    份数: [x]
+  </div>
+
+  批次/序列号 / 创建新批次时打印 — 同产品标签模式。
 -->
 <odoo>
     <record id="view_picking_type_form_inherit_mrp_zpl2" model="ir.ui.view">
@@ -9,165 +29,90 @@
         <field name="model">stock.picking.type</field>
         <field name="inherit_id" ref="mrp.view_picking_type_form_inherit_mrp" />
         <field name="arch" type="xml">
-            <!-- Production Order: restructure to match Product Labels/Lot/SN Labels
-                 visual rhythm: placeholder label + o_row(checkbox + format selector),
-                 then ZPL-specific fields that only show when format = ZPL. -->
+            <!-- =========================================================
+                 1. 生产订单：原生是单独一行 checkbox，改为 placeholder + o_row
+                 o_row 内含 checkbox + 格式下拉；ZPL 字段 o_row 下方
+                 ========================================================= -->
             <xpath expr="//field[@name='auto_print_done_production_order']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='auto_print_done_production_order']" position="after">
-                <label
-                    for="auto_print_done_production_order"
-                    string="Production Order"
-                />
+                <label for="auto_print_done_production_order" string="Production Order"/>
                 <div class="o_row">
-                    <field
-                        name="auto_print_done_production_order"
-                        string="Production Order"
-                    />
-                    <label
-                        for="production_order_label_to_print"
-                        string="Print labels as:"
-                        invisible="not auto_print_done_production_order"
-                        class="fw-bold"
-                    />
-                    <field
-                        name="production_order_label_to_print"
-                        invisible="not auto_print_done_production_order"
-                    />
+                    <field name="auto_print_done_production_order" string="Production Order"/>
+                    <label for="production_order_label_to_print" string="Print labels as:"
+                           invisible="not auto_print_done_production_order" class="fw-bold"/>
+                    <field name="production_order_label_to_print"
+                           invisible="not auto_print_done_production_order"/>
                 </div>
-                <label
-                    for="production_order_zpl2_label_id"
-                    string="ZPL Label Template:"
-                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
-                    class="fw-bold"
-                />
-                <field
-                    name="production_order_zpl2_label_id"
-                    nolabel="1"
-                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
-                    options="{'no_create': True, 'no_create_edit': True}"
-                />
-                <label
-                    for="production_order_zpl2_copies"
-                    string="Copies:"
-                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
-                    class="fw-bold"
-                />
-                <field
-                    name="production_order_zpl2_copies"
-                    nolabel="1"
-                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
-                />
+                <div invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'">
+                    <div class="o_row">
+                        <label for="production_order_zpl2_label_id" string="ZPL Label Template:" class="fw-bold"/>
+                        <field name="production_order_zpl2_label_id" nolabel="1"
+                               options="{'no_create': True, 'no_create_edit': True}"/>
+                        <label for="production_order_zpl2_copies" string="Copies:" class="fw-bold"/>
+                        <field name="production_order_zpl2_copies" nolabel="1"/>
+                    </div>
+                </div>
             </xpath>
 
-            <!-- Done Product Labels: hide the native PDF/ZPL format selector,
-                 keep only our custom ZPL II fields below it. -->
-            <xpath expr="//field[@name='mrp_product_label_to_print']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//label[@for='mrp_product_label_to_print']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='mrp_product_label_to_print']" position="after">
-                <label
-                    for="product_zpl2_label_id"
-                    string="ZPL Label Template:"
-                    invisible="not auto_print_done_mrp_product_labels"
-                    class="fw-bold"
-                />
-                <field
-                    name="product_zpl2_label_id"
-                    nolabel="1"
-                    invisible="not auto_print_done_mrp_product_labels"
-                    options="{'no_create': True, 'no_create_edit': True}"
-                />
-                <label
-                    for="product_zpl2_copies"
-                    string="Copies:"
-                    invisible="not auto_print_done_mrp_product_labels"
-                    class="fw-bold"
-                />
-                <field
-                    name="product_zpl2_copies"
-                    nolabel="1"
-                    invisible="not auto_print_done_mrp_product_labels"
-                />
+            <!-- =========================================================
+                 2. 产品标签：REPLACE native o_row (checkbox + PDF/ZPL 下拉)
+                 新 o_row = checkbox + ZPL 模板 + 份数  全部一行
+                 ========================================================= -->
+            <xpath expr="//div[field[@name='auto_print_done_mrp_product_labels']]" position="replace">
+                <div class="o_row">
+                    <field name="auto_print_done_mrp_product_labels" string="Product Labels"/>
+                    <label for="product_zpl2_label_id" string="ZPL Label Template:"
+                           invisible="not auto_print_done_mrp_product_labels" class="fw-bold"/>
+                    <field name="product_zpl2_label_id" nolabel="1"
+                           invisible="not auto_print_done_mrp_product_labels"
+                           options="{'no_create': True, 'no_create_edit': True}"/>
+                    <label for="product_zpl2_copies" string="Copies:"
+                           invisible="not auto_print_done_mrp_product_labels" class="fw-bold"/>
+                    <field name="product_zpl2_copies" nolabel="1"
+                           invisible="not auto_print_done_mrp_product_labels"/>
+                </div>
             </xpath>
 
-            <!-- Done Lot/SN Labels -->
-            <xpath expr="//field[@name='done_mrp_lot_label_to_print']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//label[@for='done_mrp_lot_label_to_print']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='done_mrp_lot_label_to_print']" position="after">
-                <label
-                    for="done_mrp_lot_zpl2_label_id"
-                    string="ZPL Label Template:"
-                    invisible="not auto_print_done_mrp_lot"
-                    class="fw-bold"
-                />
-                <field
-                    name="done_mrp_lot_zpl2_label_id"
-                    nolabel="1"
-                    invisible="not auto_print_done_mrp_lot"
-                    options="{'no_create': True, 'no_create_edit': True}"
-                />
-                <label
-                    for="done_mrp_lot_zpl2_copies"
-                    string="Copies:"
-                    invisible="not auto_print_done_mrp_lot"
-                    class="fw-bold"
-                />
-                <field
-                    name="done_mrp_lot_zpl2_copies"
-                    nolabel="1"
-                    invisible="not auto_print_done_mrp_lot"
-                />
+            <!-- =========================================================
+                 3. 批次/序列号标签 (完成时打印)
+                 ========================================================= -->
+            <xpath expr="//div[field[@name='auto_print_done_mrp_lot']]" position="replace"
+                   groups="stock.group_production_lot">
+                <div class="o_row">
+                    <field name="auto_print_done_mrp_lot" string="Lot/SN Labels"
+                           groups="stock.group_production_lot"/>
+                    <label for="done_mrp_lot_zpl2_label_id" string="ZPL Label Template:"
+                           invisible="not auto_print_done_mrp_lot" class="fw-bold"/>
+                    <field name="done_mrp_lot_zpl2_label_id" nolabel="1"
+                           invisible="not auto_print_done_mrp_lot"
+                           options="{'no_create': True, 'no_create_edit': True}"/>
+                    <label for="done_mrp_lot_zpl2_copies" string="Copies:"
+                           invisible="not auto_print_done_mrp_lot" class="fw-bold"/>
+                    <field name="done_mrp_lot_zpl2_copies" nolabel="1"
+                           invisible="not auto_print_done_mrp_lot"/>
+                </div>
             </xpath>
 
-            <!-- Generated Lot/SN Labels -->
-            <xpath
-                expr="//field[@name='generated_mrp_lot_label_to_print']"
-                position="attributes"
-            >
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath
-                expr="//label[@for='generated_mrp_lot_label_to_print']"
-                position="attributes"
-            >
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath
-                expr="//field[@name='generated_mrp_lot_label_to_print']"
-                position="after"
-            >
-                <label
-                    for="generated_mrp_lot_zpl2_label_id"
-                    string="ZPL Label Template:"
-                    invisible="not auto_print_generated_mrp_lot"
-                    class="fw-bold"
-                />
-                <field
-                    name="generated_mrp_lot_zpl2_label_id"
-                    nolabel="1"
-                    invisible="not auto_print_generated_mrp_lot"
-                    options="{'no_create': True, 'no_create_edit': True}"
-                />
-                <label
-                    for="generated_mrp_lot_zpl2_copies"
-                    string="Copies:"
-                    invisible="not auto_print_generated_mrp_lot"
-                    class="fw-bold"
-                />
-                <field
-                    name="generated_mrp_lot_zpl2_copies"
-                    nolabel="1"
-                    invisible="not auto_print_generated_mrp_lot"
-                />
+            <!-- =========================================================
+                 4. 批次/序列号标签 (创建新批次时打印)
+                 ========================================================= -->
+            <xpath expr="//div[field[@name='auto_print_generated_mrp_lot']]" position="replace"
+                   groups="stock.group_production_lot">
+                <div class="o_row">
+                    <field name="auto_print_generated_mrp_lot" string="Lot/SN Label"
+                           groups="stock.group_production_lot"/>
+                    <label for="generated_mrp_lot_zpl2_label_id" string="ZPL Label Template:"
+                           invisible="not auto_print_generated_mrp_lot" class="fw-bold"/>
+                    <field name="generated_mrp_lot_zpl2_label_id" nolabel="1"
+                           invisible="not auto_print_generated_mrp_lot"
+                           options="{'no_create': True, 'no_create_edit': True}"/>
+                    <label for="generated_mrp_lot_zpl2_copies" string="Copies:"
+                           invisible="not auto_print_generated_mrp_lot" class="fw-bold"/>
+                    <field name="generated_mrp_lot_zpl2_copies" nolabel="1"
+                           invisible="not auto_print_generated_mrp_lot"/>
+                </div>
             </xpath>
         </field>
     </record>
