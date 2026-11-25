@@ -40,6 +40,14 @@
                         <field name="zpl_done_lot_copies" string="Done Copies" />
                         <field name="zpl_no_print" />
                     </group>
+                    <group name="zpl_production_order_group" string="Production Order">
+                        <field
+                            name="production_order_zpl2_label_id"
+                            string="Production Order ZPL Label"
+                            options="{'no_create': True, 'no_create_edit': True}"
+                        />
+                        <field name="production_order_zpl2_copies" string="Copies" />
+                    </group>
                 </group>
             </xpath>
         </field>

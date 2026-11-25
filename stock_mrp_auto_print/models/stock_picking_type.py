@@ -91,6 +91,32 @@ class StockPickingType(models.Model):
         default=1,
         help="Default number of copies for product labels. 0 = use default 1.",
     )
+    production_order_label_to_print = fields.Selection(
+        [("pdf", "PDF"), ("zpl", "ZPL")],
+        string="Production Order Print Format",
+        default="pdf",
+        help=(
+            "Format used when auto-printing the production order document "
+            "after a MO is done. PDF uses the native Odoo report; ZPL uses "
+            "the custom ZPL II label configured below."
+        ),
+    )
+    production_order_zpl2_label_id = fields.Many2one(
+        comodel_name="printing.label.zpl2",
+        string="Production Order Custom ZPL Label",
+        domain="[('model_id.model', '=', 'mrp.production')]",
+        help=(
+            "Custom ZPL II label for the production order document. "
+            "Used when production_order_label_to_print is set to ZPL. "
+            "If not set, the operation type does not auto-print ZPL for "
+            "production orders; use PDF instead."
+        ),
+    )
+    production_order_zpl2_copies = fields.Integer(
+        string="Production Order ZPL Copies",
+        default=1,
+        help="Default number of copies for custom ZPL production order labels. 0 = use default 1.",
+    )
 
     @api.constrains(
         "lot_zpl2_copies",
@@ -98,6 +124,7 @@ class StockPickingType(models.Model):
         "done_mrp_lot_zpl2_copies",
         "generated_mrp_lot_zpl2_copies",
         "product_zpl2_copies",
+        "production_order_zpl2_copies",
     )
     def _check_zpl2_copies(self):
         for record in self:
@@ -107,6 +134,7 @@ class StockPickingType(models.Model):
                 "done_mrp_lot_zpl2_copies",
                 "generated_mrp_lot_zpl2_copies",
                 "product_zpl2_copies",
+                "production_order_zpl2_copies",
             ]:
                 value = record[field_name]
                 if value is not None and value is not False:

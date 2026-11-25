@@ -190,15 +190,77 @@ class MrpProduction(models.Model):
         # Default to production record
         return production
 
+    def _resolve_production_order_zpl_label(self, production):
+        """Resolve ZPL label template and copies for the production order.
+
+        Template priority:
+            1. product.production_order_zpl2_label_id
+            2. picking_type.production_order_zpl2_label_id
+        Copies priority:
+            1. product.production_order_zpl2_copies (> 0)
+            2. picking_type.production_order_zpl2_copies (> 0)
+            3. 1
+
+        Returns (label, copies). label is False if no ZPL label configured.
+        """
+        product = production.product_id.product_tmpl_id
+        pt = production.picking_type_id
+        label = (
+            product.production_order_zpl2_label_id
+            or pt.production_order_zpl2_label_id
+        )
+        if not label:
+            return False, 0
+        copies = 1
+        product_copies = product.production_order_zpl2_copies
+        pt_copies = pt.production_order_zpl2_copies
+        if product_copies and product_copies > 0:
+            copies = product_copies
+        elif pt_copies and pt_copies > 0:
+            copies = pt_copies
+        return label, copies
+
     def _get_autoprint_done_report_actions(self):
         report_actions = []
         productions_to_print = self.filtered(
             lambda p: p.picking_type_id.auto_print_done_production_order
         )
-        if productions_to_print:
+        # Split: custom ZPL production order vs native PDF production order
+        custom_zpl_productions = productions_to_print.filtered(
+            lambda p: (
+                p.picking_type_id.production_order_label_to_print == "zpl"
+                and (
+                    p.product_tmpl_id.production_order_zpl2_label_id
+                    or p.picking_type_id.production_order_zpl2_label_id
+                )
+            )
+        )
+        standard_pdf_productions = productions_to_print - custom_zpl_productions
+
+        # Custom ZPL direct printing for production order
+        for production in custom_zpl_productions:
+            label, copies = self._resolve_production_order_zpl_label(production)
+            if not label:
+                continue
+            printer = production._get_zpl_printer(label=label)
+            zpl_content = b""
+            for _ in range(int(copies)):
+                zpl_content += label._generate_zpl2_data(production)
+            _logger.info(
+                "ZPL direct print: production order label '%s' for MO %s (%d copies)",
+                label.name,
+                production.name,
+                copies,
+            )
+            printer.print_document(
+                report=None, content=zpl_content, doc_format="raw"
+            )
+
+        # Native PDF production order report
+        if standard_pdf_productions:
             action = (
                 self.env.ref("mrp.action_report_production_order")
-                .report_action(productions_to_print.ids, config=False)
+                .report_action(standard_pdf_productions.ids, config=False)
             )
             clean_action(action, self.env)
             report_actions.append(action)

@@ -9,7 +9,60 @@
         <field name="model">stock.picking.type</field>
         <field name="inherit_id" ref="mrp.view_picking_type_form_inherit_mrp" />
         <field name="arch" type="xml">
-            <!-- Done Product Labels -->
+            <!-- Production Order: restructure to match Product Labels/Lot/SN Labels
+                 visual rhythm: placeholder label + o_row(checkbox + format selector),
+                 then ZPL-specific fields that only show when format = ZPL. -->
+            <xpath expr="//field[@name='auto_print_done_production_order']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='auto_print_done_production_order']" position="after">
+                <label
+                    for="auto_print_done_production_order"
+                    string="Production Order"
+                />
+                <div class="o_row">
+                    <field
+                        name="auto_print_done_production_order"
+                        string="Production Order"
+                    />
+                    <label
+                        for="production_order_label_to_print"
+                        string="Print labels as:"
+                        invisible="not auto_print_done_production_order"
+                        class="fw-bold"
+                    />
+                    <field
+                        name="production_order_label_to_print"
+                        invisible="not auto_print_done_production_order"
+                    />
+                </div>
+                <label
+                    for="production_order_zpl2_label_id"
+                    string="ZPL Label Template:"
+                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
+                    class="fw-bold"
+                />
+                <field
+                    name="production_order_zpl2_label_id"
+                    nolabel="1"
+                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
+                    options="{'no_create': True, 'no_create_edit': True}"
+                />
+                <label
+                    for="production_order_zpl2_copies"
+                    string="Copies:"
+                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
+                    class="fw-bold"
+                />
+                <field
+                    name="production_order_zpl2_copies"
+                    nolabel="1"
+                    invisible="not auto_print_done_production_order or production_order_label_to_print != 'zpl'"
+                />
+            </xpath>
+
+            <!-- Done Product Labels: hide the native PDF/ZPL format selector,
+                 keep only our custom ZPL II fields below it. -->
             <xpath expr="//field[@name='mrp_product_label_to_print']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>

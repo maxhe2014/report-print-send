@@ -56,11 +56,28 @@ class ProductTemplate(models.Model):
         string="No Print ZPL Label",
         help="When checked, lot/SN labels for this product are skipped during automatic printing (both ZPL and standard flows).",
     )
+    production_order_zpl2_label_id = fields.Many2one(
+        comodel_name="printing.label.zpl2",
+        string="Production Order ZPL Label",
+        domain="[('model_id.model', '=', 'mrp.production')]",
+        help=(
+            "Custom ZPL II label for the production order document when a "
+            "manufacturing order is done. If not set, the operation type's "
+            "production order ZPL template applies. "
+            "Takes priority over the native PDF production order report."
+        ),
+    )
+    production_order_zpl2_copies = fields.Integer(
+        string="Production Order ZPL Copies",
+        default=0,
+        help="Number of copies for the production order ZPL label. 0 = use the operation type setting.",
+    )
 
     @api.constrains(
         "zpl_copies_per_label",
         "zpl_created_lot_copies",
         "zpl_done_lot_copies",
+        "production_order_zpl2_copies",
     )
     def _check_zpl_copies(self):
         for record in self:
@@ -68,6 +85,7 @@ class ProductTemplate(models.Model):
                 "zpl_copies_per_label",
                 "zpl_created_lot_copies",
                 "zpl_done_lot_copies",
+                "production_order_zpl2_copies",
             ]:
                 value = record[field_name]
                 if value is not None and value is not False:
