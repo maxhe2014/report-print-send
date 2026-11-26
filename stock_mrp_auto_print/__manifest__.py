@@ -11,7 +11,7 @@
     "license": "OPL-1",
     "depends": [
         "printer_zpl2",
-        "printer_zpl2_wizard_enhanced",
+        "printer_zpl2_enhanced",
         "stock",
         "base_report_to_label_printer",
         "mrp",

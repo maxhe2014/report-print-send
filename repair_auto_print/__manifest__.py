@@ -12,7 +12,7 @@
     "depends": [
         "repair",
         "printer_zpl2",
-        "printer_zpl2_wizard_enhanced",
+        "printer_zpl2_enhanced",
         "base_report_to_label_printer",
     ],
     "data": [
