@@ -251,10 +251,8 @@ class MrpProduction(models.Model):
             if not label:
                 continue
             printer = production._get_zpl_printer(label=label)
-            # One label per produced unit: copies x production quantity,
-            # rounded up. A zero quantity is not printed.
-            unit_count = math.ceil(production.product_qty or 0)
-            total = int(copies) * unit_count
+            # Print exactly the configured number of copies (no unit multiplier).
+            total = int(copies)
             if total <= 0:
                 continue
             zpl_content = b""
@@ -262,11 +260,9 @@ class MrpProduction(models.Model):
                 zpl_content += label._generate_zpl2_data(production)
             _logger.info(
                 "ZPL direct print: production order label '%s' for MO %s "
-                "(%d copies x %d units = %d labels)",
+                "(%d copies)",
                 label.name,
                 production.name,
-                copies,
-                unit_count,
                 total,
             )
             printer.print_document(
