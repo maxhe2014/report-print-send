@@ -19,6 +19,13 @@
             <xpath expr="//page[@name='zpl_labels']" position="inside">
                 <group name="repair_zpl2_label_section" string="Repair Labels">
                     <div class="text-muted" colspan="2">Leave a template empty to use the repair operation type default. Set copies to 0 to inherit its quantity.</div>
+                    <group name="repair_order_zpl2_label_group" string="Repair Order">
+                        <field
+                            name="repair_order_zpl2_label_id"
+                            options="{'no_create': True, 'no_create_edit': True}"
+                        />
+                        <field name="repair_order_zpl2_copies" />
+                    </group>
                     <group name="repair_product_zpl2_label_group" string="Product Labels">
                         <field
                             name="repair_product_zpl2_label_id"

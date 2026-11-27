@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 01:20+0000\n"
-"PO-Revision-Date: 2026-11-25 01:20+0000\n"
+"POT-Creation-Date: 2026-11-27 01:24+0000\n"
+"PO-Revision-Date: 2026-11-27 01:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -64,6 +64,14 @@ msgid "Automatically print the repair order when the repair is completed."
 msgstr ""
 
 #. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_order_zpl2_label_id
+msgid ""
+"Custom ZPL II label for the repair order document. Used when "
+"repair_order_label_to_print is set to ZPL. If not set, the operation type "
+"does not auto-print ZPL for repair orders; use PDF instead."
+msgstr ""
+
+#. module: repair_auto_print
 #: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_copies
 msgid "Default Repair Lot/SN Label Copies"
 msgstr ""
@@ -71,6 +79,16 @@ msgstr ""
 #. module: repair_auto_print
 #: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
 msgid "Default Repair Lot/SN ZPL II Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_order_zpl2_copies
+msgid "Default Repair Order ZPL Copies"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_order_zpl2_label_id
+msgid "Default Repair Order ZPL II Label"
 msgstr ""
 
 #. module: repair_auto_print
@@ -92,6 +110,21 @@ msgstr ""
 #. module: repair_auto_print
 #: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_product_zpl2_copies
 msgid "Default number of custom ZPL II product labels per repair order."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_order_zpl2_copies
+msgid ""
+"Default number of custom ZPL II repair order labels per repair order. 0 = "
+"use default 1."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__repair_order_label_to_print
+msgid ""
+"Format used when auto-printing the repair order document after a repair is "
+"completed. PDF uses the native Odoo repair report; ZPL uses the custom ZPL "
+"II label configured below."
 msgstr ""
 
 #. module: repair_auto_print
@@ -124,8 +157,10 @@ msgstr ""
 
 #. module: repair_auto_print
 #: model:ir.model.fields,help:repair_auto_print.field_product_product__done_repair_lot_zpl2_copies
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_order_zpl2_copies
 #: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_product_zpl2_copies
 #: model:ir.model.fields,help:repair_auto_print.field_product_template__done_repair_lot_zpl2_copies
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_order_zpl2_copies
 #: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl2_copies
 msgid ""
 "Overrides the operation type's copies when greater than 0. Set to 0 to "
@@ -134,6 +169,7 @@ msgstr ""
 
 #. module: repair_auto_print
 #: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__done_repair_lot_label_to_print__pdf
+#: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__repair_order_label_to_print__pdf
 #: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__repair_product_label_to_print__pdf
 msgid "PDF"
 msgstr ""
@@ -141,6 +177,11 @@ msgstr ""
 #. module: repair_auto_print
 #: model:ir.model,name:repair_auto_print.model_stock_picking_type
 msgid "Picking Type"
+msgstr ""
+
+#. module: repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+msgid "Print as:"
 msgstr ""
 
 #. module: repair_auto_print
@@ -198,7 +239,25 @@ msgstr ""
 #. module: repair_auto_print
 #: model:ir.model,name:repair_auto_print.model_repair_order
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
+#: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "Repair Order"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_order_zpl2_copies
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_order_zpl2_copies
+msgid "Repair Order Label Copies"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_stock_picking_type__repair_order_label_to_print
+msgid "Repair Order Label Format"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_order_zpl2_label_id
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_order_zpl2_label_id
+msgid "Repair Order ZPL II Label"
 msgstr ""
 
 #. module: repair_auto_print
@@ -235,6 +294,15 @@ msgid ""
 msgstr ""
 
 #. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_order_zpl2_label_id
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_order_zpl2_label_id
+msgid ""
+"Repair-specific repair-order label shared by all variants. Takes priority "
+"over the native PDF repair order report and over the repair operation type's"
+" default template. Leave empty to use the repair operation type setting."
+msgstr ""
+
+#. module: repair_auto_print
 #: model:ir.model.fields,help:repair_auto_print.field_stock_picking_type__done_repair_lot_zpl2_label_id
 msgid ""
 "Used when the repaired product has no repair-specific lot/SN label. A custom"
@@ -250,6 +318,7 @@ msgstr ""
 
 #. module: repair_auto_print
 #: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__done_repair_lot_label_to_print__zpl
+#: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__repair_order_label_to_print__zpl
 #: model:ir.model.fields.selection,name:repair_auto_print.selection__stock_picking_type__repair_product_label_to_print__zpl
 msgid "ZPL"
 msgstr ""
@@ -261,4 +330,13 @@ msgstr ""
 msgid ""
 "ZPL II label '%(label)s' for repair '%(repair)s' has an unsupported model: "
 "%(model)s."
+msgstr ""
+
+#. module: repair_auto_print
+#. odoo-python
+#: code:addons/repair_auto_print/models/repair_order.py:0
+#, python-format
+msgid ""
+"ZPL II label '%(label)s' for repair '%(repair)s' has an unsupported model: "
+"%(model)s. A repair-order label must be bound to repair.order."
 msgstr ""

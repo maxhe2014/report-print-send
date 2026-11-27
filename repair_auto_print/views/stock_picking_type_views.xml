@@ -17,7 +17,32 @@
                 >
                     <group>
                         <group string="Print when repair is completed">
-                            <field name="auto_print_done_repair_order" string="Repair Order" />
+                            <label
+                                for="auto_print_done_repair_order"
+                                string="Repair Order"
+                            />
+                            <div class="o_row">
+                                <field name="auto_print_done_repair_order" string="Repair Order" />
+                                <label
+                                    for="repair_order_label_to_print"
+                                    string="Print as:"
+                                    invisible="not auto_print_done_repair_order"
+                                    class="fw-bold"
+                                />
+                                <field
+                                    name="repair_order_label_to_print"
+                                    invisible="not auto_print_done_repair_order"
+                                />
+                            </div>
+                            <field
+                                name="repair_order_zpl2_label_id"
+                                invisible="not auto_print_done_repair_order or repair_order_label_to_print == 'pdf'"
+                                options="{'no_create': True, 'no_create_edit': True}"
+                            />
+                            <field
+                                name="repair_order_zpl2_copies"
+                                invisible="not auto_print_done_repair_order or repair_order_label_to_print == 'pdf' or not repair_order_zpl2_label_id"
+                            />
                             <label
                                 for="auto_print_done_repair_product_labels"
                                 string="Product Labels"

@@ -123,6 +123,72 @@ class RepairOrder(models.Model):
             doc_format="raw",
         )
 
+    def _resolve_repair_order_zpl_label(self, repair):
+        """Resolve the ZPL II label template and copies for a repair order.
+
+        Template priority:
+            1. product.repair_order_zpl2_label_id
+            2. picking_type.repair_order_zpl2_label_id
+
+        Copies priority:
+            1. product.repair_order_zpl2_copies (> 0)
+            2. picking_type.repair_order_zpl2_copies (> 0)
+            3. 1
+
+        Returns (label, copies). label is False if no ZPL II label configured.
+        """
+        product = repair.product_id.product_tmpl_id
+        pt = repair.picking_type_id
+        label = (
+            product.repair_order_zpl2_label_id
+            or pt.repair_order_zpl2_label_id
+        )
+        if not label:
+            return False, 0
+        copies = 1
+        product_copies = product.repair_order_zpl2_copies
+        pt_copies = pt.repair_order_zpl2_copies
+        if product_copies and product_copies > 0:
+            copies = product_copies
+        elif pt_copies and pt_copies > 0:
+            copies = pt_copies
+        return label, copies
+
+    def _print_repair_order_zpl_labels(self):
+        """Directly print repair-order ZPL II labels for matching repairs.
+
+        A repair is eligible when the operation type's auto-print switch is
+        on, OR the product has both a repair-order ZPL template and copies
+        > 0 (product-level override). Repairs that already resolve to a ZPL
+        II label are sent directly to CUPS and returned so the caller can
+        exclude them from the browser PDF report list (avoid double-print).
+        """
+        self.ensure_one()
+        pt = self.picking_type_id
+        product = self.product_id.product_tmpl_id
+        eligible = pt.auto_print_done_repair_order or (
+            product.repair_order_zpl2_label_id
+            and product.repair_order_zpl2_copies > 0
+        )
+        if not eligible:
+            return False
+        label, copies = self._resolve_repair_order_zpl_label(self)
+        if not label:
+            return False
+        if label.model_id.model != "repair.order":
+            raise UserError(
+                _(
+                    "ZPL II label '%(label)s' for repair '%(repair)s' has an "
+                    "unsupported model: %(model)s. A repair-order label must "
+                    "be bound to repair.order.",
+                    label=label.name,
+                    repair=self.display_name,
+                    model_name=label.model_id.model or "False",
+                )
+            )
+        self._print_done_zpl2_label(label, self, int(copies))
+        return True
+
     def _print_done_zpl2_labels(self):
         """Directly print custom labels and return repairs handled per type."""
         direct_product_repairs = self.browse()
@@ -135,7 +201,9 @@ class RepairOrder(models.Model):
                 label, copies = repair._resolve_done_zpl2_label("product")
                 if label:
                     record = repair._get_done_zpl2_record(label, "product")
-                    repair._print_done_zpl2_label(label, record, copies)
+                    # 打印份数 = 每份标签数 × 维修产品数量（向上取整）
+                    count = math.ceil(repair.product_qty) * copies
+                    repair._print_done_zpl2_label(label, record, count)
                     direct_product_repairs |= repair
             if (
                 self.env.user.has_group("stock.group_production_lot")
@@ -156,12 +224,29 @@ class RepairOrder(models.Model):
             self._print_done_zpl2_labels()
         )
         report_actions = []
-        repairs_to_print = self.filtered(
+        # Repair order document: split into direct ZPL II and native PDF.
+        # A repair is eligible when the operation type's auto-print switch
+        # is on, OR the product has both a repair-order ZPL template and
+        # copies > 0 (product-level override). A repair uses direct ZPL II
+        # when the product has a repair-order ZPL template, or the operation
+        # type is set to ZPL and has a template. Otherwise it falls back to
+        # the native PDF report.
+        repair_orders_to_print = self.filtered(
             lambda repair: repair.picking_type_id.auto_print_done_repair_order
+            or (
+                repair.product_id.product_tmpl_id.repair_order_zpl2_label_id
+                and repair.product_id.product_tmpl_id.repair_order_zpl2_copies
+                > 0
+            )
         )
-        if repairs_to_print:
+        direct_repair_order_repairs = repair_orders_to_print.browse()
+        for repair in repair_orders_to_print:
+            if repair._print_repair_order_zpl_labels():
+                direct_repair_order_repairs |= repair
+        standard_pdf_repairs = repair_orders_to_print - direct_repair_order_repairs
+        if standard_pdf_repairs:
             action = self.env.ref("repair.action_report_repair_order").report_action(
-                repairs_to_print.ids, config=False
+                standard_pdf_repairs.ids, config=False
             )
             clean_action(action, self.env)
             report_actions.append(action)

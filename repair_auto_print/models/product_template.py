@@ -8,6 +8,25 @@ from odoo.exceptions import ValidationError
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    repair_order_zpl2_label_id = fields.Many2one(
+        comodel_name="printing.label.zpl2",
+        string="Repair Order ZPL II Label",
+        domain="[('model_id.model', '=', 'repair.order')]",
+        help=(
+            "Repair-specific repair-order label shared by all variants. "
+            "Takes priority over the native PDF repair order report and over "
+            "the repair operation type's default template. Leave empty to use "
+            "the repair operation type setting."
+        ),
+    )
+    repair_order_zpl2_copies = fields.Integer(
+        string="Repair Order Label Copies",
+        default=0,
+        help=(
+            "Overrides the operation type's copies when greater than 0. "
+            "Set to 0 to inherit the operation type setting."
+        ),
+    )
     repair_product_zpl2_label_id = fields.Many2one(
         comodel_name="printing.label.zpl2",
         string="Repair Product ZPL II Label",
@@ -49,10 +68,15 @@ class ProductTemplate(models.Model):
         ),
     )
 
-    @api.constrains("repair_product_zpl2_copies", "done_repair_lot_zpl2_copies")
+    @api.constrains(
+        "repair_order_zpl2_copies",
+        "repair_product_zpl2_copies",
+        "done_repair_lot_zpl2_copies",
+    )
     def _check_repair_zpl2_copies(self):
         for record in self:
             for field_name in (
+                "repair_order_zpl2_copies",
                 "repair_product_zpl2_copies",
                 "done_repair_lot_zpl2_copies",
             ):
