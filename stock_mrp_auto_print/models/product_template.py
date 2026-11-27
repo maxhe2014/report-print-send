@@ -56,6 +56,14 @@ class ProductTemplate(models.Model):
         string="No Print ZPL Label",
         help="When checked, lot/SN labels for this product are skipped during automatic printing (both ZPL and standard flows).",
     )
+    product_zpl_no_print = fields.Boolean(
+        string="No Print Product Label",
+        help="When checked, product labels for this product are skipped during automatic printing (both ZPL and standard PDF flows).",
+    )
+    production_order_zpl_no_print = fields.Boolean(
+        string="No Print Production Order Label",
+        help="When checked, production order ZPL labels for this product are skipped during automatic printing.",
+    )
     production_order_zpl2_label_id = fields.Many2one(
         comodel_name="printing.label.zpl2",
         string="Production Order ZPL Label",

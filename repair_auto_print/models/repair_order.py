@@ -31,6 +31,13 @@ class RepairOrder(models.Model):
         label_field = f"{prefix}_zpl2_label_id"
         copies_field = f"{prefix}_zpl2_copies"
         product_template = self.product_id.product_tmpl_id
+        # Skip products marked as "no print" for this label type
+        no_print_field = (
+            "repair_product_zpl_no_print" if label_type == "product"
+            else "repair_lot_zpl_no_print"
+        )
+        if product_template[no_print_field]:
+            return False, 0
         label = product_template[label_field] or self.picking_type_id[label_field]
         product_copies = product_template[copies_field]
         copies = (
@@ -138,6 +145,9 @@ class RepairOrder(models.Model):
         Returns (label, copies). label is False if no ZPL II label configured.
         """
         product = repair.product_id.product_tmpl_id
+        # Skip products marked as "no print repair order label"
+        if product.repair_order_zpl_no_print:
+            return False, 0
         pt = repair.picking_type_id
         label = (
             product.repair_order_zpl2_label_id

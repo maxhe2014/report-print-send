@@ -139,7 +139,8 @@ class StockPicking(models.Model):
         Returns (label, copies). label is False if no ZPL label configured.
         """
         product = move.product_id.product_tmpl_id
-        if product.zpl_no_print:
+        # Skip products marked as "no print product label"
+        if product.product_zpl_no_print:
             return False, 0
 
         pt = move.picking_id.picking_type_id

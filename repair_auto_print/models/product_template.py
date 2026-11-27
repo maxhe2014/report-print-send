@@ -67,6 +67,18 @@ class ProductTemplate(models.Model):
             "Set to 0 to inherit the operation type setting."
         ),
     )
+    repair_order_zpl_no_print = fields.Boolean(
+        string="No Print Repair Order Label",
+        help="When checked, repair order ZPL labels for this product are skipped during automatic printing.",
+    )
+    repair_product_zpl_no_print = fields.Boolean(
+        string="No Print Repair Product Label",
+        help="When checked, repair product ZPL labels for this product are skipped during automatic printing.",
+    )
+    repair_lot_zpl_no_print = fields.Boolean(
+        string="No Print Repair Lot/SN Label",
+        help="When checked, repair lot/SN ZPL labels for this product are skipped during automatic printing.",
+    )
 
     @api.constrains(
         "repair_order_zpl2_copies",

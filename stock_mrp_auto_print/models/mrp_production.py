@@ -156,7 +156,8 @@ class MrpProduction(models.Model):
         Returns (label, copies). label is False if no ZPL label configured.
         """
         product = production.product_id.product_tmpl_id
-        if product.zpl_no_print:
+        # Skip products marked as "no print product label"
+        if product.product_zpl_no_print:
             return False, 0
 
         pt = production.picking_type_id
@@ -204,6 +205,9 @@ class MrpProduction(models.Model):
         Returns (label, copies). label is False if no ZPL label configured.
         """
         product = production.product_id.product_tmpl_id
+        # Skip products marked as "no print production order label"
+        if product.production_order_zpl_no_print:
+            return False, 0
         pt = production.picking_type_id
         label = (
             product.production_order_zpl2_label_id

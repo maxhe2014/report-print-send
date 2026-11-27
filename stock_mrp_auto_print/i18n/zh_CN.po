@@ -447,3 +447,26 @@ msgstr "需求总量与已完成数量"
 #: model:ir.model.fields.selection,name:stock_mrp_auto_print.selection__stock_picking_type__production_order_label_to_print__zpl
 msgid "ZPL"
 msgstr "ZPL"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_product__product_zpl_no_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__product_zpl_no_print
+msgid "No Print Product Label"
+msgstr "不打印产品标签"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_product__product_zpl_no_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__product_zpl_no_print
+msgid "When checked, product labels for this product are skipped during automatic printing (both ZPL and standard PDF flows)."
+msgstr "勾选后，自动打印时跳过该产品的产品标签（包括 ZPL 和标准 PDF 流程）。"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_product__production_order_zpl_no_print
+#: model:ir.model.fields,field_description:stock_mrp_auto_print.field_product_template__production_order_zpl_no_print
+msgid "No Print Production Order Label"
+msgstr "不打印生产订单标签"
+
+#. module: stock_mrp_auto_print
+#: model:ir.model.fields,help:stock_mrp_auto_print.field_product_product__production_order_zpl_no_print
+msgid "When checked, production order ZPL labels for this product are skipped during automatic printing."
+msgstr "勾选后，自动打印时跳过该产品的生产订单 ZPL 标签。"

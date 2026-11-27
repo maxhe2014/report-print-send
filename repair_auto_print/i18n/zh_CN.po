@@ -350,3 +350,36 @@ msgid ""
 msgstr ""
 "维修“%(repair)s”的 ZPL II 标签“%(label)s”使用了不支持的模型：%(model)s。"
 "维修单标签必须绑定到 repair.order 模型。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_order_zpl_no_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_order_zpl_no_print
+msgid "No Print Repair Order Label"
+msgstr "不打印维修单标签"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_order_zpl_no_print
+msgid "When checked, repair order ZPL labels for this product are skipped during automatic printing."
+msgstr "勾选后，自动打印时跳过该产品的维修单 ZPL 标签。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_product_zpl_no_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl_no_print
+msgid "No Print Repair Product Label"
+msgstr "不打印维修产品标签"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_product_zpl_no_print
+msgid "When checked, repair product ZPL labels for this product are skipped during automatic printing."
+msgstr "勾选后，自动打印时跳过该产品的维修产品 ZPL 标签。"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_lot_zpl_no_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_lot_zpl_no_print
+msgid "No Print Repair Lot/SN Label"
+msgstr "不打印维修序列号标签"
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_lot_zpl_no_print
+msgid "When checked, repair lot/SN ZPL labels for this product are skipped during automatic printing."
+msgstr "勾选后，自动打印时跳过该产品的维修序列号 ZPL 标签。"

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-27 01:24+0000\n"
-"PO-Revision-Date: 2026-11-27 01:24+0000\n"
+"POT-Creation-Date: 2026-11-27 08:41+0000\n"
+"PO-Revision-Date: 2026-11-27 08:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -143,6 +143,24 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_picking_type_form_repair_auto_print
 #: model_terms:ir.ui.view,arch_db:repair_auto_print.view_product_template_form_repair_auto_print
 msgid "Lot/SN Labels"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_lot_zpl_no_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_lot_zpl_no_print
+msgid "No Print Repair Lot/SN Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_order_zpl_no_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_order_zpl_no_print
+msgid "No Print Repair Order Label"
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_product__repair_product_zpl_no_print
+#: model:ir.model.fields,field_description:repair_auto_print.field_product_template__repair_product_zpl_no_print
+msgid "No Print Repair Product Label"
 msgstr ""
 
 #. module: repair_auto_print
@@ -314,6 +332,30 @@ msgstr ""
 msgid ""
 "Used when the repaired product has no repair-specific product label. A "
 "custom ZPL II label takes priority over the native label format."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_lot_zpl_no_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_lot_zpl_no_print
+msgid ""
+"When checked, repair lot/SN ZPL labels for this product are skipped during "
+"automatic printing."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_order_zpl_no_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_order_zpl_no_print
+msgid ""
+"When checked, repair order ZPL labels for this product are skipped during "
+"automatic printing."
+msgstr ""
+
+#. module: repair_auto_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_product__repair_product_zpl_no_print
+#: model:ir.model.fields,help:repair_auto_print.field_product_template__repair_product_zpl_no_print
+msgid ""
+"When checked, repair product ZPL labels for this product are skipped during "
+"automatic printing."
 msgstr ""
 
 #. module: repair_auto_print

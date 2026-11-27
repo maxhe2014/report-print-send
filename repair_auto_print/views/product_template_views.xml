@@ -25,6 +25,7 @@
                             options="{'no_create': True, 'no_create_edit': True}"
                         />
                         <field name="repair_order_zpl2_copies" />
+                        <field name="repair_order_zpl_no_print" />
                     </group>
                     <group name="repair_product_zpl2_label_group" string="Product Labels">
                         <field
@@ -32,6 +33,7 @@
                             options="{'no_create': True, 'no_create_edit': True}"
                         />
                         <field name="repair_product_zpl2_copies" />
+                        <field name="repair_product_zpl_no_print" />
                     </group>
                     <group
                         name="repair_lot_zpl2_label_group"
@@ -43,6 +45,7 @@
                             options="{'no_create': True, 'no_create_edit': True}"
                         />
                         <field name="done_repair_lot_zpl2_copies" />
+                        <field name="repair_lot_zpl_no_print" />
                     </group>
                 </group>
             </xpath>
