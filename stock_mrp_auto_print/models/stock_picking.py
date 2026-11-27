@@ -85,7 +85,7 @@ class StockPicking(models.Model):
         for move_line in move_lines:
             if not move_line.lot_id:
                 continue
-            if move_line.product_uom_id._has_common_reference(uom_unit):
+            if move_line.product_uom_id.category_id == uom_unit.category_id:
                 qty_by_lot[move_line.lot_id.id] += move_line.quantity
             else:
                 qty_by_lot[move_line.lot_id.id] += 1
